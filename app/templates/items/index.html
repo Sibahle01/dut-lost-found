@@ -1,0 +1,11 @@
+﻿{% extends "base.html" %}
+{% block title %}Home - DUT Lost & Found{% endblock %}
+
+{% block content %}
+<h1>Welcome to DUT Lost & Found Portal</h1>
+<p>Report lost items or find what you've lost</p>
+<div>
+    <a href="{{ url_for('items.search') }}">Browse Items</a>
+    <a href="{{ url_for('items.report') }}">Report Item</a>
+</div>
+{% endblock %}

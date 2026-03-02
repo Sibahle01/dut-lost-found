@@ -1,0 +1,24 @@
+﻿{% extends "base.html" %}
+{% block title %}Admin Dashboard - DUT Lost & Found{% endblock %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<div style="margin-top: 2rem;">
+    <h3>Pending Claims</h3>
+    <p>No pending claims. This section will display claims waiting for review.</p>
+</div>
+
+<div style="margin-top: 2rem;">
+    <h3>Recent Items</h3>
+    <p>Recent lost/found items will appear here.</p>
+</div>
+
+<div style="margin-top: 2rem;">
+    <a href="{{ url_for('admin.claims_list') }}">Manage Claims</a>
+</div>
+
+<p style="margin-top: 2rem; color: #666;">
+    <em>Admin dashboard - Coming soon. The admin team will build this page.</em>
+</p>
+{% endblock %}

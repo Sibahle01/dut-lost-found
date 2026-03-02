@@ -1,0 +1,45 @@
+﻿{% extends "base.html" %}
+{% block title %}Register - DUT Lost & Found{% endblock %}
+
+{% block content %}
+<h2>Create Your Account</h2>
+<p>DUT Lost & Found Portal</p>
+
+<form method="POST" action="{{ url_for('auth.register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <label>Full Name</label>
+    <input type="text" name="name" value="{{ form_data.get('name', '') }}" required>
+
+    <label>DUT Email Address</label>
+    <input type="email" name="email" placeholder="student@dut4life.ac.za" 
+           value="{{ form_data.get('email', '') }}" required>
+    <small>Must be @dut.ac.za or @dut4life.ac.za</small>
+
+    <label>Student / Staff Number (optional)</label>
+    <input type="text" name="student_number" value="{{ form_data.get('student_number', '') }}">
+
+    <label>Primary Campus</label>
+    <select name="campus" required>
+        <option value="" disabled {% if not form_data.get('campus') %}selected{% endif %}>
+            Select your campus
+        </option>
+        {% for c in ['Steve Biko', 'Ritson', 'ML Sultan'] %}
+            <option value="{{ c }}" {% if form_data.get('campus') == c %}selected{% endif %}>
+                {{ c }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Password (minimum 8 characters)</label>
+    <input type="password" name="password" minlength="8" required>
+
+    <label>Confirm Password</label>
+    <input type="password" name="confirm_password" required>
+
+    <button type="submit">Create Account</button>
+</form>
+
+<hr>
+<p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+{% endblock %}

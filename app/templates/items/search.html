@@ -1,7 +1,83 @@
 ﻿{% extends "base.html" %}
-{% block title %}Search Items - DUT Lost & Found{% endblock %}
+{% block title %}Browse Items{% endblock %}
 
 {% block content %}
-<h1>Search Items</h1>
-<p>Search functionality coming soon...</p>
+<h1>Browse Items</h1>
+
+<!-- Search Form -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('items.search') }}">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{ filters.keyword }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="type" class="form-control">
+                        <option value="">All Types</option>
+                        <option value="lost" {% if filters.type == 'lost' %}selected{% endif %}>Lost</option>
+                        <option value="found" {% if filters.type == 'found' %}selected{% endif %}>Found</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="campus" class="form-control">
+                        <option value="">All Campuses</option>
+                        {% for c in campuses %}
+                            <option value="{{ c }}" {% if filters.campus == c %}selected{% endif %}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Results -->
+<p>{{ items|length }} item(s) found</p>
+
+{% if items %}
+    <div class="row">
+        {% for item in items %}
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    {% if item.image_path %}
+                        <img src="{{ url_for('static', filename=item.image_path) }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                    {% else %}
+                        <div class="bg-light text-center py-5">No Image</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ item.title }}</h5>
+                        <p class="card-text">
+                            <span class="badge {% if item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
+                                {{ item.type|capitalize }}
+                            </span>
+                            <span class="badge bg-secondary">{{ item.category }}</span>
+                            <span class="badge bg-info">{{ item.campus }}</span>
+                        </p>
+                        <p class="card-text small">{{ item.public_description|truncate(100) }}</p>
+                        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        Ref: {{ item.reference_number }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        No items found matching your criteria.
+    </div>
+{% endif %}
 {% endblock %}

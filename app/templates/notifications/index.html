@@ -1,14 +1,86 @@
 ﻿{% extends "base.html" %}
-{% block title %}Notifications - DUT Lost & Found{% endblock %}
+{% block title %}Notifications — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Notifications</h1>
-
-<div style="margin-top: 2rem;">
-    <p>You have no new notifications.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold mb-0">
+    <i class="bi bi-bell"></i> Notifications
+  </h3>
+  {% if notifications %}
+    <a href="{{ url_for('notifications.mark_all_read') }}"
+       class="btn btn-outline-secondary btn-sm">
+      Mark all read
+    </a>
+  {% endif %}
 </div>
 
-<p style="margin-top: 2rem; color: #666;">
-    <em>Notifications center - Coming soon. The notifications team will build this page.</em>
-</p>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
+
+{% if notifications %}
+  <div class="list-group shadow-sm">
+    {% for notif in notifications %}
+      <div class="list-group-item list-group-item-action
+                  {% if not notif.is_read %}bg-light border-start border-danger border-3{% endif %}
+                  py-3">
+        <div class="d-flex justify-content-between align-items-start">
+          <div class="d-flex gap-3 align-items-start">
+
+            <!-- Icon by type -->
+            <div class="mt-1">
+              {% if notif.type == 'claim_approved' %}
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+              {% elif notif.type == 'claim_rejected' %}
+                <i class="bi bi-x-circle-fill text-danger fs-5"></i>
+              {% elif notif.type == 'claim_submitted' %}
+                <i class="bi bi-file-earmark-check text-warning fs-5"></i>
+              {% elif notif.type == 'match_found' %}
+                <i class="bi bi-link-45deg text-primary fs-5"></i>
+              {% elif notif.type == 'item_closed' %}
+                <i class="bi bi-archive-fill text-secondary fs-5"></i>
+              {% else %}
+                <i class="bi bi-bell text-muted fs-5"></i>
+              {% endif %}
+            </div>
+
+            <div>
+              <p class="mb-1 {% if not notif.is_read %}fw-semibold{% endif %}">
+                {{ notif.message }}
+              </p>
+              <small class="text-muted">
+                {{ notif.created_at.strftime('%d %B %Y at %H:%M') }}
+              </small>
+              {% if notif.related_item %}
+                <br>
+                <a href="{{ url_for('items.detail', item_id=notif.related_item_id) }}"
+                   class="small text-danger text-decoration-none">
+                  View item →
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2 ms-3 flex-shrink-0">
+            {% if not notif.is_read %}
+              <span class="badge bg-danger rounded-pill">New</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-bell-slash fs-1 text-muted"></i>
+    <p class="text-muted mt-3">No notifications yet.</p>
+    <p class="text-muted small">
+      You will be notified when claims are submitted, reviewed, or matched.
+    </p>
+  </div>
+{% endif %}
+
 {% endblock %}

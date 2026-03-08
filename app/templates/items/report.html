@@ -1,7 +1,354 @@
 ﻿{% extends "base.html" %}
-{% block title %}Report Item - DUT Lost & Found{% endblock %}
+{% block title %}Report Item — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Report Item</h1>
-<p>Report form coming soon...</p>
+<div class="row justify-content-center">
+  <div class="col-md-8">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+      <h1 class="fw-bold mb-1">Report a Lost or Found Item</h1>
+      <p class="text-muted mb-0">
+        Complete all required fields marked with <span class="text-danger fw-bold">*</span>.
+        Your report will be reviewed by an admin and matched against existing records.
+      </p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show">
+          {{ message|safe }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data"
+          action="{{ url_for('items.report') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- STEP 1: Lost or Found -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-semibold py-3">
+          <span class="badge bg-danger me-2">Step 1</span>
+          What are you reporting?
+        </div>
+        <div class="card-body py-4">
+          <p class="text-muted small mb-3">
+            Select one option below. This determines how your report is categorised.
+          </p>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <input type="radio" class="d-none" name="type"
+                     id="type_lost" value="lost"
+                     {% if form_data.get('type') == 'lost' %}checked{% endif %} required>
+              <label class="item-type-card lost w-100 {% if form_data.get('type') == 'lost' %}selected{% endif %}"
+                     for="type_lost">
+                <span class="type-badge">✓ Selected</span>
+                <i class="bi bi-question-circle-fill type-icon"></i>
+                <div>
+                  <div class="type-title">I Lost an Item</div>
+                  <div class="type-subtitle">
+                    I had something and now I can't find it.
+                    I want to report it missing and search for it.
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="col-md-6">
+              <input type="radio" class="d-none" name="type"
+                     id="type_found" value="found"
+                     {% if form_data.get('type') == 'found' %}checked{% endif %}>
+              <label class="item-type-card found w-100 {% if form_data.get('type') == 'found' %}selected{% endif %}"
+                     for="type_found">
+                <span class="type-badge">✓ Selected</span>
+                <i class="bi bi-search-heart-fill type-icon"></i>
+                <div>
+                  <div class="type-title">I Found an Item</div>
+                  <div class="type-subtitle">
+                    I found something that doesn't belong to me.
+                    I want to hand it in and help the owner find it.
+                  </div>
+                </div>
+              </label>
+            </div>
+
+          </div>
+          <div class="form-text mt-3">
+            <i class="bi bi-info-circle text-primary"></i>
+            Not sure which to choose? If the item is currently in your possession, select
+            <strong>I Found an Item</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Item Details -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-semibold py-3">
+          <span class="badge bg-danger me-2">Step 2</span>
+          Item Details
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">
+                Item Title <span class="text-danger">*</span>
+              </label>
+              <input type="text" name="title" class="form-control"
+                     placeholder="e.g. Black Samsung Galaxy phone"
+                     value="{{ form_data.get('title', '') }}" required>
+              <div class="form-text">Be specific — include brand, colour, and type.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">
+                Category <span class="text-danger">*</span>
+              </label>
+              <select name="category" class="form-select" required>
+                <option value="" disabled
+                  {% if not form_data.get('category') %}selected{% endif %}>
+                  Select a category
+                </option>
+                {% for cat in categories %}
+                  <option value="{{ cat }}"
+                    {% if form_data.get('category') == cat %}selected{% endif %}>
+                    {{ cat }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">
+                Campus <span class="text-danger">*</span>
+              </label>
+              <select name="campus" class="form-select" required>
+                <option value="" disabled
+                  {% if not form_data.get('campus') %}selected{% endif %}>
+                  Select your campus
+                </option>
+                {% for c in campuses %}
+                  <option value="{{ c }}"
+                    {% if form_data.get('campus') == c %}selected{% endif %}>
+                    {{ c }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Date of Incident</label>
+              <input type="date" name="date_of_incident" class="form-control"
+                     value="{{ form_data.get('date_of_incident', '') }}">
+              <div class="form-text">Approximate date is fine if unsure.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Specific Location</label>
+              <input type="text" name="location" class="form-control"
+                     placeholder="e.g. Library 2nd floor, Main cafeteria, Parking lot B"
+                     value="{{ form_data.get('location', '') }}">
+              <div class="form-text">
+                The more specific you are, the easier it is to find a match.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Descriptions -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-semibold py-3">
+          <span class="badge bg-danger me-2">Step 3</span>
+          Descriptions
+        </div>
+        <div class="card-body">
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">
+              Public Description <span class="text-danger">*</span>
+            </label>
+            <div class="alert alert-light border small py-2 mb-2">
+              <i class="bi bi-eye text-primary"></i>
+              <strong>Visible to everyone.</strong>
+              Describe the item clearly but do not include any details
+              that only the owner would know — save those for the private field below.
+            </div>
+            <textarea name="public_description" class="form-control" rows="3"
+                      placeholder="Example: Black leather wallet, worn at the corners. Contains student card slot and three card compartments. Found near the library entrance."
+                      required>{{ form_data.get('public_description', '') }}</textarea>
+          </div>
+
+          <div class="mb-0">
+            <label class="form-label fw-semibold text-danger">
+              <i class="bi bi-shield-lock-fill"></i>
+              Private Verification Details <span class="text-danger">*</span>
+            </label>
+            <div class="alert alert-danger bg-danger bg-opacity-10 border-danger small py-2 mb-2">
+              <i class="bi bi-lock-fill"></i>
+              <strong>Admin eyes only — never shown publicly.</strong>
+              Write details that only the real owner would know.
+              This is the primary way the admin verifies that a claim is genuine.
+            </div>
+            <textarea name="private_verification" class="form-control border-danger" rows="4"
+                      placeholder="Examples:&#10;- Serial number or IMEI&#10;- What is stored inside (receipts, specific cards, photos)&#10;- Phone wallpaper or lock screen description&#10;- Saved contact names&#10;- Unique damage, stickers, or markings&#10;- Password hint (do NOT write the actual password)"
+                      required>{{ form_data.get('private_verification', '') }}</textarea>
+            <div class="form-text text-danger mt-1">
+              The more detail you provide here, the easier it is for the admin
+              to confirm the real owner and reject false claims.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- STEP 4: Photo -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white fw-semibold py-3">
+          <span class="badge bg-secondary me-2">Step 4</span>
+          Photo
+          <span class="text-muted fw-normal small ms-1">(optional but strongly recommended)</span>
+        </div>
+        <div class="card-body">
+          <input type="file" name="photo" class="form-control"
+                 accept=".png,.jpg,.jpeg,.gif">
+          <div class="form-text mt-2">
+            <i class="bi bi-image"></i>
+            A clear photo significantly increases the chance of a successful match.
+            Max 16MB. PNG, JPG, or GIF.
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="d-grid mb-5">
+        <button type="submit" class="btn btn-danger btn-lg fw-semibold py-3">
+          <i class="bi bi-send-fill me-2"></i> Submit Report
+        </button>
+        <p class="text-center text-muted small mt-2">
+          Once submitted, you will receive a unique reference number to track your report.
+        </p>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<style>
+  .item-type-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 2px solid #dee2e6;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    background: white;
+    margin: 0;
+  }
+
+  .item-type-card.lost:hover {
+    border-color: #ffc107;
+    background-color: #fff9e6;
+  }
+
+  .item-type-card.found:hover {
+    border-color: #198754;
+    background-color: #f0fff4;
+  }
+
+  .item-type-card.selected.lost {
+    border-color: #ffc107;
+    background-color: #fff9e6;
+    box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+  }
+
+  .item-type-card.selected.found {
+    border-color: #198754;
+    background-color: #f0fff4;
+    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+  }
+
+  .type-badge {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .item-type-card.selected.lost .type-badge {
+    background: #ffc107;
+    color: #000;
+    opacity: 1;
+  }
+
+  .item-type-card.selected.found .type-badge {
+    background: #198754;
+    opacity: 1;
+  }
+
+  .type-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .item-type-card.lost .type-icon { color: #ffc107; }
+  .item-type-card.found .type-icon { color: #198754; }
+
+  .type-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .type-subtitle {
+    font-size: 0.82rem;
+    color: #6c757d;
+    line-height: 1.4;
+  }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function selectTypeCard(radioId) {
+    // Remove selected from all cards
+    document.querySelectorAll('.item-type-card').forEach(function(card) {
+      card.classList.remove('selected');
+    });
+    // Add selected to the label linked to this radio
+    var label = document.querySelector('label[for="' + radioId + '"]');
+    if (label) {
+      label.classList.add('selected');
+    }
+  }
+
+  // Wire up change events
+  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      selectTypeCard(this.id);
+    });
+  });
+
+  // On page load — highlight whichever is already checked (after validation fail)
+  document.addEventListener('DOMContentLoaded', function() {
+    var checked = document.querySelector('input[name="type"]:checked');
+    if (checked) {
+      selectTypeCard(checked.id);
+    }
+  });
+</script>
 {% endblock %}

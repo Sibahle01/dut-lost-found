@@ -1,0 +1,59 @@
+﻿{% extends "base.html" %}
+{% block title %}Claim Item{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1>Claim Item: {{ item.title }}</h1>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <strong>Item Details</strong>
+            </div>
+            <div class="card-body">
+                <p><strong>Reference:</strong> {{ item.reference_number }}</p>
+                <p><strong>Category:</strong> {{ item.category }}</p>
+                <p><strong>Campus:</strong> {{ item.campus }}</p>
+                <p><strong>Description:</strong> {{ item.public_description }}</p>
+                {% if item.image_path %}
+                    <img src="{{ url_for('static', filename=item.image_path) }}" class="img-fluid rounded" style="max-height:200px;">
+                {% endif %}
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <div class="card mb-3">
+                <div class="card-header bg-warning">
+                    <strong>Proof of Ownership</strong>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Why does this item belong to you?</label>
+                        <textarea name="claim_description" class="form-control" rows="3" required 
+                                  placeholder="Describe why you believe this is your item..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Verification Details</label>
+                        <textarea name="verification_answers" class="form-control" rows="3" required
+                                  placeholder="Provide details only the owner would know (serial numbers, unique marks, contents, etc.)"></textarea>
+                        <small class="text-muted">These will be compared with the private verification details.</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Upload Evidence</label>
+                        <input type="file" name="evidence" class="form-control" required
+                               accept=".png,.jpg,.jpeg,.gif,.pdf">
+                        <small class="text-muted">Receipt, photo, or any proof of ownership (PNG, JPG, GIF, PDF)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-success">Submit Claim</button>
+            <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

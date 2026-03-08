@@ -1,0 +1,109 @@
+﻿{% extends "base.html" %}
+{% block title %}{{ item.title }} — DUT Lost & Found{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-8">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center gap-2 mb-1">
+      <span class="badge {% if item.type == 'lost' %}bg-warning text-dark{% else %}bg-success{% endif %} fs-6">
+        {{ item.type|capitalize }}
+      </span>
+      <span class="badge bg-secondary">{{ item.category }}</span>
+      <span class="badge
+        {% if item.status == 'open' %}bg-primary
+        {% elif item.status == 'matched' %}bg-info text-dark
+        {% elif item.status == 'claimed' %}bg-warning text-dark
+        {% else %}bg-dark{% endif %}">
+        {{ item.status|capitalize }}
+      </span>
+    </div>
+
+    <h2 class="fw-bold mb-0">{{ item.title }}</h2>
+    <p class="text-muted mb-4">
+      Ref: <strong>{{ item.reference_number }}</strong> ·
+      {{ item.campus }} ·
+      Reported {{ item.created_at.strftime('%d %B %Y') }}
+    </p>
+
+    {% if item.image_path %}
+      <img src="{{ url_for('static', filename=item.image_path) }}"
+           class="img-fluid rounded mb-4 shadow-sm"
+           style="max-height:350px;object-fit:contain;"
+           alt="{{ item.title }}">
+    {% endif %}
+
+    <!-- Public Description -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold">Description</div>
+      <div class="card-body">
+        <p class="mb-0">{{ item.public_description }}</p>
+      </div>
+    </div>
+
+    <!-- Location & Date -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <p class="small text-muted mb-1">Campus</p>
+            <p class="fw-semibold mb-0">{{ item.campus }}</p>
+          </div>
+          {% if item.location %}
+          <div class="col-md-4">
+            <p class="small text-muted mb-1">Location</p>
+            <p class="fw-semibold mb-0">{{ item.location }}</p>
+          </div>
+          {% endif %}
+          {% if item.date_of_incident %}
+          <div class="col-md-4">
+            <p class="small text-muted mb-1">Date</p>
+            <p class="fw-semibold mb-0">{{ item.date_of_incident.strftime('%d %B %Y') }}</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar -->
+  <div class="col-md-4">
+    {% if can_claim %}
+      <div class="card border-danger shadow-sm mb-4">
+        <div class="card-header bg-danger text-white fw-semibold">
+          Is this your item?
+        </div>
+        <div class="card-body">
+          <p class="small">
+            If this belongs to you, submit a claim.
+            You will need to provide proof of ownership.
+          </p>
+          <a href="{{ url_for('claims.submit', item_id=item.id) }}"
+             class="btn btn-danger w-100 fw-semibold">
+            Submit a Claim
+          </a>
+        </div>
+      </div>
+    {% elif not current_user.is_authenticated %}
+      <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+          <p class="small text-muted">Sign in to claim this item.</p>
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-danger btn-sm">
+            Sign In
+          </a>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold">Reference Number</div>
+      <div class="card-body text-center">
+        <h4 class="text-danger fw-bold font-monospace">{{ item.reference_number }}</h4>
+        <p class="small text-muted mb-0">Keep this number to track your item.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

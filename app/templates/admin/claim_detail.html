@@ -1,0 +1,70 @@
+﻿{% extends "base.html" %}
+{% block title %}Claim #{{ claim.id }} Details{% endblock %}
+
+{% block content %}
+<h1>Claim #{{ claim.id }} Details</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5>Item Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Title:</strong> {{ claim.item.title }}</p>
+                <p><strong>Reference:</strong> {{ claim.item.reference_number }}</p>
+                <p><strong>Category:</strong> {{ claim.item.category }}</p>
+                <p><strong>Campus:</strong> {{ claim.item.campus }}</p>
+                <p><strong>Type:</strong> 
+                    <span class="badge {% if claim.item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
+                        {{ claim.item.type|capitalize }}
+                    </span>
+                </p>
+                <p><strong>Description:</strong> {{ claim.item.public_description }}</p>
+                {% if claim.item.image_path %}
+                    <img src="{{ url_for('static', filename=claim.item.image_path) }}" class="img-fluid rounded" style="max-height:200px;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header bg-info text-white">
+                <h5>Claimant Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Name:</strong> {{ claim.claimant.name }}</p>
+                <p><strong>Email:</strong> {{ claim.claimant.email }}</p>
+                <p><strong>Student Number:</strong> {{ claim.claimant.student_number or 'N/A' }}</p>
+            </div>
+        </div>
+        
+        <div class="card mb-3">
+            <div class="card-header bg-warning">
+                <h5>Claim Details</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Submitted:</strong> {{ claim.created_at.strftime('%d %B %Y at %H:%M') }}</p>
+                <p><strong>Description:</strong> {{ claim.claim_description }}</p>
+                <p><strong>Verification Answers:</strong> {{ claim.verification_answers or 'None' }}</p>
+                {% if claim.evidence_path %}
+                    <p><strong>Evidence:</strong> 
+                        <a href="{{ url_for('static', filename=claim.evidence_path) }}" target="_blank">View Evidence</a>
+                    </p>
+                {% endif %}
+                <p><strong>Status:</strong> 
+                    <span class="badge {% if claim.status == 'pending' %}bg-warning{% elif claim.status == 'approved' %}bg-success{% else %}bg-danger{% endif %}">
+                        {{ claim.status|capitalize }}
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}" class="btn btn-warning">Review Claim</a>
+    <a href="{{ url_for('admin.claims_list') }}" class="btn btn-secondary">Back to Claims</a>
+</div>
+{% endblock %}

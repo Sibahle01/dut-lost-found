@@ -1,24 +1,160 @@
 ﻿{% extends "base.html" %}
-{% block title %}Admin Dashboard - DUT Lost & Found{% endblock %}
+{% block title %}Admin Dashboard — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Admin Dashboard</h1>
-
-<div style="margin-top: 2rem;">
-    <h3>Pending Claims</h3>
-    <p>No pending claims. This section will display claims waiting for review.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="fw-bold mb-0">Admin Dashboard</h3>
+    <p class="text-muted mb-0">Welcome, {{ current_user.name }}</p>
+  </div>
+  {% if unread_count > 0 %}
+    <span class="badge bg-danger fs-6">
+      <i class="bi bi-bell-fill"></i> {{ unread_count }} unread
+    </span>
+  {% endif %}
 </div>
 
-<div style="margin-top: 2rem;">
-    <h3>Recent Items</h3>
-    <p>Recent lost/found items will appear here.</p>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+{% endwith %}
+
+<!-- Stats -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-danger mb-0">{{ stats.pending_claims }}</h2>
+        <p class="small text-muted mb-0">Pending Claims</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-primary mb-0">{{ stats.open_items }}</h2>
+        <p class="small text-muted mb-0">Open Items</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-success mb-0">{{ stats.approved_claims }}</h2>
+        <p class="small text-muted mb-0">Approved</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-secondary mb-0">{{ stats.closed_items }}</h2>
+        <p class="small text-muted mb-0">Closed Items</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-dark mb-0">{{ stats.total_items }}</h2>
+        <p class="small text-muted mb-0">Total Items</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="card text-center border-0 shadow-sm h-100">
+      <div class="card-body py-3">
+        <h2 class="fw-bold text-info mb-0">{{ stats.total_users }}</h2>
+        <p class="small text-muted mb-0">Students</p>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div style="margin-top: 2rem;">
-    <a href="{{ url_for('admin.claims_list') }}">Manage Claims</a>
+<!-- Quick Actions -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <a href="{{ url_for('admin.claims_list', status='pending') }}"
+       class="btn btn-danger w-100 py-2">
+      <i class="bi bi-hourglass-split"></i> Review Claims
+      {% if stats.pending_claims > 0 %}
+        <span class="badge bg-white text-danger ms-1">{{ stats.pending_claims }}</span>
+      {% endif %}
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{{ url_for('admin.create_match') }}"
+       class="btn btn-outline-dark w-100 py-2">
+      <i class="bi bi-link-45deg"></i> Create Match
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{{ url_for('admin.manage_items') }}"
+       class="btn btn-outline-dark w-100 py-2">
+      <i class="bi bi-box-seam"></i> Manage Items
+    </a>
+  </div>
+  <div class="col-md-3">
+    <a href="{{ url_for('admin.manage_users') }}"
+       class="btn btn-outline-dark w-100 py-2">
+      <i class="bi bi-people"></i> Manage Users
+    </a>
+  </div>
 </div>
 
-<p style="margin-top: 2rem; color: #666;">
-    <em>Admin dashboard - Coming soon. The admin team will build this page.</em>
-</p>
+<!-- Recent Claims -->
+<h5 class="fw-semibold mb-3">Recent Claims</h5>
+{% if recent_claims %}
+  <div class="table-responsive mb-5">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Item</th>
+          <th>Reference</th>
+          <th>Claimant</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for claim in recent_claims %}
+          <tr>
+            <td class="fw-semibold">{{ claim.item.title }}</td>
+            <td class="font-monospace small text-danger">
+              {{ claim.item.reference_number }}
+            </td>
+            <td>
+              {{ claim.claimant.name }}<br>
+              <small class="text-muted">{{ claim.claimant.email }}</small>
+            </td>
+            <td class="small text-muted">
+              {{ claim.created_at.strftime('%d %b %Y') }}
+            </td>
+            <td>
+              <span class="badge
+                {% if claim.status == 'pending' %}bg-warning text-dark
+                {% elif claim.status == 'approved' %}bg-success
+                {% else %}bg-danger{% endif %}">
+                {{ claim.status|capitalize }}
+              </span>
+            </td>
+            <td>
+              <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}"
+                 class="btn btn-sm btn-outline-danger">
+                {% if claim.status == 'pending' %}Review{% else %}View{% endif %}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-light border">No claims yet.</div>
+{% endif %}
 {% endblock %}

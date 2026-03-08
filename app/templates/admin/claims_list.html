@@ -1,0 +1,98 @@
+﻿{% extends "base.html" %}
+{% block title %}Claims — Admin{% endblock %}
+
+{% block content %}
+<h3 class="fw-bold mb-4">Claim Management</h3>
+
+<!-- Filter Tabs -->
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == 'pending' %}active{% endif %}"
+       href="{{ url_for('admin.claims_list', status='pending') }}">
+      Pending
+      <span class="badge bg-warning text-dark ms-1">{{ counts.pending }}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == 'approved' %}active{% endif %}"
+       href="{{ url_for('admin.claims_list', status='approved') }}">
+      Approved
+      <span class="badge bg-success ms-1">{{ counts.approved }}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == 'rejected' %}active{% endif %}"
+       href="{{ url_for('admin.claims_list', status='rejected') }}">
+      Rejected
+      <span class="badge bg-danger ms-1">{{ counts.rejected }}</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == 'all' %}active{% endif %}"
+       href="{{ url_for('admin.claims_list', status='all') }}">
+      All
+    </a>
+  </li>
+</ul>
+
+{% if claims %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Item</th>
+          <th>Reference</th>
+          <th>Claimant</th>
+          <th>Campus</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for claim in claims %}
+          <tr {% if claim.status == 'pending' %}class="table-warning"{% endif %}>
+            <td class="text-muted small">{{ claim.id }}</td>
+            <td class="fw-semibold">{{ claim.item.title }}</td>
+            <td class="font-monospace small text-danger">
+              {{ claim.item.reference_number }}
+            </td>
+            <td>
+              {{ claim.claimant.name }}<br>
+              <small class="text-muted">{{ claim.claimant.email }}</small>
+            </td>
+            <td class="small">{{ claim.item.campus }}</td>
+            <td class="small text-muted">
+              {{ claim.created_at.strftime('%d %b %Y') }}
+            </td>
+            <td>
+              <span class="badge
+                {% if claim.status == 'pending' %}bg-warning text-dark
+                {% elif claim.status == 'approved' %}bg-success
+                {% else %}bg-danger{% endif %}">
+                {{ claim.status|capitalize }}
+              </span>
+            </td>
+            <td>
+              <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}"
+                 class="btn btn-sm btn-outline-danger">
+                {% if claim.status == 'pending' %}
+                  <i class="bi bi-eye"></i> Review
+                {% else %}
+                  <i class="bi bi-eye"></i> View
+                {% endif %}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-clipboard-check fs-1 text-muted"></i>
+    <p class="text-muted mt-3">No {{ status_filter }} claims.</p>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,79 @@
+﻿{% extends "base.html" %}
+{% block title %}Manage Items — Admin{% endblock %}
+
+{% block content %}
+<h3 class="fw-bold mb-4">Manage Items</h3>
+
+<div class="d-flex gap-2 mb-4">
+  {% for s in ['all', 'open', 'matched', 'claimed', 'closed'] %}
+    <a href="{{ url_for('admin.manage_items', status=s) }}"
+       class="btn btn-sm {% if status_filter == s %}btn-danger{% else %}btn-outline-secondary{% endif %}">
+      {{ s|capitalize }}
+    </a>
+  {% endfor %}
+</div>
+
+{% if items %}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Reference</th>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Campus</th>
+          <th>Reporter</th>
+          <th>Reported</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+          <tr>
+            <td class="font-monospace small text-danger fw-semibold">
+              {{ item.reference_number }}
+            </td>
+            <td>
+              <a href="{{ url_for('items.detail', item_id=item.id) }}"
+                 class="fw-semibold text-dark text-decoration-none">
+                {{ item.title }}
+              </a>
+            </td>
+            <td>
+              <span class="badge
+                {% if item.type == 'lost' %}bg-warning text-dark
+                {% else %}bg-success{% endif %}">
+                {{ item.type|capitalize }}
+              </span>
+            </td>
+            <td class="small">{{ item.category }}</td>
+            <td class="small">{{ item.campus }}</td>
+            <td class="small">
+              {{ item.reporter.name }}<br>
+              <span class="text-muted">{{ item.reporter.email }}</span>
+            </td>
+            <td class="small text-muted">
+              {{ item.created_at.strftime('%d %b %Y') }}
+            </td>
+            <td>
+              <span class="badge
+                {% if item.status == 'open' %}bg-primary
+                {% elif item.status == 'matched' %}bg-info text-dark
+                {% elif item.status == 'claimed' %}bg-warning text-dark
+                {% else %}bg-dark{% endif %}">
+                {{ item.status|capitalize }}
+              </span>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-inbox fs-1 text-muted"></i>
+    <p class="text-muted mt-3">No items found.</p>
+  </div>
+{% endif %}
+{% endblock %}

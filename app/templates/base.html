@@ -4,12 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}DUT Lost & Found{% endblock %}</title>
-    <!-- Minimal styling - team can enhance later -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .navbar { background: #333; padding: 1rem; }
-        .navbar a { color: white; text-decoration: none; margin-right: 1rem; }
+        .navbar { background: #333; padding: 1rem; display: flex; align-items: center; }
+        .navbar a { color: white; text-decoration: none; margin-right: 1rem; position: relative; }
         .container { padding: 2rem; }
+        
+        /* Notification Badge Styling */
+        .badge {
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            min-width: 18px;
+            text-align: center;
+        }
+
         .alert { padding: 1rem; margin: 1rem 0; border: 1px solid #ccc; }
         .alert-success { background: #d4edda; }
         .alert-danger { background: #f8d7da; }
@@ -26,11 +42,19 @@
     <nav class="navbar">
         <a href="{{ url_for('items.index') }}">DUT Lost & Found</a>
         <a href="{{ url_for('items.search') }}">Browse Items</a>
+        
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('items.report') }}">Report Item</a>
+            
+            <a href="{{ url_for('notifications.index') }}" id="notificationLink">
+                <i class="bi bi-bell"></i>
+                <span id="notificationCount" class="badge" style="display: none;">0</span>
+            </a>
+
             {% if current_user.is_admin %}
                 <a href="{{ url_for('admin.dashboard') }}">Admin</a>
             {% endif %}
+            
             <a href="{{ url_for('claims.dashboard') }}">{{ current_user.name.split()[0] }}</a>
             <a href="{{ url_for('auth.logout') }}">Sign Out</a>
         {% else %}
@@ -52,5 +76,36 @@
     <footer>
         <small>DUT Lost & Found Portal &copy; 2026 — Durban University of Technology</small>
     </footer>
+
+    <script>
+        function updateNotificationCount() {
+            // Use the correct endpoint from notifications/routes.py
+            fetch('/notifications/api/count')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const countBadge = document.getElementById('notificationCount');
+                    if (data.unread > 0) {
+                        countBadge.textContent = data.unread;
+                        countBadge.style.display = 'inline-block';
+                    } else {
+                        countBadge.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error("Error fetching notifications:", err));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if current_user.is_authenticated %}
+                updateNotificationCount();
+                // Check for new notifications every 30 seconds
+                setInterval(updateNotificationCount, 30000);
+            {% endif %}
+        });
+    </script>
 </body>
 </html>

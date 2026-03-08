@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block title %}Manage Users — Admin{% endblock %}
+
+{% block content %}
+<h3 class="fw-bold mb-4">Manage Users</h3>
+
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Student No.</th>
+        <th>Campus</th>
+        <th>Role</th>
+        <th>Verified</th>
+        <th>Registered</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td class="fw-semibold">{{ user.name }}</td>
+          <td class="small">{{ user.email }}</td>
+          <td class="small font-monospace">
+            {{ user.student_number or '—' }}
+          </td>
+          <td class="small">{{ user.campus or '—' }}</td>
+          <td>
+            <span class="badge
+              {% if user.role == 'admin' %}bg-danger
+              {% else %}bg-secondary{% endif %}">
+              {{ user.role|capitalize }}
+            </span>
+          </td>
+          <td>
+            {% if user.is_verified %}
+              <i class="bi bi-check-circle-fill text-success"></i>
+            {% else %}
+              <i class="bi bi-x-circle text-muted"></i>
+            {% endif %}
+          </td>
+          <td class="small text-muted">
+            {{ user.created_at.strftime('%d %b %Y') }}
+          </td>
+          <td>
+            {% if user.id != current_user.id %}
+              <form method="POST"
+                    action="{{ url_for('admin.toggle_role', user_id=user.id) }}"
+                    style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                        class="btn btn-sm
+                          {% if user.role == 'admin' %}btn-outline-secondary
+                          {% else %}btn-outline-danger{% endif %}"
+                        onclick="return confirm('Change {{ user.name }} to
+                          {% if user.role == 'admin' %}student{% else %}admin{% endif %}?')">
+                  {% if user.role == 'admin' %}
+                    Remove Admin
+                  {% else %}
+                    Make Admin
+                  {% endif %}
+                </button>
+              </form>
+            {% else %}
+              <span class="text-muted small">You</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

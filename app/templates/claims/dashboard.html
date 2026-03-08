@@ -2,19 +2,127 @@
 {% block title %}My Dashboard - DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Welcome, {{ user.name }}!</h1>
+<h1>Welcome, {{ current_user.name }}!</h1>
 
-<div style="margin-top: 2rem;">
-    <h3>Your Claims</h3>
-    <p>No claims yet. This section will display your submitted claims.</p>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Your Claims</h5>
+            </div>
+            <div class="card-body">
+                {% if claims %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for claim in claims %}
+                                <tr>
+                                    <td>
+                                        {% if claim.item %}
+                                            <a href="{{ url_for('items.detail', item_id=claim.item.id) }}">
+                                                {{ claim.item.title }}
+                                            </a>
+                                        {% else %}
+                                            <em>Item not found</em>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ claim.created_at.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        {% if claim.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% elif claim.status == 'approved' %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% elif claim.status == 'rejected' %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">You haven't made any claims yet.</p>
+                {% endif %}
+                <a href="{{ url_for('claims.my_claims') }}" class="btn btn-sm btn-outline-primary">View All Claims</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Your Reported Items</h5>
+            </div>
+            <div class="card-body">
+                {% if items %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('items.detail', item_id=item.id) }}">
+                                            {{ item.title }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if item.type == 'lost' %}
+                                            <span class="badge bg-warning">Lost</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Found</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.status == 'open' %}
+                                            <span class="badge bg-primary">Open</span>
+                                        {% elif item.status == 'matched' %}
+                                            <span class="badge bg-info">Matched</span>
+                                        {% elif item.status == 'claimed' %}
+                                            <span class="badge bg-success">Claimed</span>
+                                        {% elif item.status == 'closed' %}
+                                            <span class="badge bg-secondary">Closed</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">You haven't reported any items yet.</p>
+                {% endif %}
+                <a href="{{ url_for('claims.my_items') }}" class="btn btn-sm btn-outline-success">View All Items</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div style="margin-top: 2rem;">
-    <h3>Your Reported Items</h3>
-    <p>No items reported yet. This section will display items you've reported.</p>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('items.report') }}" class="btn btn-danger">Report Lost/Found Item</a>
+                <a href="{{ url_for('items.search') }}" class="btn btn-outline-secondary">Browse Items</a>
+            </div>
+        </div>
+    </div>
 </div>
-
-<p style="margin-top: 2rem; color: #666;">
-    <em>Claims dashboard - Coming soon. The claims team will build this page.</em>
-</p>
 {% endblock %}

@@ -2,11 +2,16 @@
 {% block title %}Manage Items — Admin{% endblock %}
 
 {% block content %}
-<h3 class="fw-bold mb-4">Manage Items</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="fw-bold mb-0">Manage Items</h3>
+  <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
 
 <div class="d-flex gap-2 mb-4">
   {% for s in ['all', 'open', 'matched', 'claimed', 'closed'] %}
-    <a href="{{ url_for('admin.manage_items', status=s) }}"
+    <a href="{{ url_for('admin.manage_items', status=s) }}" 
        class="btn btn-sm {% if status_filter == s %}btn-danger{% else %}btn-outline-secondary{% endif %}">
       {{ s|capitalize }}
     </a>
@@ -18,19 +23,21 @@
     <table class="table table-hover align-middle">
       <thead class="table-dark">
         <tr>
+          <th>ID</th>
           <th>Reference</th>
           <th>Title</th>
           <th>Type</th>
           <th>Category</th>
           <th>Campus</th>
           <th>Reporter</th>
-          <th>Reported</th>
           <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for item in items %}
           <tr>
+            <td class="small text-muted">{{ item.id }}</td>
             <td class="font-monospace small text-danger fw-semibold">
               {{ item.reference_number }}
             </td>
@@ -47,23 +54,37 @@
                 {{ item.type|capitalize }}
               </span>
             </td>
-            <td class="small">{{ item.category }}</td>
-            <td class="small">{{ item.campus }}</td>
+            <td class="small">{{ item.category }}</td>      
+            <td class="small">{{ item.campus }}</td>        
             <td class="small">
               {{ item.reporter.name }}<br>
               <span class="text-muted">{{ item.reporter.email }}</span>
             </td>
-            <td class="small text-muted">
-              {{ item.created_at.strftime('%d %b %Y') }}
-            </td>
             <td>
               <span class="badge
-                {% if item.status == 'open' %}bg-primary
+                {% if item.status == 'open' %}bg-primary    
                 {% elif item.status == 'matched' %}bg-info text-dark
                 {% elif item.status == 'claimed' %}bg-warning text-dark
                 {% else %}bg-dark{% endif %}">
                 {{ item.status|capitalize }}
               </span>
+            </td>
+            <td>
+              <div class="btn-group btn-group-sm" role="group">
+                <a href="{{ url_for('items.detail', item_id=item.id) }}" 
+                   class="btn btn-outline-info" title="View Details">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{{ url_for('admin.toggle_item_status', item_id=item.id) }}" 
+                   class="btn btn-outline-warning" title="Toggle Status"
+                   onclick="return confirm('Change status of this item?')">
+                  <i class="bi bi-arrow-repeat"></i>
+                </a>
+                <a href="{{ url_for('matching.admin_view_matches', item_id=item.id) }}" 
+                   class="btn btn-outline-danger" title="View Potential Matches">
+                  <i class="bi bi-link-45deg"></i>
+                </a>
+              </div>
             </td>
           </tr>
         {% endfor %}
@@ -76,4 +97,12 @@
     <p class="text-muted mt-3">No items found.</p>
   </div>
 {% endif %}
+
+<!-- Quick Actions -->
+<div class="mt-4">
+  <a href="{{ url_for('matching.run_auto_match') }}" class="btn btn-danger"
+     onclick="return confirm('Run auto-matching now? This will scan all open items for potential matches.')">
+    <i class="bi bi-robot"></i> Run Auto-Match
+  </a>
+</div>
 {% endblock %}

@@ -106,46 +106,6 @@
   </div>
 </div>
 
-<!-- Intelligent Matching System Section -->
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="card border-danger">
-      <div class="card-header bg-danger text-white">
-        <h5 class="mb-0"><i class="bi bi-robot"></i> Intelligent Matching System</h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('matching.run_auto_match') }}" 
-               class="btn btn-outline-danger w-100 py-3"
-               onclick="return confirm('Run auto-matching now? This will scan all open items for potential matches.')">
-              <i class="bi bi-play-circle-fill"></i> Run Auto-Match
-            </a>
-          </div>
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('admin.manage_items') }}" 
-               class="btn btn-outline-danger w-100 py-3">
-              <i class="bi bi-grid-3x3-gap-fill"></i> Browse Items to Match
-            </a>
-          </div>
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('matching.admin_view_matches', item_id=1) }}" 
-               class="btn btn-outline-danger w-100 py-3">
-              <i class="bi bi-link-45deg"></i> View Recent Matches
-            </a>
-          </div>
-        </div>
-        <p class="text-muted small mt-3 mb-0">
-          <i class="bi bi-info-circle"></i> 
-          The matching algorithm compares lost and found items based on category, campus, 
-          title similarity, description keywords, and date proximity. Scores above 70% are 
-          flagged for admin review.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Recent Claims -->
 <h5 class="fw-semibold mb-3">Recent Claims</h5>
 {% if recent_claims %}

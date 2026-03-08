@@ -10,8 +10,13 @@ class Notification(db.Model):
     related_item_id = db.Column(db.Integer, db.ForeignKey('items.id'), nullable=True)
     type            = db.Column(
         db.Enum(
-            'match_found', 'claim_submitted', 'claim_approved',
-            'claim_rejected', 'expiry_warning', 'item_closed',
+            'match_found', 
+            'claim_submitted', 
+            'claim_approved',
+            'claim_rejected', 
+            'expiry_warning', 
+            'item_closed',
+            'system_alert',
             name='notification_type_enum'
         ),
         nullable=False

@@ -30,14 +30,12 @@ def view_matches(item_id):
 @bp.route('/admin/matches/<int:item_id>')
 @login_required
 def admin_view_matches(item_id):
-    """Admin view to see potential matches for a specific item"""
+    """Admin view to see potential matches for an item"""
     if not current_user.is_admin:
         flash('Admin access required.', 'danger')
         return redirect(url_for('items.index'))
     
     item = Item.query.get_or_404(item_id)
-    
-    # Only show matches for this specific item
     matches = engine.find_potential_matches(item)
     
     return render_template('admin/matches/view.html', 
@@ -65,16 +63,6 @@ def confirm_match():
         flash('Items not found.', 'danger')
         return redirect(url_for('admin.dashboard'))
     
-    # Check if match already exists
-    existing_match = Match.query.filter_by(
-        lost_item_id=lost_id,
-        found_item_id=found_id
-    ).first()
-    
-    if existing_match:
-        flash('This match already exists.', 'warning')
-        return redirect(url_for('admin.dashboard'))
-    
     # Create match record
     match = Match(
         lost_item_id=lost_id,
@@ -90,35 +78,27 @@ def confirm_match():
     
     db.session.add(match)
     
-    # ── NOTIFY THE PERSON WHO LOST THE ITEM ─────────────────────────────
+    # Notify both users
     notif_lost = Notification(
         user_id=lost_item.reported_by,
         related_item_id=lost_id,
         type='match_found',
-        message=f'✅ Good news! A potential match has been found for your lost item "{lost_item.title}". '
-                f'Please visit the Library at {lost_item.campus} campus with your student card and proof of ownership '
-                f'(receipt, photos, etc.) to collect your item. Our staff will assist you.',
+        message=f'An admin has confirmed a match for your lost item: {found_item.title}. Please check your dashboard.',
         channel='in_app'
     )
     
-    # ── NOTIFY THE PERSON WHO FOUND THE ITEM ────────────────────────────
     notif_found = Notification(
         user_id=found_item.reported_by,
         related_item_id=found_id,
         type='match_found',
-        message=f'🙏 Thank you for your honesty! The item you found ("{found_item.title}") '
-                f'has been matched with its owner. Please bring the item to the Library at {found_item.campus} campus '
-                f'during operating hours. The owner has been notified and will collect it from there. '
-                f'Thank you for helping someone recover their belonging!',
+        message=f'An admin has confirmed that your found item matches a lost item: {lost_item.title}. Please check your dashboard.',
         channel='in_app'
     )
     
-    # Add both notifications
-    db.session.add(notif_lost)
-    db.session.add(notif_found)
+    db.session.add_all([notif_lost, notif_found])
     db.session.commit()
     
-    flash(f'✅ Match confirmed! Both parties have been notified.', 'success')
+    flash(f'Match confirmed between {lost_item.reference_number} and {found_item.reference_number}. Users notified.', 'success')
     return redirect(url_for('admin.claims_list'))
 
 @bp.route('/admin/reject-match', methods=['POST'])
@@ -130,6 +110,9 @@ def reject_match():
     
     lost_id = request.form.get('lost_id')
     found_id = request.form.get('found_id')
+    
+    # Just create a notification that match was rejected
+    # Items remain open for other matches
     
     flash('Match rejected.', 'info')
     return redirect(url_for('admin.dashboard'))

@@ -1,10 +1,11 @@
-﻿import re
-from difflib import SequenceMatcher
-from datetime import datetime
+﻿from datetime import datetime
+from app import db
 from app.models.item import Item
 from app.models.match import Match
 from app.models.notification import Notification
-from app import db
+from app.models.user import User
+import re
+from difflib import SequenceMatcher
 
 class TextMatcher:
     def __init__(self):
@@ -287,7 +288,9 @@ class MatchingEngine:
                             user_id=lost_item.reported_by,
                             related_item_id=lost_item.id,
                             type='match_found',
-                            message=f'High-confidence match found for your lost item: {found_item.title} (Score: {match["score"]}%)',
+                            message=f'✅ Good news! A potential match has been found for your lost item "{lost_item.title}". '
+                                    f'Please visit the Library at {lost_item.campus} campus with your student card and proof of ownership '
+                                    f'(receipt, photos, etc.) to collect your item. Our staff will assist you.',
                             channel='in_app'
                         )
                         db.session.add(notif_lost)
@@ -296,7 +299,10 @@ class MatchingEngine:
                             user_id=found_item.reported_by,
                             related_item_id=found_item.id,
                             type='match_found',
-                            message=f'Your found item may match a lost item: {lost_item.title} (Score: {match["score"]}%)',
+                            message=f'🙏 Thank you for your honesty! The item you found ("{found_item.title}") '
+                                    f'has been matched with its owner. Please bring the item to the Library at {found_item.campus} campus '
+                                    f'during operating hours. The owner has been notified and will collect it from there. '
+                                    f'Thank you for helping someone recover their belonging!',
                             channel='in_app'
                         )
                         db.session.add(notif_found)

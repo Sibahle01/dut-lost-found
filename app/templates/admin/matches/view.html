@@ -2,6 +2,10 @@
 {% block title %}Potential Matches - {{ item.reference_number }}{% endblock %}
 
 {% block content %}
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
 <style>
     /* DUT Color Scheme */
     :root {
@@ -291,4 +295,185 @@
         </a>
     </div>
 </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+{% endblock %}
+=======
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="fw-bold mb-0">Potential Matches</h3>
+    <p class="text-muted mb-0">
+      Item: {{ item.title }} ({{ item.reference_number }})
+    </p>
+  </div>
+  <a href="{{ url_for('admin.manage_items') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left"></i> Back to Items
+  </a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endwith %}
+
+<!-- Source Item Details -->
+<div class="card mb-4">
+  <div class="card-header bg-dark text-white">
+    <h5 class="mb-0">Source Item Details</h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Title:</strong> {{ item.title }}</p>
+        <p><strong>Reference:</strong> {{ item.reference_number }}</p>
+        <p><strong>Type:</strong> 
+          <span class="badge {% if item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
+            {{ item.type|capitalize }}
+          </span>
+        </p>
+        <p><strong>Category:</strong> {{ item.category }}</p>
+        <p><strong>Campus:</strong> {{ item.campus }}</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Reporter:</strong> {{ item.reporter.name }}</p>
+        <p><strong>Email:</strong> {{ item.reporter.email }}</p>
+        <p><strong>Date:</strong> {{ item.created_at.strftime('%d %b %Y') }}</p>
+        <p><strong>Status:</strong> 
+          <span class="badge bg-primary">{{ item.status|capitalize }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="mt-3">
+      <p><strong>Public Description:</strong></p>
+      <div class="border rounded p-3 bg-light">
+        {{ item.public_description }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4 class="mb-3">Potential Matches ({{ matches|length }})</h4>
+
+{% if matches %}
+  <div class="row">
+    {% for match in matches %}
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 {% if match.score >= 70 %}border-success border-2{% endif %}">
+          <div class="card-header d-flex justify-content-between align-items-center
+                     {% if match.score >= 70 %}bg-success text-white{% endif %}">
+            <h5 class="mb-0">{{ match.item.title }}</h5>
+            <span class="badge {% if match.score >= 70 %}bg-white text-success{% else %}bg-primary{% endif %} fs-6">
+              {{ match.score }}% Match
+            </span>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-6">
+                <p><strong>Reference:</strong><br>
+                  <span class="font-monospace">{{ match.item.reference_number }}</span>
+                </p>
+                <p><strong>Category:</strong> {{ match.item.category }}</p>
+                <p><strong>Campus:</strong> {{ match.item.campus }}</p>
+              </div>
+              <div class="col-6">
+                <p><strong>Type:</strong><br>
+                  <span class="badge {% if match.item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
+                    {{ match.item.type|capitalize }}
+                  </span>
+                </p>
+                <p><strong>Reporter:</strong> {{ match.item.reporter.name }}</p>
+                <p><strong>Date:</strong> {{ match.item.created_at.strftime('%d %b') }}</p>
+              </div>
+            </div>
+
+            <p><strong>Description:</strong></p>
+            <div class="border rounded p-2 bg-light small mb-3">
+              {{ match.item.public_description }}
+            </div>
+
+            <!-- Match Score Breakdown -->
+            <div class="mb-3">
+              <p class="fw-semibold mb-2">Match Breakdown:</p>
+              <div class="row g-2">
+                <div class="col-6">
+                  <small>Category: {{ match.breakdown.category }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-success" style="width: {{ match.breakdown.category }}%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <small>Campus: {{ match.breakdown.campus }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-success" style="width: {{ match.breakdown.campus }}%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <small>Title: {{ match.breakdown.title }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: {{ match.breakdown.title }}%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <small>Description: {{ match.breakdown.description }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-info" style="width: {{ match.breakdown.description }}%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <small>Date: {{ match.breakdown.date }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-warning" style="width: {{ match.breakdown.date }}%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <small>Location: {{ match.breakdown.location }}%</small>
+                  <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar bg-warning" style="width: {{ match.breakdown.location }}%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Private Verification (Admin Only) -->
+            <div class="border border-danger rounded p-2 bg-danger bg-opacity-10 mb-3">
+              <p class="small fw-bold text-danger mb-1">
+                <i class="bi bi-shield-lock-fill"></i> PRIVATE VERIFICATION
+              </p>
+              <p class="small mb-0"><strong>Source Item:</strong> {{ item.private_verification|truncate(100) }}</p>
+              <p class="small mb-0"><strong>Match Item:</strong> {{ match.item.private_verification|truncate(100) }}</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+              <a href="{{ url_for('items.detail', item_id=match.item.id) }}" 
+                 class="btn btn-sm btn-outline-primary" target="_blank">
+                <i class="bi bi-eye"></i> View
+              </a>
+              
+              <form method="POST" action="{{ url_for('admin.create_match') }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="lost_item_id" 
+                       value="{% if item.type == 'lost' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
+                <input type="hidden" name="found_item_id" 
+                       value="{% if item.type == 'found' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
+                <button type="submit" class="btn btn-sm btn-success"
+                        onclick="return confirm('Confirm this match? Both parties will be notified.')">
+                  <i class="bi bi-check-circle"></i> Confirm Match
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No potential matches found for this item.
+  </div>
+{% endif %}
+{% endblock %}
+>>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
+>>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2

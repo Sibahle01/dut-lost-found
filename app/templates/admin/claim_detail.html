@@ -2,69 +2,469 @@
 {% block title %}Claim #{{ claim.id }} Details{% endblock %}
 
 {% block content %}
-<h1>Claim #{{ claim.id }} Details</h1>
+<style>
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-secondary: linear-gradient(135deg, #5370A3, #812575, #D11F2D);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.2);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.25);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header bg-primary text-white">
-                <h5>Item Details</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Title:</strong> {{ claim.item.title }}</p>
-                <p><strong>Reference:</strong> {{ claim.item.reference_number }}</p>
-                <p><strong>Category:</strong> {{ claim.item.category }}</p>
-                <p><strong>Campus:</strong> {{ claim.item.campus }}</p>
-                <p><strong>Type:</strong> 
-                    <span class="badge {% if claim.item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
-                        {{ claim.item.type|capitalize }}
-                    </span>
-                </p>
-                <p><strong>Description:</strong> {{ claim.item.public_description }}</p>
-                {% if claim.item.image_path %}
-                    <img src="{{ url_for('static', filename=claim.item.image_path) }}" class="img-fluid rounded" style="max-height:200px;">
-                {% endif %}
-            </div>
-        </div>
-    </div>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        padding: 2rem 0;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* Header */
+    h1 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1C8441, #5370A3, #D11F2D);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    h1::before {
+        content: '🔍';
+        font-size: 2.5rem;
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+
+    h5 {
+        color: white;
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    /* Grid System */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -1rem;
+    }
+
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* Cards */
+    .card {
+        background: white;
+        border-radius: 40px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(122,180,182,0.3);
+        overflow: hidden;
+        transition: var(--transition);
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 50px -15px rgba(209,31,45,0.2);
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #1C8441, #5370A3, #812575, #D11F2D);
+    }
+
+    .card-header {
+        padding: 1.5rem 2rem;
+        background: linear-gradient(135deg, #5370A3, #812575);
+        border: none;
+    }
+
+    .card-header.bg-primary {
+        background: linear-gradient(135deg, #1C8441, #5370A3);
+    }
+
+    .card-header.bg-info {
+        background: linear-gradient(135deg, #5370A3, #812575);
+    }
+
+    .card-header.bg-warning {
+        background: linear-gradient(135deg, #FFA500, #D11F2D);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Typography */
+    p {
+        color: #5D6D7E;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    p strong {
+        color: #5370A3;
+        font-weight: 600;
+        min-width: 140px;
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-block;
+        padding: 0.5rem 1.2rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: white;
+    }
+
+    .badge.bg-warning {
+        background: linear-gradient(135deg, #FFA500, #ffb52e);
+        color: #333;
+    }
+
+    .badge.bg-success {
+        background: linear-gradient(135deg, #1C8441, #2ecc71);
+    }
+
+    .badge.bg-danger {
+        background: linear-gradient(135deg, #D11F2D, #ff6b6b);
+    }
+
+    .badge.bg-info {
+        background: linear-gradient(135deg, #5370A3, #6b8bbf);
+    }
+
+    /* Image */
+    .img-fluid {
+        max-width: 100%;
+        height: auto;
+        border-radius: 20px;
+        margin-top: 1rem;
+        border: 3px solid rgba(122,180,182,0.3);
+        box-shadow: var(--shadow-md);
+    }
+
+    .rounded {
+        border-radius: 20px;
+    }
+
+    /* Links */
+    a {
+        color: #D11F2D;
+        text-decoration: none;
+        font-weight: 600;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    a:hover {
+        color: #1C8441;
+        transform: translateX(5px);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        text-decoration: none;
+        margin-right: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, #FFA500, #D11F2D);
+        color: white;
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #5370A3, #812575);
+        color: white;
+    }
+
+    .mt-3 {
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    /* Emoji styles */
+    .emoji-icon {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+        display: inline-block;
+    }
+
+    /* Specific styling for evidence section */
+    .evidence-box {
+        background: #f8faff;
+        padding: 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(122,180,182,0.2);
+        margin-top: 0.5rem;
+    }
+
+    /* Color dots */
+    .color-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(122,180,182,0.2);
+    }
     
-    <div class="col-md-6">
-        <div class="card mb-3">
-            <div class="card-header bg-info text-white">
-                <h5>Claimant Details</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Name:</strong> {{ claim.claimant.name }}</p>
-                <p><strong>Email:</strong> {{ claim.claimant.email }}</p>
-                <p><strong>Student Number:</strong> {{ claim.claimant.student_number or 'N/A' }}</p>
+    .color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s ease infinite;
+    }
+    
+    .color-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
+    .color-dot:nth-child(2) { background: #5370A3; animation-delay: 0.2s; }
+    .color-dot:nth-child(3) { background: #D11F2D; animation-delay: 0.4s; }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.2); opacity: 0.7; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 1rem;
+        }
+        
+        h1 {
+            font-size: 2rem;
+        }
+        
+        p {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+        
+        p strong {
+            min-width: auto;
+        }
+        
+        .mt-3 {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="container">
+    <h1>Claim #{{ claim.id }} Details</h1>
+
+    <div class="row">
+        <!-- Item Details Card -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header bg-primary">
+                    <h5>
+                        <span class="emoji-icon">📦</span>
+                        Item Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <span class="emoji-icon">🏷️</span>
+                        <strong>Title:</strong> {{ claim.item.title }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">#️⃣</span>
+                        <strong>Reference:</strong> {{ claim.item.reference_number }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">📁</span>
+                        <strong>Category:</strong> {{ claim.item.category }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">📍</span>
+                        <strong>Campus:</strong> {{ claim.item.campus }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">🔖</span>
+                        <strong>Type:</strong> 
+                        <span class="badge {% if claim.item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
+                            {% if claim.item.type == 'lost' %}⚠️{% else %}✅{% endif %}
+                            {{ claim.item.type|capitalize }}
+                        </span>
+                    </p>
+                    <p>
+                        <span class="emoji-icon">📄</span>
+                        <strong>Description:</strong> {{ claim.item.public_description }}
+                    </p>
+                    {% if claim.item.image_path %}
+                        <div style="margin-top: 1rem;">
+                            <span class="emoji-icon">🖼️</span>
+                            <strong>Image:</strong>
+                            <img src="{{ url_for('static', filename=claim.item.image_path) }}" class="img-fluid rounded" style="max-height:200px;">
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
         
-        <div class="card mb-3">
-            <div class="card-header bg-warning">
-                <h5>Claim Details</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Submitted:</strong> {{ claim.created_at.strftime('%d %B %Y at %H:%M') }}</p>
-                <p><strong>Description:</strong> {{ claim.claim_description }}</p>
-                <p><strong>Verification Answers:</strong> {{ claim.verification_answers or 'None' }}</p>
-                {% if claim.evidence_path %}
-                    <p><strong>Evidence:</strong> 
-                        <a href="{{ url_for('static', filename=claim.evidence_path) }}" target="_blank">View Evidence</a>
+        <!-- Claimant and Claim Details -->
+        <div class="col-md-6">
+            <!-- Claimant Details Card -->
+            <div class="card mb-3">
+                <div class="card-header bg-info">
+                    <h5>
+                        <span class="emoji-icon">👤</span>
+                        Claimant Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <span class="emoji-icon">🧑</span>
+                        <strong>Name:</strong> {{ claim.claimant.name }}
                     </p>
-                {% endif %}
-                <p><strong>Status:</strong> 
-                    <span class="badge {% if claim.status == 'pending' %}bg-warning{% elif claim.status == 'approved' %}bg-success{% else %}bg-danger{% endif %}">
-                        {{ claim.status|capitalize }}
-                    </span>
-                </p>
+                    <p>
+                        <span class="emoji-icon">📧</span>
+                        <strong>Email:</strong> {{ claim.claimant.email }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">🆔</span>
+                        <strong>Student Number:</strong> {{ claim.claimant.student_number or 'N/A' }}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Claim Details Card -->
+            <div class="card mb-3">
+                <div class="card-header bg-warning">
+                    <h5>
+                        <span class="emoji-icon">📋</span>
+                        Claim Details
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        <span class="emoji-icon">📅</span>
+                        <strong>Submitted:</strong> {{ claim.created_at.strftime('%d %B %Y at %H:%M') }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">💬</span>
+                        <strong>Description:</strong> {{ claim.claim_description }}
+                    </p>
+                    <p>
+                        <span class="emoji-icon">❓</span>
+                        <strong>Verification Answers:</strong> {{ claim.verification_answers or 'None' }}
+                    </p>
+                    {% if claim.evidence_path %}
+                        <div class="evidence-box">
+                            <p style="margin-bottom: 0;">
+                                <span class="emoji-icon">📎</span>
+                                <strong>Evidence:</strong> 
+                                <a href="{{ url_for('static', filename=claim.evidence_path) }}" target="_blank">
+                                    👁️ View Evidence
+                                </a>
+                            </p>
+                        </div>
+                    {% endif %}
+                    <p style="margin-top: 1rem;">
+                        <span class="emoji-icon">🚦</span>
+                        <strong>Status:</strong> 
+                        <span class="badge {% if claim.status == 'pending' %}bg-warning{% elif claim.status == 'approved' %}bg-success{% else %}bg-danger{% endif %}">
+                            {% if claim.status == 'pending' %}
+                                ⏳
+                            {% elif claim.status == 'approved' %}
+                                ✅
+                            {% else %}
+                                ❌
+                            {% endif %}
+                            {{ claim.status|capitalize }}
+                        </span>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="mt-3">
-    <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}" class="btn btn-warning">Review Claim</a>
-    <a href="{{ url_for('admin.claims_list') }}" class="btn btn-secondary">Back to Claims</a>
+    <!-- Action Buttons -->
+    <div class="mt-3">
+        <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}" class="btn btn-warning">
+            <span class="emoji-icon">🔍</span>
+            Review Claim
+        </a>
+        <a href="{{ url_for('admin.claims_list') }}" class="btn btn-secondary">
+            <span class="emoji-icon">←</span>
+            Back to Claims
+        </a>
+    </div>
+
+    <!-- Color Dots -->
+    <div class="color-dots">
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+    </div>
 </div>
 {% endblock %}

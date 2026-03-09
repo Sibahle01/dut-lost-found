@@ -1,59 +1,619 @@
 ﻿{% extends "base.html" %}
-{% block title %}Claim Item{% endblock %}
+{% block title %}Claim Item - DUT Lost & Found{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <h1>Claim Item: {{ item.title }}</h1>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
         
-        <div class="card mb-4">
-            <div class="card-header bg-info text-white">
-                <strong>Item Details</strong>
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
+        
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: rgba(122,180,182,0.2);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius: 24px;
+        --border-radius-sm: 16px;
+        --border-radius-xs: 12px;
+        
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: var(--spacing-lg) 0;
+    }
+
+    .claim-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+    }
+
+    /* Page Header */
+    .page-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: var(--spacing-lg) var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .page-header h1 i {
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .page-header p i {
+        color: var(--dut-teal);
+    }
+
+    /* Cards */
+    .custom-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        margin-bottom: var(--spacing-lg);
+        position: relative;
+        transition: var(--transition);
+    }
+
+    .custom-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .custom-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
+    }
+
+    .card-header-custom {
+        padding: var(--spacing-md) var(--spacing-lg);
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .card-header-custom i {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .card-header-custom.info {
+        background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));
+    }
+
+    .card-header-custom.warning {
+        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
+    }
+
+    .card-body-custom {
+        padding: var(--spacing-lg);
+    }
+
+    /* Item Details */
+    .item-details {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .detail-row {
+        display: flex;
+        border-bottom: 1px solid var(--border-light);
+        padding: var(--spacing-xs) 0;
+    }
+
+    .detail-label {
+        width: 120px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-label i {
+        color: var(--dut-teal);
+        width: 20px;
+    }
+
+    .detail-value {
+        flex: 1;
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+
+    .reference-value {
+        font-family: 'SF Mono', monospace;
+        color: var(--dut-red);
+        font-weight: 600;
+        background: rgba(209,31,45,0.05);
+        padding: 0.2rem 0.8rem;
+        border-radius: 30px;
+        display: inline-block;
+    }
+
+    .description-box {
+        background: var(--bg-light);
+        border: 1px solid var(--border-light);
+        border-radius: var(--border-radius-sm);
+        padding: var(--spacing-md);
+        margin: var(--spacing-sm) 0;
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+
+    /* Image */
+    .item-image {
+        margin-top: var(--spacing-md);
+        text-align: center;
+    }
+
+    .item-image img {
+        max-height: 200px;
+        border-radius: var(--border-radius-sm);
+        border: 3px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Form */
+    .form-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        margin-bottom: var(--spacing-lg);
+        position: relative;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
+        color: white;
+        padding: var(--spacing-md) var(--spacing-lg);
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-body {
+        padding: var(--spacing-lg);
+    }
+
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-label i {
+        color: var(--dut-blue);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid var(--border-light);
+        border-radius: var(--border-radius-xs);
+        font-family: 'Inter', sans-serif;
+        transition: var(--transition);
+        background: var(--bg-light);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--dut-blue);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(83,112,163,0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-text {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .form-text i {
+        color: var(--dut-teal);
+        font-size: 0.75rem;
+    }
+
+    /* File Input */
+    .file-input-wrapper {
+        position: relative;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        padding: 0.5rem;
+        background: var(--bg-light);
+        border: 2px dashed var(--border-light);
+        cursor: pointer;
+    }
+
+    .file-input-wrapper input[type="file"]::-webkit-file-upload-button {
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 30px;
+        margin-right: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .file-input-wrapper input[type="file"]::-webkit-file-upload-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        flex-wrap: wrap;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--dut-green), #2ecc71);
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: var(--shadow-md);
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        background: linear-gradient(135deg, #2ecc71, var(--dut-green));
+    }
+
+    .btn-cancel {
+        background: white;
+        color: var(--text-muted);
+        border: 2px solid var(--border-light);
+        padding: 1rem 2.5rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--dut-red);
+        color: var(--dut-red);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Color Bar */
+    .color-bar {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--border-light);
+    }
+    
+    .color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: subtlePulse 3s infinite;
+    }
+    
+    .color-dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
+    .color-dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
+    .color-dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
+    .color-dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
+    .color-dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
+    .color-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
+    
+    @keyframes subtlePulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .claim-container {
+            padding: 0 var(--spacing-sm);
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            flex-direction: column;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .detail-label {
+            width: 100%;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-submit, .btn-cancel {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Load Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="claim-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-hand-paper"></i>
+            Claim Item
+        </h1>
+        <p>
+            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+            Submit your proof of ownership
+        </p>
+    </div>
+
+    <!-- Item Details Card -->
+    <div class="custom-card">
+        <div class="card-header-custom info">
+            <i class="fas fa-box-open"></i>
+            Item Details
+        </div>
+        <div class="card-body-custom">
+            <div class="item-details">
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-tag"></i>
+                        Title
+                    </span>
+                    <span class="detail-value fw-semibold">{{ item.title }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-hashtag"></i>
+                        Reference
+                    </span>
+                    <span class="detail-value">
+                        <span class="reference-value">
+                            <i class="fas fa-hashtag" style="font-size: 0.7rem;"></i>
+                            {{ item.reference_number }}
+                        </span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-layer-group"></i>
+                        Category
+                    </span>
+                    <span class="detail-value">{{ item.category }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Campus
+                    </span>
+                    <span class="detail-value">{{ item.campus }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-align-left"></i>
+                        Description
+                    </span>
+                    <span class="detail-value">{{ item.public_description }}</span>
+                </div>
             </div>
-            <div class="card-body">
-                <p><strong>Reference:</strong> {{ item.reference_number }}</p>
-                <p><strong>Category:</strong> {{ item.category }}</p>
-                <p><strong>Campus:</strong> {{ item.campus }}</p>
-                <p><strong>Description:</strong> {{ item.public_description }}</p>
-                {% if item.image_path %}
-                    <img src="{{ url_for('static', filename=item.image_path) }}" class="img-fluid rounded" style="max-height:200px;">
-                {% endif %}
-            </div>
+
+            {% if item.image_path %}
+                <div class="item-image">
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Claim Form -->
+    <form method="POST" enctype="multipart/form-data" class="form-card">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <div class="form-header">
+            <i class="fas fa-shield-alt"></i>
+            Proof of Ownership
         </div>
         
-        <form method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            
-            <div class="card mb-3">
-                <div class="card-header bg-warning">
-                    <strong>Proof of Ownership</strong>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Why does this item belong to you?</label>
-                        <textarea name="claim_description" class="form-control" rows="3" required 
-                                  placeholder="Describe why you believe this is your item..."></textarea>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Verification Details</label>
-                        <textarea name="verification_answers" class="form-control" rows="3" required
-                                  placeholder="Provide details only the owner would know (serial numbers, unique marks, contents, etc.)"></textarea>
-                        <small class="text-muted">These will be compared with the private verification details.</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Upload Evidence</label>
-                        <input type="file" name="evidence" class="form-control" required
-                               accept=".png,.jpg,.jpeg,.gif,.pdf">
-                        <small class="text-muted">Receipt, photo, or any proof of ownership (PNG, JPG, GIF, PDF)</small>
-                    </div>
+        <div class="form-body">
+            <!-- Claim Description -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-pen"></i>
+                    Why does this item belong to you?
+                </label>
+                <textarea name="claim_description" class="form-control" rows="3" required 
+                          placeholder="Describe why you believe this is your item..."></textarea>
+                <div class="form-text">
+                    <i class="fas fa-info-circle"></i>
+                    Be specific about when and how you lost the item
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-success">Submit Claim</button>
-            <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn btn-secondary">Cancel</a>
-        </form>
+            <!-- Verification Details -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-lock"></i>
+                    Verification Details
+                </label>
+                <textarea name="verification_answers" class="form-control" rows="4" required
+                          placeholder="Provide details only the owner would know (serial numbers, unique marks, contents, etc.)"></textarea>
+                <div class="form-text">
+                    <i class="fas fa-shield-alt"></i>
+                    These will be compared with the private verification details
+                </div>
+            </div>
+            
+            <!-- Evidence Upload -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-paperclip"></i>
+                    Upload Evidence
+                </label>
+                <div class="file-input-wrapper">
+                    <input type="file" name="evidence" class="form-control" required
+                           accept=".png,.jpg,.jpeg,.gif,.pdf">
+                </div>
+                <div class="form-text">
+                    <i class="fas fa-check-circle"></i>
+                    Receipt, photo, or any proof of ownership (PNG, JPG, GIF, PDF)
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-check-circle"></i>
+                    Submit Claim
+                </button>
+                <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn-cancel">
+                    <i class="fas fa-times-circle"></i>
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Color Bar -->
+    <div class="color-bar">
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
     </div>
 </div>
 {% endblock %}

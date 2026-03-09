@@ -2,97 +2,493 @@
 {% block title %}Claims — Admin{% endblock %}
 
 {% block content %}
-<h3 class="fw-bold mb-4">Claim Management</h3>
+<style>
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-secondary: linear-gradient(135deg, #5370A3, #812575, #D11F2D);
+        --gradient-accent: linear-gradient(135deg, #FFA500, #D11F2D);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.2);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.25);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-<!-- Filter Tabs -->
-<ul class="nav nav-tabs mb-4">
-  <li class="nav-item">
-    <a class="nav-link {% if status_filter == 'pending' %}active{% endif %}"
-       href="{{ url_for('admin.claims_list', status='pending') }}">
-      Pending
-      <span class="badge bg-warning text-dark ms-1">{{ counts.pending }}</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if status_filter == 'approved' %}active{% endif %}"
-       href="{{ url_for('admin.claims_list', status='approved') }}">
-      Approved
-      <span class="badge bg-success ms-1">{{ counts.approved }}</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if status_filter == 'rejected' %}active{% endif %}"
-       href="{{ url_for('admin.claims_list', status='rejected') }}">
-      Rejected
-      <span class="badge bg-danger ms-1">{{ counts.rejected }}</span>
-    </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if status_filter == 'all' %}active{% endif %}"
-       href="{{ url_for('admin.claims_list', status='all') }}">
-      All
-    </a>
-  </li>
-</ul>
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        padding: 2rem 0;
+    }
 
-{% if claims %}
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>#</th>
-          <th>Item</th>
-          <th>Reference</th>
-          <th>Claimant</th>
-          <th>Campus</th>
-          <th>Submitted</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for claim in claims %}
-          <tr {% if claim.status == 'pending' %}class="table-warning"{% endif %}>
-            <td class="text-muted small">{{ claim.id }}</td>
-            <td class="fw-semibold">{{ claim.item.title }}</td>
-            <td class="font-monospace small text-danger">
-              {{ claim.item.reference_number }}
-            </td>
-            <td>
-              {{ claim.claimant.name }}<br>
-              <small class="text-muted">{{ claim.claimant.email }}</small>
-            </td>
-            <td class="small">{{ claim.item.campus }}</td>
-            <td class="small text-muted">
-              {{ claim.created_at.strftime('%d %b %Y') }}
-            </td>
-            <td>
-              <span class="badge
-                {% if claim.status == 'pending' %}bg-warning text-dark
-                {% elif claim.status == 'approved' %}bg-success
-                {% else %}bg-danger{% endif %}">
-                {{ claim.status|capitalize }}
-              </span>
-            </td>
-            <td>
-              <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}"
-                 class="btn btn-sm btn-outline-danger">
-                {% if claim.status == 'pending' %}
-                  <i class="bi bi-eye"></i> Review
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+    }
+
+    /* Header - REDUCED SIZE */
+    h3.fw-bold {
+        font-size: 1.8rem !important;  /* Reduced from 2.5rem */
+        font-weight: 700 !important;
+        background: linear-gradient(135deg, #1C8441, #5370A3, #D11F2D);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem !important;  /* Reduced from 2rem */
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;  /* Reduced from 1rem */
+    }
+
+    h3.fw-bold::before {
+        content: '⚙️';
+        font-size: 1.6rem;  /* Reduced from 2rem */
+        background: none;
+        -webkit-text-fill-color: initial;
+    }
+
+    /* Filter Tabs - REDUCED SIZE */
+    .nav-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;  /* Reduced from 2rem */
+        border-bottom: 2px solid rgba(122,180,182,0.2);
+        padding-bottom: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .nav-item {
+        list-style: none;
+    }
+
+    .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;  /* Reduced from 0.8rem */
+        padding: 0.6rem 1.2rem;  /* Reduced from 0.8rem 1.8rem */
+        background: white;
+        border-radius: 30px;  /* Reduced from 40px */
+        color: #5370A3;
+        font-weight: 500;  /* Reduced from 600 */
+        font-size: 0.9rem;  /* Added explicit font size */
+        text-decoration: none;
+        transition: var(--transition);
+        border: 1px solid rgba(122,180,182,0.2);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .nav-link:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+        border-color: #5370A3;
+    }
+
+    .nav-link.active {
+        background: linear-gradient(135deg, #5370A3, #812575);
+        color: white;
+        border: none;
+    }
+
+    /* Badges in tabs - REDUCED SIZE */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.2rem 0.6rem;  /* Reduced from 0.3rem 0.8rem */
+        border-radius: 20px;  /* Reduced from 30px */
+        font-weight: 500;  /* Reduced from 600 */
+        font-size: 0.75rem;  /* Added explicit font size */
+    }
+
+    .badge.bg-warning {
+        background: linear-gradient(135deg, #FFA500, #ffb52e) !important;
+        color: #333 !important;
+    }
+
+    .badge.bg-success {
+        background: linear-gradient(135deg, #1C8441, #2ecc71) !important;
+        color: white !important;
+    }
+
+    .badge.bg-danger {
+        background: linear-gradient(135deg, #D11F2D, #ff6b6b) !important;
+        color: white !important;
+    }
+
+    /* Table - REDUCED SIZE */
+    .table-responsive {
+        background: white;
+        border-radius: 30px;  /* Reduced from 40px */
+        padding: 1rem;  /* Reduced from 1.5rem */
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(122,180,182,0.3);
+        overflow-x: auto;
+        position: relative;
+    }
+
+    .table-responsive::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;  /* Reduced from 6px */
+        background: linear-gradient(90deg, #1C8441, #5370A3, #812575, #D11F2D);
+        border-radius: 30px 30px 0 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;  /* Added base font size */
+    }
+
+    thead {
+        background: linear-gradient(135deg, #1C8441, #5370A3);
+        border-radius: 20px;  /* Reduced from 30px */
+    }
+
+    thead tr {
+        border-radius: 20px;
+    }
+
+    thead th {
+        color: white;
+        font-weight: 500;  /* Reduced from 600 */
+        padding: 0.8rem 0.8rem;  /* Reduced from 1.2rem 1rem */
+        font-size: 0.85rem;  /* Reduced from 0.95rem */
+        text-align: left;
+    }
+
+    thead th:first-child {
+        border-top-left-radius: 20px;
+    }
+
+    thead th:last-child {
+        border-top-right-radius: 20px;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid rgba(122,180,182,0.1);
+        transition: var(--transition);
+    }
+
+    tbody tr:hover {
+        background: rgba(83,112,163,0.05);
+        transform: scale(1.005);  /* Reduced from 1.01 */
+        box-shadow: var(--shadow-sm);
+    }
+
+    tbody td {
+        padding: 0.8rem 0.8rem;  /* Reduced from 1.2rem 1rem */
+        color: #5D6D7E;
+        font-size: 0.9rem;  /* Added explicit font size */
+    }
+
+    /* Table row highlighting for pending */
+    tr.table-warning {
+        background: rgba(255,165,0,0.05);
+        border-left: 3px solid #FFA500;  /* Reduced from 4px */
+    }
+
+    /* Reference number */
+    .font-monospace {
+        font-family: 'Courier New', monospace;
+        font-weight: 500;  /* Reduced from 600 */
+    }
+
+    .text-danger {
+        color: #D11F2D !important;
+    }
+
+    /* Claimant info - REDUCED SIZE */
+    td .fw-semibold {
+        color: #5370A3;
+        font-weight: 500;  /* Reduced from 600 */
+        display: block;
+        margin-bottom: 0.2rem;  /* Reduced from 0.3rem */
+        font-size: 0.9rem;  /* Added explicit font size */
+    }
+
+    td small.text-muted {
+        color: #7AB4B6 !important;
+        font-size: 0.8rem;  /* Reduced from 0.85rem */
+    }
+
+    /* Campus */
+    td .small {
+        color: #812575;
+        font-weight: 400;  /* Reduced from 500 */
+        font-size: 0.85rem;  /* Added explicit font size */
+    }
+
+    /* Status badges in table - REDUCED SIZE */
+    td .badge {
+        padding: 0.3rem 0.8rem;  /* Reduced from 0.5rem 1.2rem */
+        font-size: 0.8rem;  /* Reduced from 0.85rem */
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;  /* Reduced from 0.5rem */
+    }
+
+    /* Action button - REDUCED SIZE */
+    .btn-outline-danger {
+        background: transparent;
+        border: 1.5px solid #D11F2D;  /* Reduced from 2px */
+        color: #D11F2D;
+        padding: 0.4rem 0.8rem;  /* Reduced from 0.5rem 1.2rem */
+        border-radius: 25px;  /* Reduced from 30px */
+        font-size: 0.8rem;  /* Reduced from 0.85rem */
+        font-weight: 500;  /* Reduced from 600 */
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;  /* Reduced from 0.5rem */
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .btn-outline-danger:hover {
+        background: linear-gradient(135deg, #D11F2D, #812575);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Empty state - REDUCED SIZE */
+    .text-center.py-5 {
+        background: white;
+        border-radius: 30px;  /* Reduced from 40px */
+        padding: 2.5rem !important;  /* Reduced from 4rem */
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(122,180,182,0.3);
+    }
+
+    .text-center.py-5 i {
+        font-size: 3rem;  /* Reduced from 4rem */
+        color: #7AB4B6;
+        margin-bottom: 0.8rem;  /* Reduced from 1rem */
+        display: block;
+    }
+
+    .text-center.py-5 p {
+        color: #5370A3;
+        font-size: 1rem;  /* Reduced from 1.2rem */
+        font-weight: 500;
+        margin-bottom: 0.5rem;  /* Added */
+    }
+
+    .text-center.py-5 small {
+        color: #7AB4B6;
+        font-size: 0.85rem;  /* Added */
+    }
+
+    /* Emoji styles */
+    .emoji-icon {
+        font-size: 1rem;  /* Reduced from 1.2rem */
+        margin-right: 0.2rem;  /* Reduced from 0.3rem */
+        display: inline-block;
+    }
+
+    /* Color dots - REDUCED SIZE */
+    .color-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;  /* Reduced from 3rem */
+        padding-top: 1.5rem;  /* Reduced from 2rem */
+        border-top: 1px solid rgba(122,180,182,0.2);
+    }
+    
+    .color-dot {
+        width: 10px;  /* Reduced from 12px */
+        height: 10px;  /* Reduced from 12px */
+        border-radius: 50%;
+        animation: pulse 2s ease infinite;
+    }
+    
+    .color-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
+    .color-dot:nth-child(2) { background: #5370A3; animation-delay: 0.2s; }
+    .color-dot:nth-child(3) { background: #D11F2D; animation-delay: 0.4s; }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.7; }  /* Reduced from 1.2 */
+    }
+
+    /* Responsive - KEPT SAME */
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 1rem;
+        }
+        
+        h3.fw-bold {
+            font-size: 1.5rem !important;  /* Adjusted for mobile */
+        }
+        
+        .nav-tabs {
+            flex-direction: column;
+        }
+        
+        .nav-link {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        table {
+            font-size: 0.85rem;
+        }
+        
+        tbody td {
+            padding: 0.6rem 0.4rem;
+        }
+        
+        .btn-outline-danger {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.75rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <h3 class="fw-bold mb-4">Claim Management</h3>
+
+    <!-- Filter Tabs -->
+    <ul class="nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link {% if status_filter == 'pending' %}active{% endif %}"
+               href="{{ url_for('admin.claims_list', status='pending') }}">
+                <span class="emoji-icon">⏳</span>
+                Pending
+                <span class="badge bg-warning text-dark ms-1">{{ counts.pending }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if status_filter == 'approved' %}active{% endif %}"
+               href="{{ url_for('admin.claims_list', status='approved') }}">
+                <span class="emoji-icon">✅</span>
+                Approved
+                <span class="badge bg-success ms-1">{{ counts.approved }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if status_filter == 'rejected' %}active{% endif %}"
+               href="{{ url_for('admin.claims_list', status='rejected') }}">
+                <span class="emoji-icon">❌</span>
+                Rejected
+                <span class="badge bg-danger ms-1">{{ counts.rejected }}</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if status_filter == 'all' %}active{% endif %}"
+               href="{{ url_for('admin.claims_list', status='all') }}">
+                <span class="emoji-icon">📋</span>
+                All
+            </a>
+        </li>
+    </ul>
+
+    {% if claims %}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><span class="emoji-icon">#️⃣</span> ID</th>
+                        <th><span class="emoji-icon">📦</span> Item</th>
+                        <th><span class="emoji-icon">🔖</span> Reference</th>
+                        <th><span class="emoji-icon">👤</span> Claimant</th>
+                        <th><span class="emoji-icon">📍</span> Campus</th>
+                        <th><span class="emoji-icon">📅</span> Submitted</th>
+                        <th><span class="emoji-icon">🚦</span> Status</th>
+                        <th><span class="emoji-icon">⚡</span> Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for claim in claims %}
+                        <tr {% if claim.status == 'pending' %}class="table-warning"{% endif %}>
+                            <td class="text-muted small">
+                                <span class="emoji-icon">🔹</span>
+                                {{ claim.id }}
+                            </td>
+                            <td class="fw-semibold">{{ claim.item.title }}</td>
+                            <td class="font-monospace small text-danger">
+                                <span class="emoji-icon">📌</span>
+                                {{ claim.item.reference_number }}
+                            </td>
+                            <td>
+                                <span class="fw-semibold">{{ claim.claimant.name }}</span><br>
+                                <small class="text-muted">
+                                    <span class="emoji-icon">📧</span> {{ claim.claimant.email }}
+                                </small>
+                            </td>
+                            <td class="small">
+                                <span class="emoji-icon">🏛️</span>
+                                {{ claim.item.campus }}
+                            </td>
+                            <td class="small text-muted">
+                                <span class="emoji-icon">🗓️</span>
+                                {{ claim.created_at.strftime('%d %b %Y') }}
+                            </td>
+                            <td>
+                                <span class="badge
+                                    {% if claim.status == 'pending' %}bg-warning text-dark
+                                    {% elif claim.status == 'approved' %}bg-success
+                                    {% else %}bg-danger{% endif %}">
+                                    {% if claim.status == 'pending' %}
+                                        ⏳
+                                    {% elif claim.status == 'approved' %}
+                                        ✅
+                                    {% else %}
+                                        ❌
+                                    {% endif %}
+                                    {{ claim.status|capitalize }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}"
+                                   class="btn-outline-danger">
+                                    {% if claim.status == 'pending' %}
+                                        <span class="emoji-icon">🔍</span> Review
+                                    {% else %}
+                                        <span class="emoji-icon">👁️</span> View
+                                    {% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <div style="font-size: 3rem; margin-bottom: 0.8rem;">
+                {% if status_filter == 'pending' %}
+                    ⏳
+                {% elif status_filter == 'approved' %}
+                    ✅
+                {% elif status_filter == 'rejected' %}
+                    ❌
                 {% else %}
-                  <i class="bi bi-eye"></i> View
+                    📋
                 {% endif %}
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-{% else %}
-  <div class="text-center py-5">
-    <i class="bi bi-clipboard-check fs-1 text-muted"></i>
-    <p class="text-muted mt-3">No {{ status_filter }} claims.</p>
-  </div>
-{% endif %}
+            </div>
+            <p class="text-muted mt-2">No {{ status_filter }} claims found.</p>
+            <small style="color: #7AB4B6;">Check back later or try another filter</small>
+        </div>
+    {% endif %}
+
+    <!-- Color Dots -->
+    <div class="color-dots">
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+    </div>
+</div>
 {% endblock %}

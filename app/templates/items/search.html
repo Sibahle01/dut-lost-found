@@ -1,83 +1,622 @@
 ﻿{% extends "base.html" %}
-{% block title %}Browse Items{% endblock %}
+{% block title %}Browse Items - DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Browse Items</h1>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
+        
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: rgba(122,180,182,0.2);
+        
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+        --shadow-md: 0 4px 6px rgba(0,0,0,0.03);
+        --shadow-lg: 0 10px 15px rgba(0,0,0,0.05);
+        
+        --transition: all 0.2s ease;
+        --radius: 20px;
+        --radius-sm: 12px;
+        
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.25rem;
+        --space-6: 1.5rem;
+        --space-8: 2rem;
+    }
 
-<!-- Search Form -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" action="{{ url_for('items.search') }}">
-            <div class="row">
-                <div class="col-md-3">
-                    <input type="text" name="keyword" class="form-control" placeholder="Keyword" value="{{ filters.keyword }}">
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        color: var(--text-dark);
+    }
+
+    .browse-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--space-6);
+    }
+
+    /* Page Header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-6);
+        flex-wrap: wrap;
+        gap: var(--space-4);
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin: 0;
+    }
+
+    .page-header h1 i {
+        font-size: 1.8rem;
+    }
+
+    .results-count {
+        background: white;
+        padding: var(--space-2) var(--space-4);
+        border-radius: 40px;
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .results-count span {
+        font-weight: 600;
+        color: var(--dut-purple);
+        font-size: 1rem;
+    }
+
+    /* Search Card */
+    .search-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-light);
+        margin-bottom: var(--space-6);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .search-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .search-body {
+        padding: var(--space-5);
+    }
+
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        align-items: flex-end;
+    }
+
+    .search-form .form-group {
+        flex: 1 1 160px;
+        min-width: 140px;
+    }
+
+    .search-form .search-btn-group {
+        flex: 0 0 auto;
+        min-width: 100px;
+    }
+
+    @media (max-width: 768px) {
+        .search-form .form-group {
+            flex: 1 1 100%;
+        }
+        .search-form .search-btn-group {
+            flex: 1 1 100%;
+        }
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .form-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .form-label i {
+        color: var(--dut-teal);
+        font-size: 0.7rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        font-family: 'Inter', sans-serif;
+        background: white;
+        font-size: 0.9rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--dut-blue);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        color: white;
+        border: none;
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        width: 100%;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    .search-btn:hover {
+        background: linear-gradient(135deg, var(--dut-purple), var(--dut-blue));
+    }
+
+    .search-btn i {
+        font-size: 0.8rem;
+    }
+
+    /* Items Grid */
+    .items-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-5);
+        margin-bottom: var(--space-8);
+    }
+
+    @media (max-width: 992px) {
+        .items-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .items-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Item Card */
+    .item-card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .item-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .item-image {
+        width: 100%;
+        height: 180px;
+        background: var(--bg-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .no-image {
+        width: 100%;
+        height: 180px;
+        background: var(--bg-light);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        gap: var(--space-2);
+    }
+
+    .no-image i {
+        color: var(--dut-teal);
+        font-size: 2rem;
+        opacity: 0.4;
+    }
+
+    .item-body {
+        padding: var(--space-4);
+        flex: 1;
+    }
+
+    .item-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dut-blue);
+        margin-bottom: var(--space-3);
+        line-height: 1.3;
+    }
+
+    .badge-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        margin-bottom: var(--space-3);
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+        padding: var(--space-1) var(--space-3);
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+
+    .badge i {
+        font-size: 0.6rem;
+    }
+
+    .badge.type-lost {
+        background: rgba(255,165,0,0.1);
+        color: var(--dut-orange);
+        border: 1px solid rgba(255,165,0,0.2);
+    }
+
+    .badge.type-found {
+        background: rgba(28,132,65,0.1);
+        color: var(--dut-green);
+        border: 1px solid rgba(28,132,65,0.2);
+    }
+
+    .badge.category {
+        background: rgba(83,112,163,0.1);
+        color: var(--dut-blue);
+        border: 1px solid rgba(83,112,163,0.2);
+    }
+
+    .badge.campus {
+        background: rgba(122,180,182,0.1);
+        color: var(--dut-teal);
+        border: 1px solid rgba(122,180,182,0.2);
+    }
+
+    .item-description {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin: 0;
+    }
+
+    .item-footer {
+        padding: var(--space-3) var(--space-4);
+        border-top: 1px solid var(--border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg-light);
+        width: 100%;
+    }
+
+    .reference {
+        font-family: 'SF Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--dut-red);
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .reference i {
+        color: var(--dut-teal);
+        font-size: 0.65rem;
+    }
+
+    .view-btn {
+        background: transparent;
+        border: 1px solid var(--border-light);
+        color: var(--dut-blue);
+        padding: var(--space-1) var(--space-3);
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .view-btn:hover {
+        background: var(--dut-blue);
+        color: white;
+        border-color: var(--dut-blue);
+    }
+
+    .view-btn i {
+        font-size: 0.65rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-8) var(--space-6);
+        text-align: center;
+        border: 1px dashed var(--border-light);
+        margin-bottom: var(--space-8);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--dut-teal);
+        opacity: 0.5;
+        margin-bottom: var(--space-4);
+    }
+
+    .empty-state h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: var(--space-2);
+    }
+
+    .empty-state p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: var(--space-4);
+    }
+
+    .clear-filters {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-5);
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        color: white;
+        text-decoration: none;
+        border-radius: 40px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    /* Color Dots */
+    .dots {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-2);
+        margin-top: var(--space-8);
+        padding-top: var(--space-6);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .dot:nth-child(1) { background: var(--dut-green); }
+    .dot:nth-child(2) { background: var(--dut-blue); }
+    .dot:nth-child(3) { background: var(--dut-purple); }
+    .dot:nth-child(4) { background: var(--dut-red); }
+    .dot:nth-child(5) { background: var(--dut-teal); }
+    .dot:nth-child(6) { background: var(--dut-orange); }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="browse-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-search"></i>
+            Browse Items
+        </h1>
+        <div class="results-count">
+            <i class="fas fa-box"></i>
+            <span>{{ items|length }}</span> found
+        </div>
+    </div>
+
+    <!-- Search Card -->
+    <div class="search-card">
+        <div class="search-body">
+            <form method="GET" action="{{ url_for('items.search') }}">
+                <div class="search-form">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-search"></i>
+                            Keyword
+                        </label>
+                        <input type="text" name="keyword" class="form-control" 
+                               placeholder="Search..." value="{{ filters.keyword }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i>
+                            Type
+                        </label>
+                        <select name="type" class="form-select">
+                            <option value="">All</option>
+                            <option value="lost" {% if filters.type == 'lost' %}selected{% endif %}>Lost</option>
+                            <option value="found" {% if filters.type == 'found' %}selected{% endif %}>Found</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-layer-group"></i>
+                            Category
+                        </label>
+                        <select name="category" class="form-select">
+                            <option value="">All</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Campus
+                        </label>
+                        <select name="campus" class="form-select">
+                            <option value="">All</option>
+                            {% for c in campuses %}
+                                <option value="{{ c }}" {% if filters.campus == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="search-btn-group">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <select name="type" class="form-control">
-                        <option value="">All Types</option>
-                        <option value="lost" {% if filters.type == 'lost' %}selected{% endif %}>Lost</option>
-                        <option value="found" {% if filters.type == 'found' %}selected{% endif %}>Found</option>
-                    </select>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    {% if items %}
+        <div class="items-grid">
+            {% for item in items %}
+                <div class="item-card">
+                    <div class="item-image">
+                        {% if item.image_path %}
+                            <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
+                        {% else %}
+                            <div class="no-image">
+                                <i class="fas fa-image"></i>
+                                <span>No image</span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="item-body">
+                        <h5 class="item-title">{{ item.title }}</h5>
+                        
+                        <div class="badge-container">
+                            <span class="badge type-{{ item.type }}">
+                                <i class="fas {% if item.type == 'lost' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+                                {{ item.type }}
+                            </span>
+                            <span class="badge category">
+                                <i class="fas fa-layer-group"></i>
+                                {{ item.category }}
+                            </span>
+                            <span class="badge campus">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ item.campus }}
+                            </span>
+                        </div>
+
+                        <p class="item-description">
+                            {{ item.public_description|truncate(80) }}
+                        </p>
+                    </div>
+
+                    <div class="item-footer">
+                        <span class="reference">
+                            <i class="fas fa-hashtag"></i>
+                            {{ item.reference_number }}
+                        </span>
+                        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="view-btn">
+                            View <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    <select name="category" class="form-control">
-                        <option value="">All Categories</option>
-                        {% for cat in categories %}
-                            <option value="{{ cat }}" {% if filters.category == cat %}selected{% endif %}>{{ cat }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select name="campus" class="form-control">
-                        <option value="">All Campuses</option>
-                        {% for c in campuses %}
-                            <option value="{{ c }}" {% if filters.campus == c %}selected{% endif %}>{{ c }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Search</button>
-                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-search"></i>
             </div>
-        </form>
+            <h3>No items found</h3>
+            <p>Try adjusting your search filters.</p>
+            <a href="{{ url_for('items.search') }}" class="clear-filters">
+                <i class="fas fa-times"></i>
+                Clear filters
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Color Dots -->
+    <div class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
 </div>
-
-<!-- Results -->
-<p>{{ items|length }} item(s) found</p>
-
-{% if items %}
-    <div class="row">
-        {% for item in items %}
-            <div class="col-md-4 mb-3">
-                <div class="card h-100">
-                    {% if item.image_path %}
-                        <img src="{{ url_for('static', filename=item.image_path) }}" class="card-img-top" style="height:200px; object-fit:cover;">
-                    {% else %}
-                        <div class="bg-light text-center py-5">No Image</div>
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ item.title }}</h5>
-                        <p class="card-text">
-                            <span class="badge {% if item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
-                                {{ item.type|capitalize }}
-                            </span>
-                            <span class="badge bg-secondary">{{ item.category }}</span>
-                            <span class="badge bg-info">{{ item.campus }}</span>
-                        </p>
-                        <p class="card-text small">{{ item.public_description|truncate(100) }}</p>
-                        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
-                    </div>
-                    <div class="card-footer text-muted small">
-                        Ref: {{ item.reference_number }}
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <div class="alert alert-info">
-        No items found matching your criteria.
-    </div>
-{% endif %}
 {% endblock %}

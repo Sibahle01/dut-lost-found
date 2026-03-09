@@ -1,27 +1,232 @@
 ﻿{% extends "base.html" %}
-{% block title %}Sign In - DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h2>Sign In</h2>
-<p>DUT Lost & Found Portal</p>
+<style>
+    .auth-container{
+        max-width:480px;
+        margin:2rem auto;
+        position:relative;
+    }
 
-<form method="POST" action="{% if request.args.get('next') %}{{ url_for('auth.login', next=request.args.get('next')) }}{% else %}{{ url_for('auth.login') }}{% endif %}">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    .back-arrow{
+        position:absolute;
+        top:1.5rem;
+        left:1.5rem;
+        color:#D11F2D;
+        font-size:1.8rem;
+        text-decoration:none;
+        transition:all .3s ease;
+        z-index:20;
+    }
 
-    <label>DUT Email Address</label>
-    <input type="email" name="email" value="{{ email }}" required>
+    .back-arrow:hover{
+        color:#1C8441;
+        transform:translateX(-5px);
+    }
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+    .auth-card{
+        background:white;
+        border-radius:40px;
+        padding:2.5rem;
+        box-shadow:0 20px 40px rgba(0,0,0,.15);
+        border:1px solid rgba(122,180,182,.3);
+        position:relative;
+        overflow:hidden; /* This ensures the gradient bar stays within the rounded corners */
+    }
 
-    <div>
-        <input type="checkbox" name="remember_me" id="remember_me">
-        <label for="remember_me">Keep me signed in</label>
+    .auth-card::before{
+        content:'';
+        position:absolute;
+        top:0;
+        left:0;
+        right:0;
+        height:8px;
+        background:linear-gradient(90deg,#1C8441,#5370A3,#A56EAE,#D11F2D,#812575,#7AB4B6);
+        /* Removed any border-radius that might be limiting the width */
+        width:100%; /* Explicitly set width to 100% */
+    }
+
+    .auth-header{
+        text-align:center;
+        margin-bottom:2rem;
+        margin-top:1rem;
+    }
+
+    .auth-header h2{
+        font-size:2.2rem;
+        background:linear-gradient(135deg,#1C8441,#5370A3,#A56EAE);
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        margin-bottom:.5rem;
+        font-weight:800;
+    }
+
+    .auth-header p{
+        color:#812575;
+        font-size:.95rem;
+        letter-spacing:2px;
+        font-weight:500;
+    }
+
+    .form-group{
+        margin-bottom:1.8rem;
+    }
+
+    .form-group label{
+        display:block;
+        margin-bottom:.5rem;
+        color:#5370A3;
+        font-weight:600;
+    }
+
+    .form-group input{
+        width:100%;
+        padding:1rem 1.2rem;
+        border:2px solid #e0e0e0;
+        border-radius:30px;
+        font-size:1rem;
+        background:#f8faff;
+    }
+
+    .form-group input:focus{
+        outline:none;
+        border-color:#D11F2D;
+        background:white;
+        box-shadow:0 0 0 5px rgba(209,31,45,.1);
+    }
+
+    .checkbox-group{
+        display:flex;
+        align-items:center;
+        gap:.5rem;
+        margin:1.5rem 0;
+    }
+
+    .checkbox-group input{
+        width:20px;
+        height:20px;
+        accent-color:#D11F2D;
+    }
+
+    .btn-login{
+        width:100%;
+        padding:1rem;
+        background:linear-gradient(135deg,#1C8441,#5370A3,#812575);
+        color:white;
+        border:none;
+        border-radius:30px;
+        font-weight:700;
+        font-size:1.1rem;
+        cursor:pointer;
+        transition:.3s;
+    }
+
+    .btn-login:hover{
+        transform:translateY(-3px);
+        background:linear-gradient(135deg,#D11F2D,#812575,#A56EAE);
+    }
+
+    .auth-footer{
+        text-align:center;
+        margin-top:1.5rem;
+    }
+
+    .auth-footer a{
+        color:#D11F2D;
+        font-weight:700;
+        text-decoration:none;
+    }
+    
+    /* Color Dots Styles */
+    .color-dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(122,180,182,0.2);
+    }
+    
+    .color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        animation: pulse 2s ease infinite;
+    }
+    
+    .color-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
+    .color-dot:nth-child(2) { background: #5370A3; animation-delay: 0.2s; }
+    .color-dot:nth-child(3) { background: #A56EAE; animation-delay: 0.4s; }
+    .color-dot:nth-child(4) { background: #D11F2D; animation-delay: 0.6s; }
+    .color-dot:nth-child(5) { background: #812575; animation-delay: 0.8s; }
+    .color-dot:nth-child(6) { background: #7AB4B6; animation-delay: 1s; }
+    
+    @keyframes pulse {
+        0%, 100% { 
+            transform: scale(1); 
+            opacity: 1; 
+        }
+        50% { 
+            transform: scale(1.2); 
+            opacity: 0.7; 
+        }
+    }
+</style>
+
+<div class="auth-container">
+
+    <div class="auth-card">
+
+        <!-- BACK ARROW (goes to page using base.html) -->
+        <a href="{{ url_for('index') }}" class="back-arrow">←</a>
+
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>DUT LOST & FOUND PORTAL</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group">
+                <label>DUT Email Address</label>
+                <input type="email" name="email" required placeholder="student@dut4life.ac.za">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" name="remember_me" id="remember_me">
+                <label for="remember_me">Keep me signed in</label>
+            </div>
+
+            <button type="submit" class="btn-login">
+                Sign In →
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>
+                New to DUT Lost & Found?
+                <a href="{{ url_for('auth.register') }}">Create account</a>
+            </p>
+        </div>
+        
+        <!-- COLOR DOTS at the bottom of the card -->
+        <div class="color-dots">
+            <div class="color-dot"></div>
+            <div class="color-dot"></div>
+            <div class="color-dot"></div>
+            <div class="color-dot"></div>
+            <div class="color-dot"></div>
+            <div class="color-dot"></div>
+        </div>
+
     </div>
 
-    <button type="submit">Sign In</button>
-</form>
+</div>
 
-<hr>
-<p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
 {% endblock %}

@@ -2,108 +2,620 @@
 {% block title %}{{ item.title }} — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-8">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: rgba(122,180,182,0.2);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
+        
+        --transition: all 0.3s ease;
+        --radius: 24px;
+        --radius-sm: 16px;
+        
+        /* Consistent spacing */
+        --space-xs: 0.5rem;   /* 8px */
+        --space-sm: 1rem;     /* 16px */
+        --space-md: 1.5rem;   /* 24px */
+        --space-lg: 2rem;     /* 32px */
+        --space-xl: 3rem;     /* 48px */
+    }
 
-    <!-- Header -->
-    <div class="d-flex align-items-center gap-2 mb-1">
-      <span class="badge {% if item.type == 'lost' %}bg-warning text-dark{% else %}bg-success{% endif %} fs-6">
-        {{ item.type|capitalize }}
-      </span>
-      <span class="badge bg-secondary">{{ item.category }}</span>
-      <span class="badge
-        {% if item.status == 'open' %}bg-primary
-        {% elif item.status == 'matched' %}bg-info text-dark
-        {% elif item.status == 'claimed' %}bg-warning text-dark
-        {% else %}bg-dark{% endif %}">
-        {{ item.status|capitalize }}
-      </span>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: var(--space-lg) 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--space-lg);
+    }
+
+    /* Layout */
+    .row {
+        display: flex;
+        gap: var(--space-lg);
+    }
+
+    .col-main {
+        flex: 2;
+    }
+
+    .col-side {
+        flex: 1;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 var(--space-sm);
+        }
+        
+        .row {
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+    }
+
+    /* Header Card */
+    .header-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .badge-container {
+        display: flex;
+        gap: var(--space-xs);
+        flex-wrap: wrap;
+        margin-bottom: var(--space-md);
+    }
+
+    /* Badges */
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 0.4rem 1.2rem;
+        border-radius: 40px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+    }
+
+    .badge i {
+        font-size: 0.75rem;
+    }
+
+    .badge.type-lost {
+        background: rgba(255, 165, 0, 0.15);
+        color: var(--dut-orange);
+        border: 1px solid rgba(255,165,0,0.3);
+    }
+
+    .badge.type-found {
+        background: rgba(28, 132, 65, 0.15);
+        color: var(--dut-green);
+        border: 1px solid rgba(28,132,65,0.3);
+    }
+
+    .badge.category {
+        background: var(--bg-light);
+        color: var(--dut-blue);
+        border: 1px solid var(--border-light);
+    }
+
+    .badge.status-open {
+        background: rgba(83, 112, 163, 0.15);
+        color: var(--dut-blue);
+        border: 1px solid rgba(83,112,163,0.3);
+    }
+
+    .badge.status-matched {
+        background: rgba(122, 180, 182, 0.15);
+        color: var(--dut-teal);
+        border: 1px solid rgba(122,180,182,0.3);
+    }
+
+    .badge.status-claimed {
+        background: rgba(255,165,0,0.15);
+        color: var(--dut-orange);
+        border: 1px solid rgba(255,165,0,0.3);
+    }
+
+    .badge.status-closed {
+        background: rgba(94,94,94,0.15);
+        color: #5e5e5e;
+        border: 1px solid rgba(94,94,94,0.3);
+    }
+
+    h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: var(--space-xs);
+        line-height: 1.2;
+    }
+
+    .meta {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        flex-wrap: wrap;
+    }
+
+    .meta i {
+        color: var(--dut-teal);
+    }
+
+    .ref-highlight {
+        color: var(--dut-red);
+        font-weight: 600;
+        font-family: 'SF Mono', monospace;
+        background: rgba(209,31,45,0.05);
+        padding: 0.2rem 0.6rem;
+        border-radius: 30px;
+    }
+
+    /* Image */
+    .image-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-md);
+        margin-bottom: var(--space-lg);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+        text-align: center;
+    }
+
+    .image-card img {
+        max-height: 300px;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: var(--radius-sm);
+    }
+
+    /* Info Cards */
+    .info-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+        transition: var(--transition);
+    }
+
+    .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        margin-bottom: var(--space-md);
+        padding-bottom: var(--space-sm);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-header i {
+        color: var(--dut-purple);
+        font-size: 1.2rem;
+    }
+
+    .card-header h3 {
+        color: var(--dut-blue);
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .description {
+        color: var(--text-dark);
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-md);
+    }
+
+    @media (max-width: 576px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-sm);
+        }
+    }
+
+    .info-item {
+        background: var(--bg-light);
+        padding: var(--space-sm);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-light);
+    }
+
+    .info-label {
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-bottom: var(--space-xs);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .info-label i {
+        color: var(--dut-teal);
+        font-size: 0.7rem;
+    }
+
+    .info-value {
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    /* Sidebar Cards */
+    .sidebar-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+    }
+
+    .sidebar-card.claim-card {
+        border: 2px solid var(--dut-red);
+        background: linear-gradient(135deg, #fff, #fff8f8);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sidebar-card.claim-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-red), var(--dut-orange));
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        margin-bottom: var(--space-md);
+    }
+
+    .sidebar-header i {
+        font-size: 1.2rem;
+    }
+
+    .sidebar-header.claim-header i {
+        color: var(--dut-red);
+    }
+
+    .sidebar-header.reference-header i {
+        color: var(--dut-blue);
+    }
+
+    .sidebar-header h4 {
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .sidebar-text {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: var(--space-md);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-xs);
+        padding: 0.8rem 1.5rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: none;
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-claim {
+        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-claim:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-signin {
+        background: transparent;
+        border: 2px solid var(--dut-red);
+        color: var(--dut-red);
+    }
+
+    .btn-signin:hover {
+        background: var(--dut-red);
+        color: white;
+    }
+
+    /* Reference Number */
+    .ref-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--dut-red);
+        font-family: 'SF Mono', monospace;
+        text-align: center;
+        margin-bottom: var(--space-sm);
+        letter-spacing: 1px;
+    }
+
+    .ref-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .ref-note i {
+        color: var(--dut-teal);
+    }
+
+    /* Color Dots */
+    .dots {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-xs);
+        margin-top: var(--space-xl);
+        padding-top: var(--space-lg);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
+    .dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
+    .dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
+    .dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
+    .dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
+    .dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Utilities */
+    .text-muted { color: var(--text-muted) !important; }
+    .mb-0 { margin-bottom: 0 !important; }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container">
+    <div class="row">
+        <!-- Main Column -->
+        <div class="col-main">
+            <!-- Header Card -->
+            <div class="header-card">
+                <div class="badge-container">
+                    <!-- Type Badge -->
+                    <span class="badge type-{{ item.type }}">
+                        <i class="fas {% if item.type == 'lost' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+                        {{ item.type|capitalize }}
+                    </span>
+                    
+                    <!-- Category Badge -->
+                    <span class="badge category">
+                        <i class="fas fa-layer-group"></i>
+                        {{ item.category }}
+                    </span>
+                    
+                    <!-- Status Badge -->
+                    <span class="badge status-{{ item.status }}">
+                        <i class="fas 
+                            {% if item.status == 'open' %}fa-circle
+                            {% elif item.status == 'matched' %}fa-link
+                            {% elif item.status == 'claimed' %}fa-hand-paper
+                            {% else %}fa-archive{% endif %}"></i>
+                        {{ item.status|capitalize }}
+                    </span>
+                </div>
+
+                <h1>{{ item.title }}</h1>
+                
+                <div class="meta">
+                    <i class="fas fa-hashtag"></i>
+                    <span class="ref-highlight">{{ item.reference_number }}</span>
+                    <span>•</span>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ item.campus }}</span>
+                    <span>•</span>
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ item.created_at.strftime('%d %b %Y') }}</span>
+                </div>
+            </div>
+
+            <!-- Image -->
+            {% if item.image_path %}
+                <div class="image-card">
+                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
+                </div>
+            {% endif %}
+
+            <!-- Description Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="fas fa-align-left"></i>
+                    <h3>Description</h3>
+                </div>
+                <p class="description">{{ item.public_description }}</p>
+            </div>
+
+            <!-- Location & Date Card -->
+            <div class="info-card">
+                <div class="card-header">
+                    <i class="fas fa-map-pin"></i>
+                    <h3>Location & Date</h3>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-university"></i>
+                            Campus
+                        </div>
+                        <div class="info-value">{{ item.campus }}</div>
+                    </div>
+                    
+                    {% if item.location %}
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-location-dot"></i>
+                            Location
+                        </div>
+                        <div class="info-value">{{ item.location }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if item.date_of_incident %}
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fas fa-calendar-day"></i>
+                            Date
+                        </div>
+                        <div class="info-value">{{ item.date_of_incident.strftime('%d %b %Y') }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Side Column -->
+        <div class="col-side">
+            <!-- Claim Card -->
+            {% if can_claim %}
+                <div class="sidebar-card claim-card">
+                    <div class="sidebar-header claim-header">
+                        <i class="fas fa-hand-paper"></i>
+                        <h4>Is this your item?</h4>
+                    </div>
+                    <p class="sidebar-text">
+                        If this belongs to you, submit a claim with proof of ownership to verify it's yours.
+                    </p>
+                    <a href="{{ url_for('claims.submit', item_id=item.id) }}" class="btn btn-claim">
+                        <i class="fas fa-check-circle"></i>
+                        Submit a Claim
+                    </a>
+                </div>
+            {% elif not current_user.is_authenticated %}
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <i class="fas fa-lock" style="color: var(--dut-red);"></i>
+                        <h4>Sign in required</h4>
+                    </div>
+                    <p class="sidebar-text">
+                        Please sign in to claim this item.
+                    </p>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-signin">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Reference Card -->
+            <div class="sidebar-card">
+                <div class="sidebar-header reference-header">
+                    <i class="fas fa-hashtag"></i>
+                    <h4>Reference Number</h4>
+                </div>
+                <div class="ref-number">{{ item.reference_number }}</div>
+                <p class="ref-note">
+                    <i class="fas fa-info-circle"></i>
+                    Keep this to track your item
+                </p>
+            </div>
+        </div>
     </div>
 
-    <h2 class="fw-bold mb-0">{{ item.title }}</h2>
-    <p class="text-muted mb-4">
-      Ref: <strong>{{ item.reference_number }}</strong> ·
-      {{ item.campus }} ·
-      Reported {{ item.created_at.strftime('%d %B %Y') }}
-    </p>
-
-    {% if item.image_path %}
-      <img src="{{ url_for('static', filename=item.image_path) }}"
-           class="img-fluid rounded mb-4 shadow-sm"
-           style="max-height:350px;object-fit:contain;"
-           alt="{{ item.title }}">
-    {% endif %}
-
-    <!-- Public Description -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header fw-semibold">Description</div>
-      <div class="card-body">
-        <p class="mb-0">{{ item.public_description }}</p>
-      </div>
+    <!-- Color Dots -->
+    <div class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
-
-    <!-- Location & Date -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4">
-            <p class="small text-muted mb-1">Campus</p>
-            <p class="fw-semibold mb-0">{{ item.campus }}</p>
-          </div>
-          {% if item.location %}
-          <div class="col-md-4">
-            <p class="small text-muted mb-1">Location</p>
-            <p class="fw-semibold mb-0">{{ item.location }}</p>
-          </div>
-          {% endif %}
-          {% if item.date_of_incident %}
-          <div class="col-md-4">
-            <p class="small text-muted mb-1">Date</p>
-            <p class="fw-semibold mb-0">{{ item.date_of_incident.strftime('%d %B %Y') }}</p>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Sidebar -->
-  <div class="col-md-4">
-    {% if can_claim %}
-      <div class="card border-danger shadow-sm mb-4">
-        <div class="card-header bg-danger text-white fw-semibold">
-          Is this your item?
-        </div>
-        <div class="card-body">
-          <p class="small">
-            If this belongs to you, submit a claim.
-            You will need to provide proof of ownership.
-          </p>
-          <a href="{{ url_for('claims.submit', item_id=item.id) }}"
-             class="btn btn-danger w-100 fw-semibold">
-            Submit a Claim
-          </a>
-        </div>
-      </div>
-    {% elif not current_user.is_authenticated %}
-      <div class="card shadow-sm mb-4">
-        <div class="card-body text-center">
-          <p class="small text-muted">Sign in to claim this item.</p>
-          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-danger btn-sm">
-            Sign In
-          </a>
-        </div>
-      </div>
-    {% endif %}
-
-    <div class="card shadow-sm">
-      <div class="card-header fw-semibold">Reference Number</div>
-      <div class="card-body text-center">
-        <h4 class="text-danger fw-bold font-monospace">{{ item.reference_number }}</h4>
-        <p class="small text-muted mb-0">Keep this number to track your item.</p>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}

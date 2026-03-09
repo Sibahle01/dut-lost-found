@@ -2,85 +2,442 @@
 {% block title %}Notifications — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h3 class="fw-bold mb-0">
-    <i class="bi bi-bell"></i> Notifications
-  </h3>
-  {% if notifications %}
-    <a href="{{ url_for('notifications.mark_all_read') }}"
-       class="btn btn-outline-secondary btn-sm">
-      Mark all read
-    </a>
-  {% endif %}
-</div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-{% endwith %}
+<style>
+    .notifications-page,
+    .notifications-page * {
+        box-sizing: border-box;
+        font-family: 'Inter', sans-serif;
+    }
 
-{% if notifications %}
-  <div class="list-group shadow-sm">
-    {% for notif in notifications %}
-      <div class="list-group-item list-group-item-action
-                  {% if not notif.is_read %}bg-light border-start border-danger border-3{% endif %}
-                  py-3">
-        <div class="d-flex justify-content-between align-items-start">
-          <div class="d-flex gap-3 align-items-start">
+    .notifications-page {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
 
-            <!-- Icon by type -->
-            <div class="mt-1">
-              {% if notif.type == 'claim_approved' %}
-                <i class="bi bi-check-circle-fill text-success fs-5"></i>
-              {% elif notif.type == 'claim_rejected' %}
-                <i class="bi bi-x-circle-fill text-danger fs-5"></i>
-              {% elif notif.type == 'claim_submitted' %}
-                <i class="bi bi-file-earmark-check text-warning fs-5"></i>
-              {% elif notif.type == 'match_found' %}
-                <i class="bi bi-link-45deg text-primary fs-5"></i>
-              {% elif notif.type == 'item_closed' %}
-                <i class="bi bi-archive-fill text-secondary fs-5"></i>
-              {% else %}
-                <i class="bi bi-bell text-muted fs-5"></i>
-              {% endif %}
-            </div>
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: #e9edf5;
 
-            <div>
-              <p class="mb-1 {% if not notif.is_read %}fw-semibold{% endif %}">
-                {{ notif.message }}
-              </p>
-              <small class="text-muted">
-                {{ notif.created_at.strftime('%d %B %Y at %H:%M') }}
-              </small>
-              {% if notif.related_item %}
-                <br>
-                <a href="{{ url_for('items.detail', item_id=notif.related_item_id) }}"
-                   class="small text-danger text-decoration-none">
-                  View item →
-                </a>
-              {% endif %}
-            </div>
-          </div>
+        --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+        --radius: 16px;
 
-          <div class="d-flex align-items-center gap-2 ms-3 flex-shrink-0">
-            {% if not notif.is_read %}
-              <span class="badge bg-danger rounded-pill">New</span>
-            {% endif %}
-          </div>
+        --space-xs: 0.5rem;
+        --space-sm: 1rem;
+        --space-md: 1.5rem;
+        --space-lg: 2rem;
+
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .notifications-header {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-md);
+        margin-bottom: var(--space-md);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .notifications-header-left {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+
+    .notifications-header-left i {
+        font-size: 1.5rem;
+        color: var(--dut-red);
+    }
+
+    .notifications-header-left h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .mark-btn {
+        background: transparent;
+        border: 1px solid var(--border-light);
+        color: var(--text-muted);
+        padding: 0.7rem 1.2rem;
+        border-radius: 40px;
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: 0.25s ease;
+    }
+
+    .mark-btn:hover {
+        background: var(--dut-blue);
+        color: white;
+        border-color: var(--dut-blue);
+    }
+
+    .alert {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-sm) var(--space-md);
+        margin-bottom: var(--space-md);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .alert i {
+        font-size: 1.1rem;
+    }
+
+    .alert.success i { color: var(--dut-green); }
+    .alert.danger i { color: var(--dut-red); }
+    .alert.warning i { color: var(--dut-orange); }
+    .alert.info i { color: var(--dut-blue); }
+
+    .notif-list {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        margin-bottom: var(--space-lg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .notif-item {
+        padding: var(--space-md);
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-sm);
+    }
+
+    .notif-item:last-child {
+        border-bottom: none;
+    }
+
+    .notif-item.unread {
+        background: #fff9f9;
+        border-left: 4px solid var(--dut-red);
+    }
+
+    .notif-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 0.95rem;
+    }
+
+    .notif-icon.approved {
+        background: rgba(28,132,65,0.1);
+        color: var(--dut-green);
+    }
+
+    .notif-icon.rejected {
+        background: rgba(209,31,45,0.1);
+        color: var(--dut-red);
+    }
+
+    .notif-icon.submitted {
+        background: rgba(255,165,0,0.1);
+        color: var(--dut-orange);
+    }
+
+    .notif-icon.match {
+        background: rgba(83,112,163,0.1);
+        color: var(--dut-blue);
+    }
+
+    .notif-icon.closed {
+        background: rgba(122,180,182,0.1);
+        color: var(--dut-teal);
+    }
+
+    .notif-icon.default {
+        background: rgba(0,0,0,0.05);
+        color: var(--text-muted);
+    }
+
+    .notif-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notif-message {
+        color: var(--text-dark);
+        font-size: 0.98rem;
+        line-height: 1.5;
+        margin-bottom: 0.45rem;
+        word-break: break-word;
+    }
+
+    .notif-message.unread {
+        font-weight: 600;
+    }
+
+    .notif-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .notif-time {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .notif-time i {
+        color: var(--dut-teal);
+        font-size: 0.75rem;
+    }
+
+    .notif-link {
+        color: var(--dut-red);
+        text-decoration: none;
+        font-size: 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        white-space: nowrap;
+        font-weight: 600;
+        transition: 0.2s ease;
+    }
+
+    .notif-link:hover {
+        color: var(--dut-blue);
+    }
+
+    .notif-badge {
+        background: var(--dut-red);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .notif-badge i {
+        font-size: 0.55rem;
+    }
+
+    .empty {
+        background: white;
+        border-radius: var(--radius);
+        padding: 2.5rem 1.5rem;
+        text-align: center;
+        border: 2px dashed var(--border-light);
+        margin-bottom: var(--space-lg);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .empty i {
+        font-size: 3rem;
+        color: var(--dut-teal);
+        opacity: 0.35;
+        margin-bottom: 1rem;
+    }
+
+    .empty h4 {
+        font-size: 1.35rem;
+        color: var(--text-dark);
+        margin-bottom: 0.35rem;
+        font-weight: 700;
+    }
+
+    .empty p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .empty small {
+        color: var(--text-muted);
+        font-size: 0.82rem;
+    }
+
+    .dots {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: var(--space-lg);
+        padding-top: var(--space-md);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .dot:nth-child(1) { background: var(--dut-green); }
+    .dot:nth-child(2) { background: var(--dut-blue); }
+    .dot:nth-child(3) { background: var(--dut-purple); }
+    .dot:nth-child(4) { background: var(--dut-red); }
+    .dot:nth-child(5) { background: var(--dut-teal); }
+    .dot:nth-child(6) { background: var(--dut-orange); }
+
+    @media (max-width: 768px) {
+        .notifications-page {
+            margin: 1rem auto;
+        }
+
+        .notifications-header {
+            padding: 1rem;
+        }
+
+        .notifications-header-left h3 {
+            font-size: 1.4rem;
+        }
+
+        .notif-item {
+            padding: 1rem;
+            gap: 0.8rem;
+        }
+
+        .notif-badge {
+            margin-left: 0;
+            margin-top: 0.5rem;
+        }
+    }
+</style>
+
+<div class="notifications-page">
+    <div class="notifications-header">
+        <div class="notifications-header-left">
+            <i class="fas fa-bell"></i>
+            <h3>Notifications</h3>
         </div>
-      </div>
-    {% endfor %}
-  </div>
 
-{% else %}
-  <div class="text-center py-5">
-    <i class="bi bi-bell-slash fs-1 text-muted"></i>
-    <p class="text-muted mt-3">No notifications yet.</p>
-    <p class="text-muted small">
-      You will be notified when claims are submitted, reviewed, or matched.
-    </p>
-  </div>
-{% endif %}
+        {% if notifications %}
+            <a href="{{ url_for('notifications.mark_all_read') }}" class="mark-btn">
+                <i class="fas fa-check-double"></i>
+                Mark all read
+            </a>
+        {% endif %}
+    </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    <i class="fas
+                        {% if category == 'success' %} fa-check-circle
+                        {% elif category == 'danger' %} fa-exclamation-circle
+                        {% elif category == 'warning' %} fa-exclamation-triangle
+                        {% else %} fa-info-circle
+                        {% endif %}">
+                    </i>
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if notifications %}
+        <div class="notif-list">
+            {% for notif in notifications %}
+                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+                    <div class="notif-icon
+                        {% if notif.type == 'claim_approved' %} approved
+                        {% elif notif.type == 'claim_rejected' %} rejected
+                        {% elif notif.type == 'claim_submitted' %} submitted
+                        {% elif notif.type == 'match_found' %} match
+                        {% elif notif.type == 'item_closed' %} closed
+                        {% else %} default
+                        {% endif %}">
+
+                        {% if notif.type == 'claim_approved' %}
+                            <i class="fas fa-check"></i>
+                        {% elif notif.type == 'claim_rejected' %}
+                            <i class="fas fa-times"></i>
+                        {% elif notif.type == 'claim_submitted' %}
+                            <i class="fas fa-file-alt"></i>
+                        {% elif notif.type == 'match_found' %}
+                            <i class="fas fa-link"></i>
+                        {% elif notif.type == 'item_closed' %}
+                            <i class="fas fa-box-archive"></i>
+                        {% else %}
+                            <i class="fas fa-bell"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="notif-content">
+                        <div class="notif-message {% if not notif.is_read %}unread{% endif %}">
+                            {{ notif.message }}
+                        </div>
+
+                        <div class="notif-meta">
+                            <span class="notif-time">
+                                <i class="fas fa-clock"></i>
+                                {{ notif.created_at.strftime('%d %b %Y at %H:%M') }}
+                            </span>
+
+                            {% if notif.related_item %}
+                                <a href="{{ url_for('items.detail', item_id=notif.related_item_id) }}" class="notif-link">
+                                    View item <i class="fas fa-arrow-right"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if not notif.is_read %}
+                        <div class="notif-badge">
+                            <i class="fas fa-circle"></i>
+                            New
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <i class="fas fa-bell-slash"></i>
+            <h4>No notifications</h4>
+            <p>You're all caught up!</p>
+            <small>You'll be notified when claims are submitted or reviewed.</small>
+        </div>
+    {% endif %}
+
+    <div class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
+</div>
 {% endblock %}

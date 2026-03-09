@@ -11,6 +11,8 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        
+        /* Your existing CSS remains exactly the same */
         * {
             margin: 0;
             padding: 0;
@@ -37,12 +39,13 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            
             background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
             line-height: 1.6;
             color: #1a1a1a;
             min-height: 100vh;
         }
+        
 
         .navbar {
             background: rgba(255, 255, 255, 0.95);
@@ -154,8 +157,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image: url('https://images.unsplash.com/photo-1586769852044-692d6e3703f0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
+           background-image: url("images/WhatsApp\ Image\ 2026-03-07\ at\ 20.04.51.jpeg");background-size: cover;
             background-position: center;
             filter: brightness(0.7);
         }
@@ -631,6 +633,23 @@
             box-shadow: 0 20px 30px -5px rgba(0,0,0,0.3);
         }
 
+        /* Section Header */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: #5370A3;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: #812575;
+            font-size: 1.1rem;
+        }
+
         /* Responsive */
         @media (max-width: 992px) {
             .user-types, .features-grid, .stats-grid, .items-grid {
@@ -677,20 +696,20 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="https://www.dut.ac.za/wp-content/uploads/2020/04/DUT_Logo.png" alt="DUT Logo">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT Logo">
                 <div class="logo-text">
-                    <span class="dut">DUT</span>
-                    <span class="full">Durban University of Technology</span>
+                  
                 </div>
             </div>
             <div class="nav-links">
-                <a href="index.html" class="nav-link active"><i class="fas fa-home"></i>Home</a>
+                 <a href="index.html" class="nav-link active"><i class="fas fa-home"></i>Home</a>
                 <a href="items/search.html" class="nav-link"><i class="fas fa-search"></i>Browse</a>
                 <a href="auth/login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i>Sign In</a>
                 <a href="auth/register.html" class="nav-link"><i class="fas fa-user-plus"></i>Register</a>
-            </div>
+          </div>
         </div>
     </nav>
+
 
     <main class="main">
         <!-- Hero Section -->
@@ -717,7 +736,6 @@
                         Browse Items
                     </a>
                 </div>
-             
             </div>
         </section>
 
@@ -728,7 +746,7 @@
         </div>
 
         <div class="user-types">
-            <a href="auth/register.html?role=student" class="user-card">
+            <a href="login.html?role=student" class="user-card">
                 <div class="user-icon">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
@@ -736,15 +754,8 @@
                 <p>Currently enrolled at DUT. Report lost items, claim found items, and track your requests in real-time.</p>
                 <span class="user-badge">Get Started →</span>
             </a>
-            <a href="auth/register.html?role=staff" class="user-card">
-                <div class="user-icon">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
-                <h3>Staff Member</h3>
-                <p>DUT faculty or staff. Help students find their belongings and manage lost items across all campuses.</p>
-                <span class="user-badge">Get Started →</span>
-            </a>
-            <a href="admin/dashboard.html" class="user-card">
+            
+            <a href="login.html?role=admin" class="user-card">
                 <div class="user-icon">
                     <i class="fas fa-user-tie"></i>
                 </div>
@@ -791,9 +802,6 @@
             </div>
         </div>
 
-        
-
-       
         <!-- CTA Section -->
         <div class="cta-section">
             <div class="cta-bg"></div>
@@ -806,6 +814,9 @@
                         <i class="fas fa-user-plus"></i>
                         Create Account
                     </a>
+
+               
+                    
                     <a href="auth/login.html" class="btn btn-primary">
                         <i class="fas fa-sign-in-alt"></i>
                         Sign In
@@ -825,169 +836,165 @@
     </div>
 
     <div class="footer-main">
-        <div class="footer-content">
-            <!-- Brand Column with Enhanced Logo Section -->
+        <div class="footer-content" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; max-width: 1400px; margin: 0 auto; padding: 3rem 2rem;">
+            <!-- Brand Column -->
             <div class="footer-brand">
-                <div class="footer-logo-wrapper">
-                    <div class="logo-glow"></div>
-                    <img src="https://www.dut.ac.za/wp-content/uploads/2020/04/DUT_Logo.png" alt="DUT Logo" class="footer-logo-img">
+                <div class="footer-logo-wrapper" style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
+                    <div class="logo-glow" style="position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; background: radial-gradient(circle at 30% 50%, rgba(122,180,182,0.4), transparent 70%); border-radius: 50%; animation: pulseGlow 3s ease infinite;"></div>
+                    <img src="https://www.dut.ac.za/wp-content/uploads/2020/04/DUT_Logo.png" alt="DUT Logo" class="footer-logo-img" style="position: relative; z-index: 2; height: 80px; filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
                 </div>
-                <h3 class="footer-tagline">Durban University of Technology</h3>
-                <p class="footer-description">
+                <h3 class="footer-tagline" style="color: #7AB4B6; font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500;">Durban University of Technology</h3>
+                <p class="footer-description" style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 1.5rem; font-size: 0.95rem;">
                     Your official lost and found portal. Reuniting students and staff with their belongings since 2024. 
                     We're committed to making campus life easier, one found item at a time.
                 </p>
-                
-         
 
-                <!-- Social Links with Hover Effects -->
-                <div class="footer-social">
-                    <a href="#" class="social-link" aria-label="Facebook">
+                <!-- Social Links -->
+                <div class="footer-social" style="display: flex; gap: 0.8rem;">
+                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                   
-                    <a href="#" class="social-link" aria-label="Instagram">
+                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
                         <i class="fab fa-instagram"></i>
                     </a>
-                    <a href="#" class="social-link" aria-label="LinkedIn">
+                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
                         <i class="fab fa-linkedin-in"></i>
                     </a>
-                    <a href="#" class="social-link" aria-label="YouTube">
+                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
                         <i class="fab fa-youtube"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Quick Links Column with Icons -->
+            <!-- Quick Links Column -->
             <div class="footer-links-group">
-                <h4 class="footer-links-title">
+                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-compass"></i>
                     Quick Links
                 </h4>
-                <ul class="footer-links-list">
-                    <li><a href="items/search.html"><i class="fas fa-search"></i> Browse Items</a></li>
-                    <li><a href="items/report.html?type=lost"><i class="fas fa-flag"></i> Report Lost Item</a></li>
-                    <li><a href="items/report.html?type=found"><i class="fas fa-box-open"></i> Report Found Item</a></li>
-                    <li><a href="claims/dashboard.html"><i class="fas fa-clipboard-list"></i> My Dashboard</a></li>
-                    <li><a href="notifications/index.html"><i class="fas fa-bell"></i> Notifications</a></li>
+                <ul class="footer-links-list" style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 1rem;"><a href="items/search.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-search" style="width: 20px; color: #7AB4B6;"></i> Browse Items</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="items/report.html?type=lost" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-flag" style="width: 20px; color: #7AB4B6;"></i> Report Lost Item</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="items/report.html?type=found" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-box-open" style="width: 20px; color: #7AB4B6;"></i> Report Found Item</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="claims/dashboard.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-clipboard-list" style="width: 20px; color: #7AB4B6;"></i> My Dashboard</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="notifications/index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-bell" style="width: 20px; color: #7AB4B6;"></i> Notifications</a></li>
                 </ul>
             </div>
 
             <!-- Support Column -->
             <div class="footer-links-group">
-                <h4 class="footer-links-title">
+                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-headset"></i>
                     Support
                 </h4>
-                <ul class="footer-links-list">
-                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
-                    <li><a href="#"><i class="fas fa-star"></i> FAQ</a></li>
-                    <li><a href="#"><i class="fas fa-envelope"></i> Contact Us</a></li>
-                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
-                    <li><a href="#"><i class="fas fa-gavel"></i> Terms of Service</a></li>
+                <ul class="footer-links-list" style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-question-circle" style="width: 20px; color: #7AB4B6;"></i> Help Center</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-star" style="width: 20px; color: #7AB4B6;"></i> FAQ</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-envelope" style="width: 20px; color: #7AB4B6;"></i> Contact Us</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-shield-alt" style="width: 20px; color: #7AB4B6;"></i> Privacy Policy</a></li>
+                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-gavel" style="width: 20px; color: #7AB4B6;"></i> Terms of Service</a></li>
                 </ul>
             </div>
 
-            <!-- Contact Column with Interactive Map Preview -->
+            <!-- Contact Column -->
             <div class="footer-links-group">
-                <h4 class="footer-links-title">
+                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
                     <i class="fas fa-map-marker-alt"></i>
                     Get in Touch
                 </h4>
                 
                 <!-- Campus Cards -->
-                <div class="campus-card">
-                    <div class="campus-icon">
+                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
+                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
                         <i class="fas fa-university"></i>
                     </div>
                     <div class="campus-info">
-                        <strong>Steve Biko Campus</strong>
-                        <span>Main Administration</span>
+                        <strong style="color: white; font-size: 0.95rem;">Steve Biko Campus</strong>
+                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Main Administration</span>
                     </div>
                 </div>
                 
-                <div class="campus-card">
-                    <div class="campus-icon">
+                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
+                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
                         <i class="fas fa-building"></i>
                     </div>
                     <div class="campus-info">
-                        <strong>Ritson Campus</strong>
-                        <span>Engineering & Technology</span>
+                        <strong style="color: white; font-size: 0.95rem;">Ritson Campus</strong>
+                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Engineering & Technology</span>
                     </div>
                 </div>
                 
-                <div class="campus-card">
-                    <div class="campus-icon">
+                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
+                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
                         <i class="fas fa-landmark"></i>
                     </div>
                     <div class="campus-info">
-                        <strong>ML Sultan Campus</strong>
-                        <span>Arts & Design</span>
+                        <strong style="color: white; font-size: 0.95rem;">ML Sultan Campus</strong>
+                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Arts & Design</span>
                     </div>
                 </div>
 
-                <!-- Contact Details with Copy Feature -->
-                <div class="contact-details">
-                    <div class="contact-item" onclick="copyToClipboard('+27 (0)31 373 1234')">
-                        <i class="fas fa-phone-alt"></i>
+                <!-- Contact Details -->
+                <div class="contact-details" style="margin-top: 1.5rem;">
+                    <div class="contact-item" onclick="copyToClipboard('+27 (0)31 373 1234')" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7); cursor: pointer;">
+                        <i class="fas fa-phone-alt" style="width: 20px; color: #7AB4B6;"></i>
                         <span>+27 (0)31 373 1234</span>
-                        <small class="copy-hint">Click to copy</small>
+                        <small class="copy-hint" style="position: absolute; right: 1rem; font-size: 0.7rem; color: #7AB4B6; opacity: 0;">Click to copy</small>
                     </div>
-                    <div class="contact-item" onclick="copyToClipboard('lostfound@dut.ac.za')">
-                        <i class="fas fa-envelope"></i>
+                    <div class="contact-item" onclick="copyToClipboard('lostfound@dut.ac.za')" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7); cursor: pointer;">
+                        <i class="fas fa-envelope" style="width: 20px; color: #7AB4B6;"></i>
                         <span>lostfound@dut.ac.za</span>
-                        <small class="copy-hint">Click to copy</small>
+                        <small class="copy-hint" style="position: absolute; right: 1rem; font-size: 0.7rem; color: #7AB4B6; opacity: 0;">Click to copy</small>
                     </div>
-                    <div class="contact-item">
-                        <i class="fas fa-clock"></i>
+                    <div class="contact-item" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7);">
+                        <i class="fas fa-clock" style="width: 20px; color: #7AB4B6;"></i>
                         <span>Mon-Fri: 8:00 - 17:00</span>
                     </div>
                 </div>
 
                 <!-- Emergency Badge -->
-                <div class="emergency-badge">
-                    <i class="fas fa-shield-alt"></i>
+                <div class="emergency-badge" style="margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, rgba(209,31,45,0.2), rgba(122,180,182,0.2)); border-radius: 20px; display: flex; align-items: center; gap: 1rem;">
+                    <i class="fas fa-shield-alt" style="font-size: 2rem; color: #D11F2D; animation: pulse 2s ease infinite;"></i>
                     <div>
-                        <strong>Campus Security</strong>
-                        <span>24/7 Emergency: 031 373 5555</span>
+                        <strong style="display: block; color: white; font-size: 0.95rem;">Campus Security</strong>
+                        <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">24/7 Emergency: 031 373 5555</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Newsletter Signup -->
-        <div class="newsletter-section">
-            <div class="newsletter-content">
-                <div class="newsletter-icon">
+        <!-- Newsletter Section -->
+        <div class="newsletter-section" style="border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem; background: rgba(0,0,0,0.2);">
+            <div class="newsletter-content" style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+                <div class="newsletter-icon" style="width: 60px; height: 60px; background: rgba(122,180,182,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #7AB4B6; font-size: 1.8rem;">
                     <i class="fas fa-bell"></i>
                 </div>
                 <div class="newsletter-text">
-                    <h4>Stay Updated</h4>
-                    <p>Get notified when items matching your lost items are found</p>
+                    <h4 style="color: white; margin-bottom: 0.3rem;">Stay Updated</h4>
+                    <p style="color: rgba(255,255,255,0.6);">Get notified when items matching your lost items are found</p>
                 </div>
-               
             </div>
         </div>
     </div>
 
-    <!-- Footer Bottom with Links -->
-    <div class="footer-bottom">
-        <div class="footer-bottom-content">
-            <div class="footer-copyright">
+    <!-- Footer Bottom -->
+    <div class="footer-bottom" style="background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="footer-bottom-content" style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div class="footer-copyright" style="display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
                 <i class="fas fa-search"></i>
                 <span>DUT Lost & Found Portal © 2026 — Durban University of Technology</span>
             </div>
             
-            <div class="footer-bottom-links">
-                <a href="#"><i class="fas fa-sitemap"></i> Sitemap</a>
-                <a href="#"><i class="fas fa-lock"></i> Privacy</a>
-                <a href="#"><i class="fas fa-file-contract"></i> Terms</a>
-                <a href="#"><i class="fas fa-cookie-bite"></i> Cookies</a>
+            <div class="footer-bottom-links" style="display: flex; gap: 1.5rem;">
+                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-sitemap"></i> Sitemap</a>
+                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-cookie-bite"></i> Cookies</a>
             </div>
             
-            <div class="footer-envision">
-                <span class="envision-badge">ENVISION2030</span>
-                <span class="made-with">Made with <i class="fas fa-heart" style="color: #D11F2D;"></i> for the DUT community</span>
+            <div class="footer-envision" style="text-align: right;">
+                <span class="envision-badge" style="background: linear-gradient(135deg, #5370A3, #812575); color: white; padding: 0.3rem 1rem; border-radius: 40px; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-right: 0.5rem;">ENVISION2030</span>
+                <span class="made-with" style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Made with <i class="fas fa-heart" style="color: #D11F2D;"></i> for the DUT community</span>
             </div>
         </div>
     </div>
@@ -1001,6 +1008,19 @@ function copyToClipboard(text) {
         const notification = document.createElement('div');
         notification.className = 'copy-notification';
         notification.innerHTML = '<i class="fas fa-check-circle"></i> Copied to clipboard!';
+        notification.style.position = 'fixed';
+        notification.style.bottom = '20px';
+        notification.style.right = '20px';
+        notification.style.background = '#1C8441';
+        notification.style.color = 'white';
+        notification.style.padding = '1rem 2rem';
+        notification.style.borderRadius = '50px';
+        notification.style.display = 'flex';
+        notification.style.alignItems = 'center';
+        notification.style.gap = '0.5rem';
+        notification.style.boxShadow = '0 10px 30px -5px rgba(0,0,0,0.3)';
+        notification.style.zIndex = '9999';
+        notification.style.animation = 'slideIn 0.3s ease';
         document.body.appendChild(notification);
         
         setTimeout(() => {
@@ -1008,551 +1028,27 @@ function copyToClipboard(text) {
         }, 2000);
     });
 }
+
+// Add keyframe animation for slideIn
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes pulseGlow {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.1); }
+    }
+`;
+document.head.appendChild(style);
 </script>
-
-<!-- Add these styles to your existing CSS -->
-<style>
-/* Footer Enhancements */
-.footer-wave {
-    color: var(--dut-primary);
-    line-height: 0;
-    margin-top: -1px;
-}
-
-.footer-wave svg {
-    width: 100%;
-    height: 80px;
-}
-
-.footer-main {
-    background: linear-gradient(135deg, #1a2639 0%, #2a3447 100%);
-    position: relative;
-}
-
-.footer-brand {
-    grid-column: span 1;
-}
-
-.footer-logo-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 1.5rem;
-}
-
-.logo-glow {
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    background: radial-gradient(circle at 30% 50%, rgba(122,180,182,0.4), transparent 70%);
-    border-radius: 50%;
-    animation: pulseGlow 3s ease infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.1); }
-}
-
-.footer-logo-img {
-    position: relative;
-    z-index: 2;
-    height: 80px;
-    filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-
-.footer-tagline {
-    color: #7AB4B6;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    font-weight: 500;
-}
-
-.footer-description {
-    color: rgba(255,255,255,0.7);
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
-}
-
-.footer-stats-mini {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.05);
-    border-radius: 20px;
-    backdrop-filter: blur(5px);
-}
-
-.stat-mini {
-    text-align: center;
-    flex: 1;
-}
-
-.stat-mini-number {
-    display: block;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #7AB4B6;
-    line-height: 1.2;
-}
-
-.stat-mini-label {
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.footer-social {
-    display: flex;
-    gap: 0.8rem;
-}
-
-.social-link {
-    width: 45px;
-    height: 45px;
-    border-radius: 15px;
-    background: rgba(255,255,255,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    overflow: hidden;
-}
-
-.social-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #5370A3, #A56EAE);
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 1;
-}
-
-.social-link i {
-    position: relative;
-    z-index: 2;
-    transition: transform 0.3s;
-}
-
-.social-link:hover {
-    transform: translateY(-8px);
-}
-
-.social-link:hover::before {
-    opacity: 1;
-}
-
-.social-link:hover i {
-    transform: scale(1.2);
-    color: white;
-}
-
-.footer-links-group {
-    padding-left: 2rem;
-}
-
-.footer-links-title {
-    color: #7AB4B6;
-    font-size: 1.2rem;
-    margin-bottom: 1.8rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    position: relative;
-}
-
-.footer-links-title::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: linear-gradient(90deg, #D11F2D, #7AB4B6);
-    border-radius: 3px;
-    transition: width 0.3s;
-}
-
-.footer-links-group:hover .footer-links-title::after {
-    width: 60px;
-}
-
-.footer-links-list {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-links-list li {
-    margin-bottom: 1rem;
-}
-
-.footer-links-list a {
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    transition: all 0.3s;
-    padding: 0.3rem 0;
-}
-
-.footer-links-list a i {
-    width: 20px;
-    color: #7AB4B6;
-    transition: all 0.3s;
-}
-
-.footer-links-list a:hover {
-    color: white;
-    transform: translateX(10px);
-}
-
-.footer-links-list a:hover i {
-    color: #D11F2D;
-    transform: scale(1.2);
-}
-
-/* Campus Cards */
-.campus-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255,255,255,0.03);
-    border-radius: 16px;
-    margin-bottom: 0.8rem;
-    transition: all 0.3s;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-.campus-card:hover {
-    background: rgba(255,255,255,0.08);
-    transform: translateX(5px);
-    border-color: rgba(122,180,182,0.3);
-}
-
-.campus-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(122,180,182,0.2);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #7AB4B6;
-    font-size: 1.2rem;
-}
-
-.campus-info {
-    display: flex;
-    flex-direction: column;
-}
-
-.campus-info strong {
-    color: white;
-    font-size: 0.95rem;
-}
-
-.campus-info span {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.8rem;
-}
-
-/* Contact Details */
-.contact-details {
-    margin-top: 1.5rem;
-}
-
-.contact-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.8rem 0;
-    color: rgba(255,255,255,0.7);
-    cursor: pointer;
-    position: relative;
-    transition: all 0.3s;
-}
-
-.contact-item:hover {
-    color: white;
-    background: rgba(255,255,255,0.05);
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
-    margin-left: -0.5rem;
-}
-
-.contact-item i {
-    width: 20px;
-    color: #7AB4B6;
-}
-
-.copy-hint {
-    position: absolute;
-    right: 1rem;
-    font-size: 0.7rem;
-    color: #7AB4B6;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.contact-item:hover .copy-hint {
-    opacity: 1;
-}
-
-/* Emergency Badge */
-.emergency-badge {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: linear-gradient(135deg, rgba(209,31,45,0.2), rgba(122,180,182,0.2));
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    border: 1px solid rgba(209,31,45,0.3);
-    backdrop-filter: blur(5px);
-}
-
-.emergency-badge i {
-    font-size: 2rem;
-    color: #D11F2D;
-    animation: pulse 2s ease infinite;
-}
-
-.emergency-badge strong {
-    display: block;
-    color: white;
-    font-size: 0.95rem;
-}
-
-.emergency-badge span {
-    color: rgba(255,255,255,0.7);
-    font-size: 0.85rem;
-}
-
-/* Newsletter Section */
-.newsletter-section {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 2rem;
-    background: rgba(0,0,0,0.2);
-}
-
-.newsletter-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.newsletter-icon {
-    width: 60px;
-    height: 60px;
-    background: rgba(122,180,182,0.2);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #7AB4B6;
-    font-size: 1.8rem;
-    animation: float 3s ease infinite;
-}
-
-.newsletter-text h4 {
-    color: white;
-    margin-bottom: 0.3rem;
-}
-
-.newsletter-text p {
-    color: rgba(255,255,255,0.6);
-}
-
-.newsletter-form {
-    display: flex;
-    gap: 0.5rem;
-    flex: 1;
-    max-width: 500px;
-}
-
-.newsletter-form input {
-    flex: 1;
-    padding: 1rem 1.5rem;
-    border: 2px solid rgba(255,255,255,0.1);
-    border-radius: 50px;
-    background: rgba(255,255,255,0.05);
-    color: white;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.3s;
-}
-
-.newsletter-form input:focus {
-    outline: none;
-    border-color: #7AB4B6;
-    background: rgba(255,255,255,0.1);
-}
-
-.newsletter-form input::placeholder {
-    color: rgba(255,255,255,0.4);
-}
-
-.newsletter-form button {
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 50px;
-    background: linear-gradient(135deg, #D11F2D, #A56EAE);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.newsletter-form button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px -5px rgba(209,31,45,0.5);
-}
-
-/* Footer Bottom Enhanced */
-.footer-bottom {
-    background: rgba(0,0,0,0.3);
-    border-top: 1px solid rgba(255,255,255,0.05);
-}
-
-.footer-bottom-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.footer-copyright {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: rgba(255,255,255,0.5);
-    font-size: 0.9rem;
-}
-
-.footer-bottom-links {
-    display: flex;
-    gap: 1.5rem;
-}
-
-.footer-bottom-links a {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    transition: color 0.3s;
-}
-
-.footer-bottom-links a:hover {
-    color: #7AB4B6;
-}
-
-.footer-envision {
-    text-align: right;
-}
-
-.envision-badge {
-    background: linear-gradient(135deg, #5370A3, #812575);
-    color: white;
-    padding: 0.3rem 1rem;
-    border-radius: 40px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: inline-block;
-    margin-right: 0.5rem;
-}
-
-.made-with {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.9rem;
-}
-
-/* Copy Notification */
-.copy-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #1C8441;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: 0 10px 30px -5px rgba(0,0,0,0.3);
-    z-index: 9999;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Responsive */
-@media (max-width: 992px) {
-    .footer-content {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 2rem;
-    }
-    
-    .newsletter-content {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .footer-bottom-content {
-        flex-direction: column;
-        text-align: center;
-    }
-}
-
-@media (max-width: 768px) {
-    .footer-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .footer-links-group {
-        padding-left: 0;
-    }
-    
-    .footer-wave svg {
-        height: 40px;
-    }
-    
-    .newsletter-form {
-        flex-direction: column;
-        width: 100%;
-    }
-}
-</style>
+</body>
+</html>

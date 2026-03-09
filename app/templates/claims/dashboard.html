@@ -2,18 +2,583 @@
 {% block title %}My Dashboard - DUT Lost & Found{% endblock %}
 
 {% block content %}
-<h1>Welcome, {{ current_user.name }}!</h1>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
+        
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: rgba(122,180,182,0.2);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius: 20px;
+        --border-radius-sm: 12px;
+        
+        --spacing-xs: 0.5rem;
+        --spacing-sm: 1rem;
+        --spacing-md: 1.5rem;
+        --spacing-lg: 2rem;
+        --spacing-xl: 3rem;
+    }
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">Your Claims</h5>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: var(--spacing-lg) 0;
+    }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-lg);
+    }
+
+    /* Welcome Header */
+    .welcome-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: var(--spacing-lg) var(--spacing-xl);
+        margin-bottom: var(--spacing-xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+
+    .welcome-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .welcome-text {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .welcome-avatar {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.8rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-md);
+        border: 3px solid white;
+    }
+
+    .welcome-title h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-title p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .welcome-title p i {
+        color: var(--dut-teal);
+        font-size: 0.8rem;
+    }
+
+    .stats-mini {
+        display: flex;
+        gap: var(--spacing-md);
+        background: var(--bg-light);
+        padding: var(--spacing-sm) var(--spacing-md);
+        border-radius: 40px;
+        border: 1px solid var(--border-light);
+    }
+
+    .stat-mini-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .stat-mini-item i {
+        color: var(--dut-blue);
+    }
+
+    .stat-mini-value {
+        font-weight: 700;
+        color: var(--dut-purple);
+    }
+
+    /* Grid Layout */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: var(--spacing-md);
+        }
+    }
+
+    /* Cards */
+    .dashboard-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        transition: var(--transition);
+        height: fit-content;
+        position: relative;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .dashboard-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
+    }
+
+    .card-header-custom {
+        padding: var(--spacing-md) var(--spacing-lg);
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .card-header-custom i {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .card-header-custom.claims {
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+    }
+
+    .card-header-custom.items {
+        background: linear-gradient(135deg, var(--dut-green), #2ecc71);
+    }
+
+    .card-header-custom.quick {
+        background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));
+    }
+
+    .card-body-custom {
+        padding: var(--spacing-lg);
+    }
+
+    /* Table Styles */
+    .table-responsive {
+        overflow-x: auto;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .dashboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+    }
+
+    .dashboard-table thead tr {
+        border-bottom: 2px solid var(--border-light);
+    }
+
+    .dashboard-table th {
+        text-align: left;
+        padding: 0.75rem 0.5rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+
+    .dashboard-table td {
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--border-light);
+        color: var(--text-dark);
+    }
+
+    .dashboard-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .dashboard-table tr:hover td {
+        background: rgba(83,112,163,0.05);
+    }
+
+    /* Item Links */
+    .item-link {
+        color: var(--dut-blue);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .item-link:hover {
+        color: var(--dut-purple);
+    }
+
+    .item-link i {
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: var(--transition);
+    }
+
+    .item-link:hover i {
+        opacity: 1;
+        transform: translateX(3px);
+    }
+
+    /* Badges */
+    .badge-custom {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 1rem;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        width: fit-content;
+    }
+
+    .badge-custom i {
+        font-size: 0.75rem;
+    }
+
+    /* Status badges for claims */
+    .badge-custom.pending {
+        background: rgba(255, 165, 0, 0.15);
+        color: var(--dut-orange);
+        border: 1px solid rgba(255, 165, 0, 0.3);
+    }
+
+    .badge-custom.approved {
+        background: rgba(28, 132, 65, 0.15);
+        color: var(--dut-green);
+        border: 1px solid rgba(28, 132, 65, 0.3);
+    }
+
+    .badge-custom.rejected {
+        background: rgba(209, 31, 45, 0.15);
+        color: var(--dut-red);
+        border: 1px solid rgba(209, 31, 45, 0.3);
+    }
+
+    /* Type badges for items */
+    .badge-custom.lost {
+        background: rgba(255, 165, 0, 0.15);
+        color: var(--dut-orange);
+        border: 1px solid rgba(255, 165, 0, 0.3);
+    }
+
+    .badge-custom.found {
+        background: rgba(28, 132, 65, 0.15);
+        color: var(--dut-green);
+        border: 1px solid rgba(28, 132, 65, 0.3);
+    }
+
+    /* Status badges for items */
+    .badge-custom.open {
+        background: rgba(83, 112, 163, 0.15);
+        color: var(--dut-blue);
+        border: 1px solid rgba(83, 112, 163, 0.3);
+    }
+
+    .badge-custom.matched {
+        background: rgba(122, 180, 182, 0.15);
+        color: var(--dut-teal);
+        border: 1px solid rgba(122, 180, 182, 0.3);
+    }
+
+    .badge-custom.claimed {
+        background: rgba(28, 132, 65, 0.15);
+        color: var(--dut-green);
+        border: 1px solid rgba(28, 132, 65, 0.3);
+    }
+
+    .badge-custom.closed {
+        background: rgba(94, 94, 94, 0.15);
+        color: #5e5e5e;
+        border: 1px solid rgba(94, 94, 94, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        color: var(--text-muted);
+        padding: var(--spacing-md) 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .empty-state i {
+        color: var(--dut-teal);
+        font-size: 1.2rem;
+    }
+
+    /* Quick Actions Card */
+    .quick-actions-card {
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        margin-top: var(--spacing-lg);
+        position: relative;
+    }
+
+    .quick-actions-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--dut-teal), var(--dut-blue), var(--dut-purple));
+    }
+
+    .quick-actions-body {
+        padding: var(--spacing-lg);
+        display: flex;
+        gap: var(--spacing-md);
+        flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn-custom {
+        padding: 0.8rem 1.8rem;
+        border-radius: 40px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-custom.primary {
+        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
+        color: white;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-custom.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-custom.secondary {
+        background: white;
+        color: var(--dut-blue);
+        border: 2px solid var(--border-light);
+    }
+
+    .btn-custom.secondary:hover {
+        border-color: var(--dut-blue);
+        color: var(--dut-purple);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-custom.small {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-custom.small i {
+        font-size: 0.8rem;
+    }
+
+    .btn-custom.view-all {
+        background: transparent;
+        color: var(--dut-blue);
+        border: 1px solid var(--border-light);
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-custom.view-all:hover {
+        background: var(--dut-blue);
+        color: white;
+        border-color: var(--dut-blue);
+    }
+
+    /* Card Footer */
+    .card-footer-custom {
+        padding: var(--spacing-md) var(--spacing-lg);
+        border-top: 1px solid var(--border-light);
+        background: var(--bg-light);
+    }
+
+    /* Color Bar */
+    .color-bar {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: var(--spacing-xl);
+        padding-top: var(--spacing-lg);
+        border-top: 1px solid var(--border-light);
+    }
+    
+    .color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: subtlePulse 3s infinite;
+    }
+    
+    .color-dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
+    .color-dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
+    .color-dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
+    .color-dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
+    .color-dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
+    .color-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
+    
+    @keyframes subtlePulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-container {
+            padding: 0 var(--spacing-sm);
+        }
+
+        .welcome-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .welcome-text {
+            width: 100%;
+        }
+
+        .stats-mini {
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        .quick-actions-body {
+            flex-direction: column;
+        }
+
+        .btn-custom {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<!-- Load Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="dashboard-container">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+        <div class="welcome-text">
+            <div class="welcome-avatar">
+                {{ current_user.name[0] }}
             </div>
-            <div class="card-body">
+            <div class="welcome-title">
+                <h1>Welcome back, {{ current_user.name.split()[0] }}!</h1>
+                <p>
+                    <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
+                    DUT Lost & Found Portal
+                </p>
+            </div>
+        </div>
+        <div class="stats-mini">
+            <div class="stat-mini-item">
+                <i class="fas fa-file-alt"></i>
+                <span class="stat-mini-value">{{ claims|length }}</span>
+                <span>claims</span>
+            </div>
+            <div class="stat-mini-item">
+                <i class="fas fa-box"></i>
+                <span class="stat-mini-value">{{ items|length }}</span>
+                <span>items</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="dashboard-grid">
+        <!-- Your Claims Card -->
+        <div class="dashboard-card">
+            <div class="card-header-custom claims">
+                <i class="fas fa-file-alt"></i>
+                Your Claims
+            </div>
+            <div class="card-body-custom">
                 {% if claims %}
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table class="dashboard-table">
                             <thead>
                                 <tr>
                                     <th>Item</th>
@@ -26,22 +591,26 @@
                                 <tr>
                                     <td>
                                         {% if claim.item %}
-                                            <a href="{{ url_for('items.detail', item_id=claim.item.id) }}">
+                                            <a href="{{ url_for('items.detail', item_id=claim.item.id) }}" class="item-link">
                                                 {{ claim.item.title }}
+                                                <i class="fas fa-arrow-right"></i>
                                             </a>
                                         {% else %}
-                                            <em>Item not found</em>
+                                            <em class="text-muted">Item not found</em>
                                         {% endif %}
                                     </td>
                                     <td>{{ claim.created_at.strftime('%d/%m/%Y') }}</td>
                                     <td>
-                                        {% if claim.status == 'pending' %}
-                                            <span class="badge bg-warning">Pending</span>
-                                        {% elif claim.status == 'approved' %}
-                                            <span class="badge bg-success">Approved</span>
-                                        {% elif claim.status == 'rejected' %}
-                                            <span class="badge bg-danger">Rejected</span>
-                                        {% endif %}
+                                        <span class="badge-custom {{ claim.status }}">
+                                            {% if claim.status == 'pending' %}
+                                                <i class="fas fa-clock"></i>
+                                            {% elif claim.status == 'approved' %}
+                                                <i class="fas fa-check-circle"></i>
+                                            {% elif claim.status == 'rejected' %}
+                                                <i class="fas fa-times-circle"></i>
+                                            {% endif %}
+                                            {{ claim.status|capitalize }}
+                                        </span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -49,22 +618,30 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-muted">You haven't made any claims yet.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <span>You haven't made any claims yet.</span>
+                    </div>
                 {% endif %}
-                <a href="{{ url_for('claims.my_claims') }}" class="btn btn-sm btn-outline-primary">View All Claims</a>
+            </div>
+            <div class="card-footer-custom">
+                <a href="{{ url_for('claims.my_claims') }}" class="btn-custom small view-all">
+                    <i class="fas fa-eye"></i>
+                    View All Claims
+                </a>
             </div>
         </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">Your Reported Items</h5>
+
+        <!-- Your Reported Items Card -->
+        <div class="dashboard-card">
+            <div class="card-header-custom items">
+                <i class="fas fa-box"></i>
+                Your Reported Items
             </div>
-            <div class="card-body">
+            <div class="card-body-custom">
                 {% if items %}
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table class="dashboard-table">
                             <thead>
                                 <tr>
                                     <th>Item</th>
@@ -76,27 +653,34 @@
                                 {% for item in items %}
                                 <tr>
                                     <td>
-                                        <a href="{{ url_for('items.detail', item_id=item.id) }}">
+                                        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="item-link">
                                             {{ item.title }}
+                                            <i class="fas fa-arrow-right"></i>
                                         </a>
                                     </td>
                                     <td>
-                                        {% if item.type == 'lost' %}
-                                            <span class="badge bg-warning">Lost</span>
-                                        {% else %}
-                                            <span class="badge bg-success">Found</span>
-                                        {% endif %}
+                                        <span class="badge-custom {{ item.type }}">
+                                            {% if item.type == 'lost' %}
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            {% else %}
+                                                <i class="fas fa-check-circle"></i>
+                                            {% endif %}
+                                            {{ item.type|capitalize }}
+                                        </span>
                                     </td>
                                     <td>
-                                        {% if item.status == 'open' %}
-                                            <span class="badge bg-primary">Open</span>
-                                        {% elif item.status == 'matched' %}
-                                            <span class="badge bg-info">Matched</span>
-                                        {% elif item.status == 'claimed' %}
-                                            <span class="badge bg-success">Claimed</span>
-                                        {% elif item.status == 'closed' %}
-                                            <span class="badge bg-secondary">Closed</span>
-                                        {% endif %}
+                                        <span class="badge-custom {{ item.status }}">
+                                            {% if item.status == 'open' %}
+                                                <i class="fas fa-circle"></i>
+                                            {% elif item.status == 'matched' %}
+                                                <i class="fas fa-link"></i>
+                                            {% elif item.status == 'claimed' %}
+                                                <i class="fas fa-hand-paper"></i>
+                                            {% elif item.status == 'closed' %}
+                                                <i class="fas fa-archive"></i>
+                                            {% endif %}
+                                            {{ item.status|capitalize }}
+                                        </span>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -104,25 +688,47 @@
                         </table>
                     </div>
                 {% else %}
-                    <p class="text-muted">You haven't reported any items yet.</p>
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <span>You haven't reported any items yet.</span>
+                    </div>
                 {% endif %}
-                <a href="{{ url_for('claims.my_items') }}" class="btn btn-sm btn-outline-success">View All Items</a>
+            </div>
+            <div class="card-footer-custom">
+                <a href="{{ url_for('claims.my_items') }}" class="btn-custom small view-all">
+                    <i class="fas fa-eye"></i>
+                    View All Items
+                </a>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">Quick Actions</h5>
-            </div>
-            <div class="card-body">
-                <a href="{{ url_for('items.report') }}" class="btn btn-danger">Report Lost/Found Item</a>
-                <a href="{{ url_for('items.search') }}" class="btn btn-outline-secondary">Browse Items</a>
-            </div>
+    <!-- Quick Actions -->
+    <div class="quick-actions-card">
+        <div class="card-header-custom quick">
+            <i class="fas fa-bolt"></i>
+            Quick Actions
         </div>
+        <div class="quick-actions-body">
+            <a href="{{ url_for('items.report') }}" class="btn-custom primary">
+                <i class="fas fa-plus-circle"></i>
+                Report Lost/Found Item
+            </a>
+            <a href="{{ url_for('items.search') }}" class="btn-custom secondary">
+                <i class="fas fa-search"></i>
+                Browse Items
+            </a>
+        </div>
+    </div>
+
+    <!-- Color Bar -->
+    <div class="color-bar">
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
+        <div class="color-dot"></div>
     </div>
 </div>
 {% endblock %}

@@ -2,353 +2,815 @@
 {% block title %}Report Item — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-8">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    :root {
+        --dut-green: #1C8441;
+        --dut-blue: #5370A3;
+        --dut-purple: #812575;
+        --dut-red: #D11F2D;
+        --dut-teal: #7AB4B6;
+        --dut-orange: #FFA500;
+        
+        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
+        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
+        
+        --bg-light: #f8faff;
+        --text-dark: #1a1a1a;
+        --text-muted: #5D6D7E;
+        --border-light: rgba(122,180,182,0.2);
+        
+        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
+        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
+        
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --radius: 24px;
+        --radius-sm: 16px;
+        
+        --space-xs: 0.5rem;
+        --space-sm: 1rem;
+        --space-md: 1.5rem;
+        --space-lg: 2rem;
+        --space-xl: 3rem;
+    }
 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
+        color: var(--text-dark);
+        min-height: 100vh;
+        padding: var(--space-lg) 0;
+    }
+
+    .report-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 var(--space-lg);
+    }
+
+    /* Page Header */
+    .page-header {
+        background: white;
+        border-radius: var(--radius);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: var(--space-xs);
+        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .page-header h1 i {
+        font-size: 2rem;
+        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .page-header p {
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    .required-star {
+        color: var(--dut-red);
+        font-weight: 700;
+    }
+
+    /* Cards */
+    .step-card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        margin-bottom: var(--space-lg);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
+    }
+
+    .step-header {
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        color: white;
+        padding: var(--space-md) var(--space-lg);
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .step-header i {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+
+    .step-badge {
+        background: var(--dut-red);
+        color: white;
+        padding: 0.3rem 1rem;
+        border-radius: 40px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-right: var(--space-sm);
+    }
+
+    .step-body {
+        padding: var(--space-lg);
+    }
+
+    /* Item Type Cards */
+    .type-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-md);
+        margin-bottom: var(--space-sm);
+    }
+
+    @media (max-width: 576px) {
+        .type-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .type-radio {
+        display: none;
+    }
+
+    .type-card {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-md);
+        padding: var(--space-lg);
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        background: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .type-card.lost:hover {
+        border-color: var(--dut-orange);
+        background: rgba(255,165,0,0.05);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .type-card.found:hover {
+        border-color: var(--dut-green);
+        background: rgba(28,132,65,0.05);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .type-card.selected.lost {
+        border-color: var(--dut-orange);
+        background: rgba(255,165,0,0.05);
+        box-shadow: 0 0 0 4px rgba(255,165,0,0.2);
+    }
+
+    .type-card.selected.found {
+        border-color: var(--dut-green);
+        background: rgba(28,132,65,0.05);
+        box-shadow: 0 0 0 4px rgba(28,132,65,0.2);
+    }
+
+    .type-badge-selected {
+        position: absolute;
+        top: var(--space-xs);
+        right: var(--space-sm);
+        background: var(--dut-orange);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.2rem 0.8rem;
+        border-radius: 40px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .type-card.selected.lost .type-badge-selected {
+        background: var(--dut-orange);
+        opacity: 1;
+    }
+
+    .type-card.selected.found .type-badge-selected {
+        background: var(--dut-green);
+        opacity: 1;
+    }
+
+    .type-icon {
+        font-size: 2.2rem;
+        flex-shrink: 0;
+    }
+
+    .type-card.lost .type-icon {
+        color: var(--dut-orange);
+    }
+
+    .type-card.found .type-icon {
+        color: var(--dut-green);
+    }
+
+    .type-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+        color: var(--text-dark);
+    }
+
+    .type-subtitle {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    /* Form Elements */
+    .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: var(--space-xs);
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+
+    .form-label i {
+        color: var(--dut-teal);
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        font-family: 'Inter', sans-serif;
+        transition: var(--transition);
+        background: white;
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--dut-blue);
+        box-shadow: 0 0 0 3px rgba(83,112,163,0.1);
+    }
+
+    .form-text {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .form-text i {
+        color: var(--dut-teal);
+        font-size: 0.75rem;
+    }
+
+    /* Alerts */
+    .alert-modern {
+        background: white;
+        border-radius: var(--radius-sm);
+        padding: var(--space-md) var(--space-lg);
+        margin-bottom: var(--space-md);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .alert-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+    }
+
+    .alert-modern.success::before { background: var(--dut-green); }
+    .alert-modern.danger::before { background: var(--dut-red); }
+    .alert-modern.warning::before { background: var(--dut-orange); }
+    .alert-modern.info::before { background: var(--dut-blue); }
+
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .alert-content i {
+        font-size: 1.2rem;
+    }
+
+    .alert-modern.success i { color: var(--dut-green); }
+    .alert-modern.danger i { color: var(--dut-red); }
+    .alert-modern.warning i { color: var(--dut-orange); }
+    .alert-modern.info i { color: var(--dut-blue); }
+
+    .btn-close-modern {
+        background: transparent;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .btn-close-modern:hover {
+        background: var(--bg-light);
+        color: var(--dut-red);
+    }
+
+    /* Info Box */
+    .info-box {
+        background: var(--bg-light);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-sm);
+        padding: var(--space-md);
+        margin-bottom: var(--space-md);
+    }
+
+    .info-box.private {
+        background: rgba(209,31,45,0.05);
+        border: 1px dashed var(--dut-red);
+    }
+
+    .info-box i {
+        margin-right: var(--space-xs);
+    }
+
+    /* File Input */
+    .file-input-wrapper {
+        position: relative;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        padding: 0.5rem;
+        background: var(--bg-light);
+        border: 2px dashed var(--border-light);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .file-input-wrapper input[type="file"]::-webkit-file-upload-button {
+        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 40px;
+        margin-right: var(--space-sm);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .file-input-wrapper input[type="file"]::-webkit-file-upload-button:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
+        color: white;
+        border: none;
+        padding: 1.2rem 2rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-sm);
+        width: 100%;
+        box-shadow: var(--shadow-md);
+        margin-bottom: var(--space-sm);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .submit-note {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+    .submit-note i {
+        color: var(--dut-teal);
+    }
+
+    /* Color Dots */
+    .dots {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-xs);
+        margin-top: var(--space-xl);
+        padding-top: var(--space-lg);
+        border-top: 1px solid var(--border-light);
+    }
+
+    .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+
+    .dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
+    .dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
+    .dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
+    .dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
+    .dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
+    .dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .report-container {
+            padding: 0 var(--space-sm);
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .step-body {
+            padding: var(--space-md);
+        }
+
+        .type-card {
+            padding: var(--space-md);
+        }
+    }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="report-container">
     <!-- Page Header -->
-    <div class="mb-4">
-      <h1 class="fw-bold mb-1">Report a Lost or Found Item</h1>
-      <p class="text-muted mb-0">
-        Complete all required fields marked with <span class="text-danger fw-bold">*</span>.
-        Your report will be reviewed by an admin and matched against existing records.
-      </p>
+    <div class="page-header">
+        <h1>
+            <i class="fas fa-pen"></i>
+            Report an Item
+        </h1>
+        <p>
+            Complete all required fields marked with <span class="required-star">*</span>.
+            Your report will be reviewed by an admin and matched against existing records.
+        </p>
     </div>
 
+    <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show">
-          {{ message|safe }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-      {% endfor %}
+        {% for category, message in messages %}
+            <div class="alert-modern {{ category }}">
+                <div class="alert-content">
+                    <i class="fas 
+                        {% if category == 'success' %}fa-check-circle
+                        {% elif category == 'danger' %}fa-exclamation-circle
+                        {% elif category == 'warning' %}fa-exclamation-triangle
+                        {% else %}fa-info-circle{% endif %}">
+                    </i>
+                    <span>{{ message|safe }}</span>
+                </div>
+                <button type="button" class="btn-close-modern" onclick="this.parentElement.remove()">×</button>
+            </div>
+        {% endfor %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data"
-          action="{{ url_for('items.report') }}">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ url_for('items.report') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-      <!-- STEP 1: Lost or Found -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white fw-semibold py-3">
-          <span class="badge bg-danger me-2">Step 1</span>
-          What are you reporting?
-        </div>
-        <div class="card-body py-4">
-          <p class="text-muted small mb-3">
-            Select one option below. This determines how your report is categorised.
-          </p>
-          <div class="row g-3">
-
-            <div class="col-md-6">
-              <input type="radio" class="d-none" name="type"
-                     id="type_lost" value="lost"
-                     {% if form_data.get('type') == 'lost' %}checked{% endif %} required>
-              <label class="item-type-card lost w-100 {% if form_data.get('type') == 'lost' %}selected{% endif %}"
-                     for="type_lost">
-                <span class="type-badge">✓ Selected</span>
-                <i class="bi bi-question-circle-fill type-icon"></i>
-                <div>
-                  <div class="type-title">I Lost an Item</div>
-                  <div class="type-subtitle">
-                    I had something and now I can't find it.
-                    I want to report it missing and search for it.
-                  </div>
+        <!-- STEP 1: Lost or Found -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-badge">Step 1</span>
+                <i class="fas fa-question-circle"></i>
+                What are you reporting?
+            </div>
+            <div class="step-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle" style="color: var(--dut-blue);"></i>
+                    <span>Select one option below. This determines how your report is categorised.</span>
                 </div>
-              </label>
-            </div>
 
-            <div class="col-md-6">
-              <input type="radio" class="d-none" name="type"
-                     id="type_found" value="found"
-                     {% if form_data.get('type') == 'found' %}checked{% endif %}>
-              <label class="item-type-card found w-100 {% if form_data.get('type') == 'found' %}selected{% endif %}"
-                     for="type_found">
-                <span class="type-badge">✓ Selected</span>
-                <i class="bi bi-search-heart-fill type-icon"></i>
-                <div>
-                  <div class="type-title">I Found an Item</div>
-                  <div class="type-subtitle">
-                    I found something that doesn't belong to me.
-                    I want to hand it in and help the owner find it.
-                  </div>
+                <div class="type-grid">
+                    <!-- Lost Option -->
+                    <input type="radio" class="type-radio" name="type" id="type_lost" value="lost"
+                           {% if form_data.get('type') == 'lost' %}checked{% endif %} required>
+                    <label class="type-card lost {% if form_data.get('type') == 'lost' %}selected{% endif %}" for="type_lost">
+                        <span class="type-badge-selected">
+                            <i class="fas fa-check"></i> Selected
+                        </span>
+                        <i class="fas fa-exclamation-triangle type-icon"></i>
+                        <div>
+                            <div class="type-title">I Lost an Item</div>
+                            <div class="type-subtitle">
+                                I had something and now I can't find it.
+                                I want to report it missing and search for it.
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Found Option -->
+                    <input type="radio" class="type-radio" name="type" id="type_found" value="found"
+                           {% if form_data.get('type') == 'found' %}checked{% endif %}>
+                    <label class="type-card found {% if form_data.get('type') == 'found' %}selected{% endif %}" for="type_found">
+                        <span class="type-badge-selected">
+                            <i class="fas fa-check"></i> Selected
+                        </span>
+                        <i class="fas fa-heart type-icon"></i>
+                        <div>
+                            <div class="type-title">I Found an Item</div>
+                            <div class="type-subtitle">
+                                I found something that doesn't belong to me.
+                                I want to hand it in and help the owner find it.
+                            </div>
+                        </div>
+                    </label>
                 </div>
-              </label>
-            </div>
 
-          </div>
-          <div class="form-text mt-3">
-            <i class="bi bi-info-circle text-primary"></i>
-            Not sure which to choose? If the item is currently in your possession, select
-            <strong>I Found an Item</strong>.
-          </div>
+                <div class="form-text">
+                    <i class="fas fa-info-circle" style="color: var(--dut-blue);"></i>
+                    Not sure which to choose? If the item is currently in your possession, select
+                    <strong>I Found an Item</strong>.
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- STEP 2: Item Details -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white fw-semibold py-3">
-          <span class="badge bg-danger me-2">Step 2</span>
-          Item Details
+        <!-- STEP 2: Item Details -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-badge">Step 2</span>
+                <i class="fas fa-box"></i>
+                Item Details
+            </div>
+            <div class="step-body">
+                <div class="row" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md);">
+                    <div style="grid-column: span 2 / span 2;">
+                        <label class="form-label">
+                            <i class="fas fa-tag"></i>
+                            Item Title <span class="required-star">*</span>
+                        </label>
+                        <input type="text" name="title" class="form-control"
+                               placeholder="e.g. Black Samsung Galaxy phone"
+                               value="{{ form_data.get('title', '') }}" required>
+                        <div class="form-text">
+                            <i class="fas fa-lightbulb"></i>
+                            Be specific — include brand, colour, and type.
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-layer-group"></i>
+                            Category <span class="required-star">*</span>
+                        </label>
+                        <select name="category" class="form-select" required>
+                            <option value="" disabled {% if not form_data.get('category') %}selected{% endif %}>
+                                Select a category
+                            </option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if form_data.get('category') == cat %}selected{% endif %}>
+                                    {{ cat }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Campus <span class="required-star">*</span>
+                        </label>
+                        <select name="campus" class="form-select" required>
+                            <option value="" disabled {% if not form_data.get('campus') %}selected{% endif %}>
+                                Select your campus
+                            </option>
+                            {% for c in campuses %}
+                                <option value="{{ c }}" {% if form_data.get('campus') == c %}selected{% endif %}>
+                                    {{ c }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-calendar"></i>
+                            Date of Incident
+                        </label>
+                        <input type="date" name="date_of_incident" class="form-control"
+                               value="{{ form_data.get('date_of_incident', '') }}">
+                        <div class="form-text">
+                            <i class="fas fa-clock"></i>
+                            Approximate date is fine if unsure.
+                        </div>
+                    </div>
+
+                    <div style="grid-column: span 2 / span 2;">
+                        <label class="form-label">
+                            <i class="fas fa-location-dot"></i>
+                            Specific Location
+                        </label>
+                        <input type="text" name="location" class="form-control"
+                               placeholder="e.g. Library 2nd floor, Main cafeteria, Parking lot B"
+                               value="{{ form_data.get('location', '') }}">
+                        <div class="form-text">
+                            <i class="fas fa-map-pin"></i>
+                            The more specific you are, the easier it is to find a match.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-          <div class="row g-3">
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">
-                Item Title <span class="text-danger">*</span>
-              </label>
-              <input type="text" name="title" class="form-control"
-                     placeholder="e.g. Black Samsung Galaxy phone"
-                     value="{{ form_data.get('title', '') }}" required>
-              <div class="form-text">Be specific — include brand, colour, and type.</div>
+        <!-- STEP 3: Descriptions -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-badge">Step 3</span>
+                <i class="fas fa-align-left"></i>
+                Descriptions
             </div>
+            <div class="step-body">
+                <!-- Public Description -->
+                <div style="margin-bottom: var(--space-lg);">
+                    <label class="form-label">
+                        <i class="fas fa-eye"></i>
+                        Public Description <span class="required-star">*</span>
+                    </label>
+                    <div class="info-box">
+                        <i class="fas fa-eye" style="color: var(--dut-blue);"></i>
+                        <strong>Visible to everyone.</strong>
+                        Describe the item clearly but do not include any details
+                        that only the owner would know — save those for the private field below.
+                    </div>
+                    <textarea name="public_description" class="form-control" rows="3"
+                              placeholder="Example: Black leather wallet, worn at the corners. Contains student card slot and three card compartments. Found near the library entrance."
+                              required>{{ form_data.get('public_description', '') }}</textarea>
+                </div>
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">
-                Category <span class="text-danger">*</span>
-              </label>
-              <select name="category" class="form-select" required>
-                <option value="" disabled
-                  {% if not form_data.get('category') %}selected{% endif %}>
-                  Select a category
-                </option>
-                {% for cat in categories %}
-                  <option value="{{ cat }}"
-                    {% if form_data.get('category') == cat %}selected{% endif %}>
-                    {{ cat }}
-                  </option>
-                {% endfor %}
-              </select>
+                <!-- Private Verification -->
+                <div>
+                    <label class="form-label" style="color: var(--dut-red);">
+                        <i class="fas fa-lock"></i>
+                        Private Verification Details <span class="required-star">*</span>
+                    </label>
+                    <div class="info-box private">
+                        <i class="fas fa-shield-alt" style="color: var(--dut-red);"></i>
+                        <strong>Admin eyes only — never shown publicly.</strong>
+                        Write details that only the real owner would know.
+                        This is the primary way the admin verifies that a claim is genuine.
+                    </div>
+                    <textarea name="private_verification" class="form-control" rows="4"
+                              style="border-color: var(--dut-red);"
+                              placeholder="Examples:&#10;- Serial number or IMEI&#10;- What is stored inside (receipts, specific cards, photos)&#10;- Phone wallpaper or lock screen description&#10;- Saved contact names&#10;- Unique damage, stickers, or markings&#10;- Password hint (do NOT write the actual password)"
+                              required>{{ form_data.get('private_verification', '') }}</textarea>
+                    <div class="form-text" style="color: var(--dut-red);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        The more detail you provide here, the easier it is for the admin
+                        to confirm the real owner and reject false claims.
+                    </div>
+                </div>
             </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">
-                Campus <span class="text-danger">*</span>
-              </label>
-              <select name="campus" class="form-select" required>
-                <option value="" disabled
-                  {% if not form_data.get('campus') %}selected{% endif %}>
-                  Select your campus
-                </option>
-                {% for c in campuses %}
-                  <option value="{{ c }}"
-                    {% if form_data.get('campus') == c %}selected{% endif %}>
-                    {{ c }}
-                  </option>
-                {% endfor %}
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label fw-semibold">Date of Incident</label>
-              <input type="date" name="date_of_incident" class="form-control"
-                     value="{{ form_data.get('date_of_incident', '') }}">
-              <div class="form-text">Approximate date is fine if unsure.</div>
-            </div>
-
-            <div class="col-12">
-              <label class="form-label fw-semibold">Specific Location</label>
-              <input type="text" name="location" class="form-control"
-                     placeholder="e.g. Library 2nd floor, Main cafeteria, Parking lot B"
-                     value="{{ form_data.get('location', '') }}">
-              <div class="form-text">
-                The more specific you are, the easier it is to find a match.
-              </div>
-            </div>
-
-          </div>
         </div>
-      </div>
 
-      <!-- STEP 3: Descriptions -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white fw-semibold py-3">
-          <span class="badge bg-danger me-2">Step 3</span>
-          Descriptions
-        </div>
-        <div class="card-body">
-
-          <div class="mb-4">
-            <label class="form-label fw-semibold">
-              Public Description <span class="text-danger">*</span>
-            </label>
-            <div class="alert alert-light border small py-2 mb-2">
-              <i class="bi bi-eye text-primary"></i>
-              <strong>Visible to everyone.</strong>
-              Describe the item clearly but do not include any details
-              that only the owner would know — save those for the private field below.
+        <!-- STEP 4: Photo -->
+        <div class="step-card">
+            <div class="step-header">
+                <span class="step-badge">Step 4</span>
+                <i class="fas fa-camera"></i>
+                Photo
+                <span style="font-weight: normal; opacity: 0.8; margin-left: var(--space-xs);">(optional but strongly recommended)</span>
             </div>
-            <textarea name="public_description" class="form-control" rows="3"
-                      placeholder="Example: Black leather wallet, worn at the corners. Contains student card slot and three card compartments. Found near the library entrance."
-                      required>{{ form_data.get('public_description', '') }}</textarea>
-          </div>
-
-          <div class="mb-0">
-            <label class="form-label fw-semibold text-danger">
-              <i class="bi bi-shield-lock-fill"></i>
-              Private Verification Details <span class="text-danger">*</span>
-            </label>
-            <div class="alert alert-danger bg-danger bg-opacity-10 border-danger small py-2 mb-2">
-              <i class="bi bi-lock-fill"></i>
-              <strong>Admin eyes only — never shown publicly.</strong>
-              Write details that only the real owner would know.
-              This is the primary way the admin verifies that a claim is genuine.
+            <div class="step-body">
+                <div class="file-input-wrapper">
+                    <input type="file" name="photo" class="form-control"
+                           accept=".png,.jpg,.jpeg,.gif">
+                </div>
+                <div class="form-text" style="margin-top: var(--space-sm);">
+                    <i class="fas fa-image"></i>
+                    A clear photo significantly increases the chance of a successful match.
+                    Max 16MB. PNG, JPG, or GIF.
+                </div>
             </div>
-            <textarea name="private_verification" class="form-control border-danger" rows="4"
-                      placeholder="Examples:&#10;- Serial number or IMEI&#10;- What is stored inside (receipts, specific cards, photos)&#10;- Phone wallpaper or lock screen description&#10;- Saved contact names&#10;- Unique damage, stickers, or markings&#10;- Password hint (do NOT write the actual password)"
-                      required>{{ form_data.get('private_verification', '') }}</textarea>
-            <div class="form-text text-danger mt-1">
-              The more detail you provide here, the easier it is for the admin
-              to confirm the real owner and reject false claims.
-            </div>
-          </div>
-
         </div>
-      </div>
 
-      <!-- STEP 4: Photo -->
-      <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white fw-semibold py-3">
-          <span class="badge bg-secondary me-2">Step 4</span>
-          Photo
-          <span class="text-muted fw-normal small ms-1">(optional but strongly recommended)</span>
+        <!-- Submit -->
+        <div style="margin-bottom: var(--space-xl);">
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                Submit Report
+            </button>
+            <p class="submit-note">
+                <i class="fas fa-info-circle"></i>
+                Once submitted, you will receive a unique reference number to track your report.
+            </p>
         </div>
-        <div class="card-body">
-          <input type="file" name="photo" class="form-control"
-                 accept=".png,.jpg,.jpeg,.gif">
-          <div class="form-text mt-2">
-            <i class="bi bi-image"></i>
-            A clear photo significantly increases the chance of a successful match.
-            Max 16MB. PNG, JPG, or GIF.
-          </div>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <div class="d-grid mb-5">
-        <button type="submit" class="btn btn-danger btn-lg fw-semibold py-3">
-          <i class="bi bi-send-fill me-2"></i> Submit Report
-        </button>
-        <p class="text-center text-muted small mt-2">
-          Once submitted, you will receive a unique reference number to track your report.
-        </p>
-      </div>
-
     </form>
-  </div>
+
+    <!-- Color Dots -->
+    <div class="dots">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+    </div>
 </div>
 
-<style>
-  .item-type-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem;
-    border: 2px solid #dee2e6;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    position: relative;
-    background: white;
-    margin: 0;
-  }
-
-  .item-type-card.lost:hover {
-    border-color: #ffc107;
-    background-color: #fff9e6;
-  }
-
-  .item-type-card.found:hover {
-    border-color: #198754;
-    background-color: #f0fff4;
-  }
-
-  .item-type-card.selected.lost {
-    border-color: #ffc107;
-    background-color: #fff9e6;
-    box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
-  }
-
-  .item-type-card.selected.found {
-    border-color: #198754;
-    background-color: #f0fff4;
-    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
-  }
-
-  .type-badge {
-    position: absolute;
-    top: -10px;
-    right: 10px;
-    color: white;
-    font-size: 0.7rem;
-    font-weight: bold;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .item-type-card.selected.lost .type-badge {
-    background: #ffc107;
-    color: #000;
-    opacity: 1;
-  }
-
-  .item-type-card.selected.found .type-badge {
-    background: #198754;
-    opacity: 1;
-  }
-
-  .type-icon {
-    font-size: 2rem;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .item-type-card.lost .type-icon { color: #ffc107; }
-  .item-type-card.found .type-icon { color: #198754; }
-
-  .type-title {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .type-subtitle {
-    font-size: 0.82rem;
-    color: #6c757d;
-    line-height: 1.4;
-  }
-</style>
-{% endblock %}
-
-{% block scripts %}
 <script>
-  function selectTypeCard(radioId) {
-    // Remove selected from all cards
-    document.querySelectorAll('.item-type-card').forEach(function(card) {
-      card.classList.remove('selected');
-    });
-    // Add selected to the label linked to this radio
-    var label = document.querySelector('label[for="' + radioId + '"]');
-    if (label) {
-      label.classList.add('selected');
+    function selectTypeCard(radioId) {
+        document.querySelectorAll('.type-card').forEach(function(card) {
+            card.classList.remove('selected');
+        });
+        var label = document.querySelector('label[for="' + radioId + '"]');
+        if (label) {
+            label.classList.add('selected');
+        }
     }
-  }
 
-  // Wire up change events
-  document.querySelectorAll('input[name="type"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-      selectTypeCard(this.id);
+    document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            selectTypeCard(this.id);
+        });
     });
-  });
 
-  // On page load — highlight whichever is already checked (after validation fail)
-  document.addEventListener('DOMContentLoaded', function() {
-    var checked = document.querySelector('input[name="type"]:checked');
-    if (checked) {
-      selectTypeCard(checked.id);
-    }
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        var checked = document.querySelector('input[name="type"]:checked');
+        if (checked) {
+            selectTypeCard(checked.id);
+        }
+    });
 </script>
 {% endblock %}

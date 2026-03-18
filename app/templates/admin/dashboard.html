@@ -1,1138 +1,277 @@
-﻿{% extends "base.html" %}
-{% block title %}Admin Dashboard — DUT Lost & Found{% endblock %}
-
-{% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    :root {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
-        
-        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
-        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
-        
-        --bg-light: #f8faff;
-        --text-dark: #1a1a1a;
-        --text-muted: #5D6D7E;
-        --border-light: rgba(122,180,182,0.2);
-        
-        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
-        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
-        
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --border-radius: 24px;
-        --border-radius-sm: 16px;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-        color: var(--text-dark);
-        min-height: 100vh;
-        padding: 2rem 0;
-    }
-
-    .dashboard {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-
-    /* Creative Header with DUT Colors */
-    .dashboard-header {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .dashboard-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
-    }
-
-    .header-left {
-        position: relative;
-    }
-
-    .greeting {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        color: var(--dut-teal);
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .greeting span {
-        width: 30px;
-        height: 2px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue));
-    }
-
-    .dashboard-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 0.25rem;
-    }
-
-    .dashboard-title span {
-        color: var(--dut-purple);
-        font-weight: 800;
-    }
-
-    .welcome-text {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .welcome-text i {
-        color: var(--dut-green);
-    }
-
-    .admin-profile {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .notification-badge {
-        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
-        color: white;
-        padding: 0.6rem 1.2rem;
-        border-radius: 40px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: var(--shadow-sm);
-        border: 2px solid white;
-    }
-
-    .notification-badge i {
-        color: rgba(255,255,255,0.9);
-    }
-
-    .admin-avatar {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 1.2rem;
-        border: 3px solid white;
-        box-shadow: var(--shadow-md);
-    }
-
-    /* Creative Alerts with DUT Colors */
-    .alerts-container {
-        margin-bottom: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .alert-modern {
-        background: white;
-        border-radius: var(--border-radius-sm);
-        padding: 1rem 1.5rem;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-light);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .alert-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-    }
-
-    .alert-modern.success::before { background: var(--dut-green); }
-    .alert-modern.danger::before { background: var(--dut-red); }
-    .alert-modern.warning::before { background: var(--dut-orange); }
-    .alert-modern.info::before { background: var(--dut-blue); }
-
-    .alert-content {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .alert-content i {
-        font-size: 1.1rem;
-    }
-
-    .alert-content.success i { color: var(--dut-green); }
-    .alert-content.danger i { color: var(--dut-red); }
-    .alert-content.warning i { color: var(--dut-orange); }
-    .alert-content.info i { color: var(--dut-blue); }
-
-    .alert-close {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: 1px solid var(--border-light);
-        background: transparent;
-        color: var(--text-muted);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: var(--transition);
-    }
-
-    .alert-close:hover {
-        background: var(--dut-red);
-        color: white;
-        border-color: var(--dut-red);
-    }
-
-    /* Stats Grid with DUT Colors */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 1.25rem;
-        margin-bottom: 2.5rem;
-    }
-
-    @media (max-width: 1024px) {
-        .stats-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (max-width: 640px) {
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    .stat-card {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 1.5rem 1rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .stat-card::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
-        transform: scaleX(0);
-        transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover::after {
-        transform: scaleX(1);
-    }
-
-    .stat-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-    }
-
-    .stat-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: var(--border-radius-sm);
-        background: linear-gradient(135deg, rgba(83,112,163,0.1), rgba(129,37,117,0.1));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-    }
-
-    .stat-icon i {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .stat-trend {
-        font-size: 0.7rem;
-        padding: 0.25rem 0.5rem;
-        border-radius: 30px;
-        background: var(--dut-teal);
-        color: white;
-        opacity: 0.8;
-    }
-
-    .stat-value {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 0.25rem;
-    }
-
-    .stat-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .stat-label span {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-    }
-
-    .stat-card:nth-child(1) .stat-label span { background: var(--dut-red); }
-    .stat-card:nth-child(2) .stat-label span { background: var(--dut-blue); }
-    .stat-card:nth-child(3) .stat-label span { background: var(--dut-green); }
-    .stat-card:nth-child(4) .stat-label span { background: var(--dut-purple); }
-    .stat-card:nth-child(5) .stat-label span { background: var(--dut-teal); }
-    .stat-card:nth-child(6) .stat-label span { background: var(--dut-orange); }
-
-    /* Quick Actions with DUT Colors */
-    .actions-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1.25rem;
-        margin-bottom: 2.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .actions-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    .action-card {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 1.5rem;
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        text-decoration: none;
-        color: var(--text-dark);
-        transition: var(--transition);
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .action-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--dut-blue);
-    }
-
-    .action-card.primary {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-    }
-
-    .action-card.primary .action-icon {
-        background: rgba(255,255,255,0.2);
-        color: white;
-    }
-
-    .action-card.primary .action-subtitle {
-        color: rgba(255,255,255,0.8);
-    }
-
-    .action-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: var(--border-radius-sm);
-        background: linear-gradient(135deg, rgba(83,112,163,0.1), rgba(129,37,117,0.1));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.3rem;
-    }
-
-    .action-icon i {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .action-card.primary .action-icon i {
-        background: white;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .action-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-
-    .action-title {
-        font-weight: 600;
-        font-size: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .action-badge {
-        background: var(--dut-red);
-        color: white;
-        padding: 0.2rem 0.6rem;
-        border-radius: 30px;
-        font-size: 0.7rem;
-        font-weight: 600;
-    }
-
-    .action-subtitle {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-    }
-
-    /* Section Headers */
-    .section-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1.5rem;
-    }
-
-    .section-header h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .section-header h2 i {
-        color: var(--dut-red);
-        font-size: 1.3rem;
-    }
-
-    .view-all {
-        color: var(--dut-blue);
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border: 1px solid var(--border-light);
-        border-radius: 30px;
-        transition: var(--transition);
-    }
-
-    .view-all:hover {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-        border-color: transparent;
-    }
-
-    /* Table with DUT Colors */
-    .table-container {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 0.25rem 0;
-        box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        margin-bottom: 3rem;
-    }
-
-    .table-header {
-        display: grid;
-        grid-template-columns: 2fr 1fr 2fr 1.5fr 1fr 1fr;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-        font-weight: 600;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .table-row {
-        display: grid;
-        grid-template-columns: 2fr 1fr 2fr 1.5fr 1fr 1fr;
-        gap: 1rem;
-        padding: 1rem 1.5rem;
-        align-items: center;
-        border-bottom: 1px solid var(--border-light);
-        transition: var(--transition);
-    }
-
-    .table-row:hover {
-        background: linear-gradient(135deg, rgba(83,112,163,0.05), rgba(129,37,117,0.05));
-    }
-
-    .item-title {
-        font-weight: 500;
-        color: var(--text-dark);
-    }
-
-    .ref-badge {
-        background: linear-gradient(135deg, rgba(209,31,45,0.1), rgba(255,165,0,0.1));
-        color: var(--dut-red);
-        padding: 0.25rem 0.75rem;
-        border-radius: 30px;
-        font-size: 0.8rem;
-        font-family: monospace;
-        font-weight: 600;
-        display: inline-block;
-    }
-
-    .claimant-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .claimant-name {
-        font-weight: 500;
-        color: var(--text-dark);
-    }
-
-    .claimant-email {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-    }
-
-    .date-cell {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
-
-    .status-badge {
-        padding: 0.35rem 1rem;
-        border-radius: 30px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .status-badge.pending {
-        background: rgba(255, 165, 0, 0.15);
-        color: var(--dut-orange);
-        border: 1px solid rgba(255, 165, 0, 0.3);
-    }
-
-    .status-badge.approved {
-        background: rgba(28, 132, 65, 0.15);
-        color: var(--dut-green);
-        border: 1px solid rgba(28, 132, 65, 0.3);
-    }
-
-    .status-badge.rejected {
-        background: rgba(209, 31, 45, 0.15);
-        color: var(--dut-red);
-        border: 1px solid rgba(209, 31, 45, 0.3);
-    }
-
-    .action-btn {
-        background: transparent;
-        border: 1px solid var(--border-light);
-        color: var(--dut-blue);
-        padding: 0.4rem 1rem;
-        border-radius: 30px;
-        font-size: 0.8rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        transition: var(--transition);
-    }
-
-    .action-btn:hover {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-        border-color: transparent;
-    }
-
-    /* Empty State with DUT Colors */
-    .empty-state {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 4rem 2rem;
-        text-align: center;
-        box-shadow: var(--shadow-md);
-        border: 2px dashed var(--border-light);
-        margin-bottom: 2rem;
-    }
-
-    .empty-state i {
-        font-size: 4rem;
-        background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 1.5rem;
-    }
-
-    .empty-state h3 {
-        font-size: 1.3rem;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .empty-state p {
-        color: var(--text-muted);
-        max-width: 300px;
-        margin: 0 auto;
-    }
-
-    /* Color Dots Footer */
-    .color-bar {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        margin-top: 3rem;
-        padding-top: 2rem;
-        border-top: 1px solid var(--border-light);
-    }
-    
-    .color-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        animation: subtlePulse 3s infinite;
-    }
-    
-    .color-dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
-    .color-dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
-    .color-dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
-    .color-dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
-    .color-dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
-    .color-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
-    
-    @keyframes subtlePulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .dashboard {
-            padding: 0 1rem;
-        }
-
-        .dashboard-header {
-            flex-direction: column;
-            gap: 1.5rem;
-            text-align: center;
-        }
-
-        .dashboard-title {
-            font-size: 2rem;
-        }
-
-        .greeting {
-            justify-content: center;
-        }
-
-        .table-header, .table-row {
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-        }
-
-        .table-header {
-            display: none;
-        }
-
-        .table-row {
-            padding: 1rem;
-        }
-
-        .color-bar {
-            flex-wrap: wrap;
-        }
-    }
-</style>
-
-<!-- Load Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<div class="dashboard">
-    <!-- Header with DUT Colors -->
-    <header class="dashboard-header">
-        <div class="header-left">
-            <div class="greeting">
-                <span></span>
-                ADMIN DASHBOARD
-                <span></span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard · DUT Lost & Found</title>
+
+    <!-- same fonts / icons / root as original -->
+   <link rel="stylesheet" href="../css/admindashboard.css"> <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+   
+</head>
+<body>
+    <!-- top strip (identical to original) -->
+    <div class="top-strip">
+        <div class="top-strip-inner">
+            <div class="top-strip-left">
+                <span><i class="fas fa-shield-alt"></i> Official DUT Student & Staff Platform</span>
+                <span class="top-dot"></span>
+                <span><i class="fas fa-lock"></i> Secure Claim Verification</span>
             </div>
-            <h1 class="dashboard-title">
-                Welcome back, <span>{{ current_user.name.split()[0] }}</span>
-            </h1>
-            <div class="welcome-text">
-                <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-                DUT Lost & Found Portal
+            <div class="top-strip-right">
+                <span><i class="fas fa-map-marker-alt"></i> Steve Biko Campus</span>
+                <span><i class="fas fa-envelope"></i> lostfound@dut.ac.za</span>
             </div>
         </div>
-        <div class="admin-profile">
-            {% if unread_count > 0 %}
-                <div class="notification-badge">
-                    <i class="fas fa-bell"></i>
-                    {{ unread_count }} new
+    </div>
+
+    <!-- navbar (same original) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT Logo" onerror="this.style.display='none';">
+                <div class="logo-text">
+                    <div class="logo-title">DUT Lost & Found</div>
+                    <div class="logo-subtitle">Official Campus Recovery Portal</div>
                 </div>
-            {% endif %}
-            <div class="admin-avatar">
-                {{ current_user.name[0] }}
+            </div>
+            
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="dashboard-container">
+        <!-- header with unread badge -->
+        <div class="header-flex">
+            <div class="header-title">
+                <h3 class="fw-bold mb-0">Admin Dashboard</h3>
+                <p class="text-muted mb-0">Welcome, Sarah Khumalo</p>
+            </div>
+            <span class="badge bg-danger fs-6"><i class="fas fa-bell"></i> 3 unread</span>
+        </div>
+
+        <!-- flash message demo -->
+        <div class="alert alert-info alert-dismissible fade show">
+            <span><i class="fas fa-info-circle"></i> System running smoothly. 3 pending claims.</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- stats row -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-danger mb-0">7</h2>
+                        <p class="small text-muted mb-0">Pending Claims</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-primary mb-0">12</h2>
+                        <p class="small text-muted mb-0">Open Items</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-success mb-0">9</h2>
+                        <p class="small text-muted mb-0">Approved</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-secondary mb-0">5</h2>
+                        <p class="small text-muted mb-0">Closed Items</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-dark mb-0">24</h2>
+                        <p class="small text-muted mb-0">Total Items</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="card text-center border-0 shadow-sm h-100">
+                    <div class="card-body py-3">
+                        <h2 class="fw-bold text-info mb-0">156</h2>
+                        <p class="small text-muted mb-0">Students</p>
+                    </div>
+                </div>
             </div>
         </div>
-    </header>
+      <br/>
 
-    <!-- Alerts with DUT Colors -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="alerts-container">
-                {% for category, message in messages %}
-                    <div class="alert-modern {{ category }}">
-                        <div class="alert-content {{ category }}">
-                            <i class="fas 
-                                {% if category == 'success' %}fa-check-circle
-                                {% elif category == 'danger' %}fa-exclamation-circle
-                                {% elif category == 'warning' %}fa-exclamation-triangle
-                                {% else %}fa-info-circle{% endif %}">
-                            </i>
-                            <span>{{ message }}</span>
+        <!-- Quick Actions -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <a href="claims_list.html" class="btn btn-danger w-100 py-2">
+                    <i class="fas fa-hourglass-half"></i> Review Claims
+                    <span class="badge bg-white text-danger ms-1">7</span>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="#" class="btn btn-outline-dark w-100 py-2">
+                    <i class="fas fa-link"></i> Create Match
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="manage_items.html" class="btn btn-outline-dark w-100 py-2">
+                    <i class="fas fa-boxes"></i> Manage Items
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="manage_users.html" class="btn btn-outline-dark w-100 py-2">
+                    <i class="fas fa-users"></i> Manage Users
+                </a>
+            </div>
+        </div>
+      <br/>
+      <br/>
+        <!-- Intelligent Matching System Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0"><i class="fas fa-robot"></i> Intelligent Matching System</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <a href="#" class="btn btn-outline-danger w-100 py-3" onclick="return confirm('Run auto-matching now?')">
+                                    <i class="fas fa-play-circle"></i> Run Auto-Match
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="#" class="btn btn-outline-danger w-100 py-3">
+                                    <i class="fas fa-th-large"></i> Browse Items to Match
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="matches/view.html" class="btn btn-outline-danger w-100 py-3">
+                                    <i class="fas fa-link"></i> View Recent Matches
+                                </a>
+                            </div>
                         </div>
-                        <button class="alert-close" onclick="this.parentElement.remove()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Stats Grid with DUT Colors -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-hourglass-half"></i>
-                </div>
-                <span class="stat-trend">active</span>
-            </div>
-            <div class="stat-value">{{ stats.pending_claims }}</div>
-            <div class="stat-label">
-                <span></span> Pending Claims
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-folder-open"></i>
-                </div>
-                <span class="stat-trend">open</span>
-            </div>
-            <div class="stat-value">{{ stats.open_items }}</div>
-            <div class="stat-label">
-                <span></span> Open Items
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <span class="stat-trend">resolved</span>
-            </div>
-            <div class="stat-value">{{ stats.approved_claims }}</div>
-            <div class="stat-label">
-                <span></span> Approved
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-archive"></i>
-                </div>
-                <span class="stat-trend">closed</span>
-            </div>
-            <div class="stat-value">{{ stats.closed_items }}</div>
-            <div class="stat-label">
-                <span></span> Closed Items
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-cube"></i>
-                </div>
-                <span class="stat-trend">total</span>
-            </div>
-            <div class="stat-value">{{ stats.total_items }}</div>
-            <div class="stat-label">
-                <span></span> Total Items
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-header">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <span class="stat-trend">users</span>
-            </div>
-            <div class="stat-value">{{ stats.total_users }}</div>
-            <div class="stat-label">
-                <span></span> Total Users
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions with DUT Colors -->
-    <div class="actions-grid">
-        <a href="{{ url_for('admin.claims_list', status='pending') }}" class="action-card primary">
-            <div class="action-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <div class="action-content">
-                <div class="action-title">
-                    Review Claims
-                    {% if stats.pending_claims > 0 %}
-                        <span class="action-badge">{{ stats.pending_claims }}</span>
-                    {% endif %}
-                </div>
-                <div class="action-subtitle">Pending approvals</div>
-            </div>
-        </a>
-        <a href="{{ url_for('admin.create_match') }}" class="action-card">
-            <div class="action-icon">
-                <i class="fas fa-link"></i>
-            </div>
-            <div class="action-content">
-                <div class="action-title">Create Match</div>
-                <div class="action-subtitle">Connect items</div>
-            </div>
-        </a>
-        <a href="{{ url_for('admin.manage_items') }}" class="action-card">
-            <div class="action-icon">
-                <i class="fas fa-boxes"></i>
-            </div>
-            <div class="action-content">
-                <div class="action-title">Manage Items</div>
-                <div class="action-subtitle">Inventory control</div>
-            </div>
-        </a>
-        <a href="{{ url_for('admin.manage_users') }}" class="action-card">
-            <div class="action-icon">
-                <i class="fas fa-user-cog"></i>
-            </div>
-            <div class="action-content">
-                <div class="action-title">Manage Users</div>
-                <div class="action-subtitle">User administration</div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Recent Claims Section -->
-    <div class="section-header">
-        <h2>
-            <i class="fas fa-history"></i>
-            Recent Claims
-        </h2>
-        <a href="{{ url_for('admin.claims_list') }}" class="view-all">
-            View All <i class="fas fa-arrow-right"></i>
-        </a>
-    </div>
-
-    {% if recent_claims %}
-        <div class="table-container">
-            <div class="table-header">
-                <div>Item</div>
-                <div>Reference</div>
-                <div>Claimant</div>
-                <div>Submitted</div>
-                <div>Status</div>
-                <div>Action</div>
-            </div>
-            {% for claim in recent_claims %}
-                <div class="table-row">
-                    <div class="item-title">{{ claim.item.title }}</div>
-                    <div><span class="ref-badge">{{ claim.item.reference_number }}</span></div>
-                    <div class="claimant-info">
-                        <span class="claimant-name">{{ claim.claimant.name }}</span>
-                        <span class="claimant-email">{{ claim.claimant.email }}</span>
-                    </div>
-                    <div class="date-cell">{{ claim.created_at.strftime('%d %b %Y') }}</div>
-                    <div>
-                        <span class="status-badge {{ claim.status }}">{{ claim.status|capitalize }}</span>
-                    </div>
-                    <div>
-                        <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}" class="action-btn">
-                            <i class="fas fa-eye"></i>
-                            {% if claim.status == 'pending' %}Review{% else %}View{% endif %}
-                        </a>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="fas fa-info-circle"></i> 
+                            The matching algorithm compares lost and found items based on category, campus, 
+                            title similarity, description keywords, and date proximity. Scores above 70% are 
+                            flagged for admin review.
+                        </p>
                     </div>
                 </div>
-            {% endfor %}
+            </div>
         </div>
-    {% else %}
-        <div class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <h3>No claims yet</h3>
-            <p>Claims will appear here when users submit them</p>
+
+        <!-- Recent Claims -->
+        <h5 class="fw-semibold mb-3">Recent Claims</h5>
+        <div class="table-responsive mb-5">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Item</th>
+                        <th>Reference</th>
+                        <th>Claimant</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="fw-semibold">MacBook Pro 14"</td>
+                        <td class="font-monospace small text-danger">DUT-L-2405-189</td>
+                        <td>Thabo Ndlovu<br><small class="text-muted">thabo.n@dut4life.ac.za</small></td>
+                        <td class="small text-muted">14 May 2026</td>
+                        <td><span class="badge bg-warning">Pending</span></td>
+                        <td><a href="#" class="btn btn-sm btn-outline-danger">Review</a></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-semibold">Student ID Card</td>
+                        <td class="font-monospace small text-danger">DUT-L-2405-176</td>
+                        <td>Priya Singh<br><small class="text-muted">priya.s@dut4life.ac.za</small></td>
+                        <td class="small text-muted">13 May 2026</td>
+                        <td><span class="badge bg-success">Approved</span></td>
+                        <td><a href="#" class="btn btn-sm btn-outline-danger">View</a></td>
+                    </tr>
+                    <tr>
+                        <td class="fw-semibold">Water Bottle (black)</td>
+                        <td class="font-monospace small text-danger">DUT-F-2405-142</td>
+                        <td>John Mokoena<br><small class="text-muted">john.m@dut4life.ac.za</small></td>
+                        <td class="small text-muted">12 May 2026</td>
+                        <td><span class="badge bg-danger">Rejected</span></td>
+                        <td><a href="#" class="btn btn-sm btn-outline-danger">View</a></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-    {% endif %}
+    </div>
 
-    <!-- Color Bar - All DUT Colors -->
-    <div class="color-bar">
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-    </div>
-</div>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ category }} alert-dismissible fade show">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-  {% endfor %}
-{% endwith %}
-
-<!-- Stats -->
-<div class="row g-3 mb-4">
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-danger mb-0">{{ stats.pending_claims }}</h2>
-        <p class="small text-muted mb-0">Pending Claims</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-primary mb-0">{{ stats.open_items }}</h2>
-        <p class="small text-muted mb-0">Open Items</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-success mb-0">{{ stats.approved_claims }}</h2>
-        <p class="small text-muted mb-0">Approved</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-secondary mb-0">{{ stats.closed_items }}</h2>
-        <p class="small text-muted mb-0">Closed Items</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-dark mb-0">{{ stats.total_items }}</h2>
-        <p class="small text-muted mb-0">Total Items</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-md-2">
-    <div class="card text-center border-0 shadow-sm h-100">
-      <div class="card-body py-3">
-        <h2 class="fw-bold text-info mb-0">{{ stats.total_users }}</h2>
-        <p class="small text-muted mb-0">Students</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Quick Actions -->
-<div class="row g-3 mb-4">
-  <div class="col-md-3">
-    <a href="{{ url_for('admin.claims_list', status='pending') }}"
-       class="btn btn-danger w-100 py-2">
-      <i class="bi bi-hourglass-split"></i> Review Claims
-      {% if stats.pending_claims > 0 %}
-        <span class="badge bg-white text-danger ms-1">{{ stats.pending_claims }}</span>
-      {% endif %}
-    </a>
-  </div>
-  <div class="col-md-3">
-    <a href="{{ url_for('admin.create_match') }}"
-       class="btn btn-outline-dark w-100 py-2">
-      <i class="bi bi-link-45deg"></i> Create Match
-    </a>
-  </div>
-  <div class="col-md-3">
-    <a href="{{ url_for('admin.manage_items') }}"
-       class="btn btn-outline-dark w-100 py-2">
-      <i class="bi bi-box-seam"></i> Manage Items
-    </a>
-  </div>
-  <div class="col-md-3">
-    <a href="{{ url_for('admin.manage_users') }}"
-       class="btn btn-outline-dark w-100 py-2">
-      <i class="bi bi-people"></i> Manage Users
-    </a>
-  </div>
-</div>
-
-<!-- Intelligent Matching System Section -->
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="card border-danger">
-      <div class="card-header bg-danger text-white">
-        <h5 class="mb-0"><i class="bi bi-robot"></i> Intelligent Matching System</h5>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('matching.run_auto_match') }}" 
-               class="btn btn-outline-danger w-100 py-3"
-               onclick="return confirm('Run auto-matching now? This will scan all open items for potential matches.')">
-              <i class="bi bi-play-circle-fill"></i> Run Auto-Match
-            </a>
-          </div>
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('admin.manage_items') }}" 
-               class="btn btn-outline-danger w-100 py-3">
-              <i class="bi bi-grid-3x3-gap-fill"></i> Browse Items to Match
-            </a>
-          </div>
-          <div class="col-md-4 mb-2">
-            <a href="{{ url_for('matching.admin_view_matches', item_id=1) }}" 
-               class="btn btn-outline-danger w-100 py-3">
-              <i class="bi bi-link-45deg"></i> View Recent Matches
-            </a>
-          </div>
+    <!-- FOOTER (exact from original) -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT" class="footer-logo" onerror="this.style.display='none';">
+                <p>Your official lost and found portal, designed to reconnect students and staff with their belongings through a secure and reliable campus process.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                    <h4 class="footer-heading">Quick Links</h4>
+                  <ul class="footer-links">
+                    <li><a href="manage_items.html"><i class="fas fa-search"></i> Browse Items</a></li>
+                    <li><a href="manage_users.html"><i class="fas fa-users"></i> Browse Users</a></li>
+                    <li><a href="matches/view.html"><i class="fas fa-box-open"></i> View Matches</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-clipboard-list"></i> Dashboard</a></li>
+                  </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Get in Touch</h4>
+                <div class="footer-contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div><strong>Steve Biko Campus</strong><br />Main Administration</div>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>+27 (0)31 373 1234</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>lostfound@dut.ac.za</span>
+                </div>
+            </div>
         </div>
-        <p class="text-muted small mt-3 mb-0">
-          <i class="bi bi-info-circle"></i> 
-          The matching algorithm compares lost and found items based on category, campus, 
-          title similarity, description keywords, and date proximity. Scores above 70% are 
-          flagged for admin review.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Recent Claims -->
-<h5 class="fw-semibold mb-3">Recent Claims</h5>
-{% if recent_claims %}
-  <div class="table-responsive mb-5">
-    <table class="table table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Item</th>
-          <th>Reference</th>
-          <th>Claimant</th>
-          <th>Submitted</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for claim in recent_claims %}
-          <tr>
-            <td class="fw-semibold">{{ claim.item.title }}</td>
-            <td class="font-monospace small text-danger">
-              {{ claim.item.reference_number }}
-            </td>
-            <td>
-              {{ claim.claimant.name }}<br>
-              <small class="text-muted">{{ claim.claimant.email }}</small>
-            </td>
-            <td class="small text-muted">
-              {{ claim.created_at.strftime('%d %b %Y') }}
-            </td>
-            <td>
-              <span class="badge
-                {% if claim.status == 'pending' %}bg-warning text-dark
-                {% elif claim.status == 'approved' %}bg-success
-                {% else %}bg-danger{% endif %}">
-                {{ claim.status|capitalize }}
-              </span>
-            </td>
-            <td>
-              <a href="{{ url_for('admin.review_claim', claim_id=claim.id) }}"
-                 class="btn btn-sm btn-outline-danger">
-                {% if claim.status == 'pending' %}Review{% else %}View{% endif %}
-              </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-{% else %}
-  <div class="alert alert-light border">No claims yet.</div>
-{% endif %}
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
->>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
-{% endblock %}
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <div>DUT Lost & Found Portal © 2026 — Durban University of Technology</div>
+                <div><span class="envision-tag">ENVISION2030</span></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

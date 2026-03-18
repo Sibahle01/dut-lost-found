@@ -1,1000 +1,260 @@
-﻿{% extends "base.html" %}
-{% block title %}Review Claim — Admin{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Review Claim #1245 · Admin · DUT Lost & Found</title>
 
-{% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    <!-- same fonts / icons / root as original, plus minimal bootstrap-like utilities, all styled with DUT tokens -->
+    <link rel="stylesheet" href="../css/reviewclaim.css"> <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     
-    :root {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
-        
-        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
-        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
-        
-        --bg-light: #f8faff;
-        --text-dark: #1a1a1a;
-        --text-muted: #5D6D7E;
-        --border-light: rgba(122,180,182,0.2);
-        
-        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
-        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
-        
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --border-radius: 20px;
-        --border-radius-sm: 12px;
-        
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 1rem;
-        --spacing-md: 1.5rem;
-        --spacing-lg: 2rem;
-        --spacing-xl: 3rem;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-        color: var(--text-dark);
-        min-height: 100vh;
-        padding: var(--spacing-lg) 0;
-    }
-
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 var(--spacing-lg);
-    }
-
-    /* Header Section */
-    .page-header {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: var(--spacing-md) var(--spacing-lg);
-        margin-bottom: var(--spacing-lg);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-md);
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
-    }
-
-    .back-btn {
-        background: white;
-        border: 1px solid var(--border-light);
-        color: var(--text-muted);
-        padding: 0.6rem 1.2rem;
-        border-radius: 40px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: var(--transition);
-        white-space: nowrap;
-    }
-
-    .back-btn:hover {
-        background: var(--dut-blue);
-        color: white;
-        border-color: var(--dut-blue);
-        transform: translateX(-3px);
-    }
-
-    .header-title {
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-md);
-        flex: 1;
-        flex-wrap: wrap;
-    }
-
-    .header-title h3 {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin: 0;
-        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .status-badge-large {
-        padding: 0.5rem 1.5rem;
-        border-radius: 40px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        white-space: nowrap;
-    }
-
-    .status-badge-large.pending {
-        background: rgba(255, 165, 0, 0.15);
-        color: var(--dut-orange);
-        border: 1px solid rgba(255, 165, 0, 0.3);
-    }
-
-    .status-badge-large.approved {
-        background: rgba(28, 132, 65, 0.15);
-        color: var(--dut-green);
-        border: 1px solid rgba(28, 132, 65, 0.3);
-    }
-
-    .status-badge-large.rejected {
-        background: rgba(209, 31, 45, 0.15);
-        color: var(--dut-red);
-        border: 1px solid rgba(209, 31, 45, 0.3);
-    }
-
-    /* Alerts */
-    .alert-modern {
-        background: white;
-        border-radius: var(--border-radius-sm);
-        padding: var(--spacing-sm) var(--spacing-md);
-        margin-bottom: var(--spacing-md);
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border-light);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-sm);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .alert-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 4px;
-        height: 100%;
-    }
-
-    .alert-modern.success::before { background: var(--dut-green); }
-    .alert-modern.danger::before { background: var(--dut-red); }
-    .alert-modern.warning::before { background: var(--dut-orange); }
-    .alert-modern.info::before { background: var(--dut-blue); }
-
-    .alert-modern i {
-        font-size: 1.2rem;
-    }
-
-    .alert-modern.success i { color: var(--dut-green); }
-    .alert-modern.danger i { color: var(--dut-red); }
-    .alert-modern.warning i { color: var(--dut-orange); }
-    .alert-modern.info i { color: var(--dut-blue); }
-
-    /* Two Column Layout */
-    .two-column {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: var(--spacing-lg);
-        margin-bottom: var(--spacing-xl);
-    }
-
-    @media (max-width: 992px) {
-        .two-column {
-            grid-template-columns: 1fr;
-            gap: var(--spacing-md);
-        }
-    }
-
-    /* Cards */
-    .custom-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        transition: var(--transition);
-        height: fit-content;
-        position: relative;
-        margin-bottom: var(--spacing-md);
-    }
-
-    .custom-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    .custom-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
-    }
-
-    .card-header-custom {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-weight: 600;
-        font-size: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .card-header-custom i {
-        font-size: 1.2rem;
-        opacity: 0.9;
-    }
-
-    .card-header-custom.dark {
-        background: linear-gradient(135deg, #2c3e50, #34495e);
-    }
-
-    .card-header-custom.warning {
-        background: linear-gradient(135deg, var(--dut-orange), #ffb52e);
-        color: var(--text-dark);
-    }
-
-    .card-body-custom {
-        padding: var(--spacing-md);
-    }
-
-    /* Image */
-    .evidence-image {
-        width: 100%;
-        border-radius: var(--border-radius-sm);
-        border: 2px solid var(--border-light);
-        box-shadow: var(--shadow-sm);
-        margin-bottom: var(--spacing-md);
-        max-height: 200px;
-        object-fit: contain;
-        background: var(--bg-light);
-    }
-
-    /* Tables */
-    .info-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-
-    .info-table tr {
-        border-bottom: 1px solid var(--border-light);
-    }
-
-    .info-table tr:last-child {
-        border-bottom: none;
-    }
-
-    .info-table td {
-        padding: 0.75rem 0;
-    }
-
-    .info-table .label {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        width: 35%;
-        vertical-align: top;
-    }
-
-    .info-table .label i {
-        width: 1.2rem;
-        color: var(--dut-teal);
-        margin-right: 0.3rem;
-    }
-
-    .info-table .value {
-        color: var(--text-dark);
-        font-weight: 500;
-    }
-
-    .info-table .reference-value {
-        font-family: 'SF Mono', monospace;
-        color: var(--dut-red);
-        font-weight: 600;
-    }
-
-    /* Description Box */
-    .description-box {
-        background: var(--bg-light);
-        border: 1px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        padding: var(--spacing-sm);
-        margin-top: var(--spacing-sm);
-        color: var(--text-dark);
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    .section-label {
-        color: var(--text-muted);
-        font-size: 0.85rem;
-        margin-bottom: 0.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .section-label i {
-        color: var(--dut-teal);
-    }
-
-    /* Private Verification */
-    .private-box {
-        background: rgba(209, 31, 45, 0.05);
-        border: 2px dashed var(--dut-red);
-        border-radius: var(--border-radius-sm);
-        padding: var(--spacing-md);
-        margin-top: var(--spacing-md);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .private-box::before {
-        content: '🔒🔒🔒';
-        position: absolute;
-        top: 5px;
-        right: 10px;
-        font-size: 2rem;
-        opacity: 0.1;
-        transform: rotate(10deg);
-    }
-
-    .private-title {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--dut-red);
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.75rem;
-    }
-
-    .private-content {
-        color: var(--text-dark);
-        font-size: 0.95rem;
-        background: white;
-        padding: 0.8rem;
-        border-radius: var(--border-radius-sm);
-        border: 1px solid rgba(209,31,45,0.1);
-    }
-
-    /* Claimant Cards */
-    .claimant-card {
-        background: white;
-        border-radius: var(--border-radius);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        margin-bottom: var(--spacing-md);
-    }
-
-    .claimant-header {
-        background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));
-        color: white;
-        padding: var(--spacing-sm) var(--spacing-md);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .claimant-body {
-        padding: var(--spacing-md);
-    }
-
-    /* Decision Form */
-    .decision-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-lg);
-        border: 2px solid var(--dut-red);
-        overflow: hidden;
-        margin-top: var(--spacing-xl);
-        margin-bottom: var(--spacing-xl);
-        position: relative;
-    }
-
-    .decision-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-red), var(--dut-orange));
-    }
-
-    .decision-header {
-        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
-        color: white;
-        padding: var(--spacing-md) var(--spacing-lg);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.1rem;
-    }
-
-    .decision-body {
-        padding: var(--spacing-lg);
-    }
-
-    .radio-group {
-        display: flex;
-        gap: var(--spacing-lg);
-        margin-bottom: var(--spacing-lg);
-        flex-wrap: wrap;
-    }
-
-    .radio-option {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .radio-option input[type="radio"] {
-        display: none;
-    }
-
-    .radio-option label {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: var(--spacing-sm) var(--spacing-md);
-        border: 2px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        cursor: pointer;
-        transition: var(--transition);
-        font-weight: 500;
-    }
-
-    .radio-option input[type="radio"]:checked + label {
-        border-color: var(--dut-green);
-        background: rgba(28,132,65,0.05);
-    }
-
-    .radio-option input[type="radio"][value="reject"]:checked + label {
-        border-color: var(--dut-red);
-        background: rgba(209,31,45,0.05);
-    }
-
-    .radio-option label i.approve {
-        color: var(--dut-green);
-        font-size: 1.2rem;
-    }
-
-    .radio-option label i.reject {
-        color: var(--dut-red);
-        font-size: 1.2rem;
-    }
-
-    .form-group {
-        margin-bottom: var(--spacing-lg);
-    }
-
-    .form-label {
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-
-    .form-label span {
-        color: var(--dut-red);
-    }
-
-    .form-input {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        font-family: 'Inter', sans-serif;
-        transition: var(--transition);
-    }
-
-    .form-input:focus {
-        outline: none;
-        border-color: var(--dut-blue);
-        box-shadow: 0 0 0 3px rgba(83,112,163,0.1);
-    }
-
-    .form-text {
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        margin-top: 0.3rem;
-    }
-
-    .submit-btn {
-        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
-        color: white;
-        border: none;
-        padding: 1rem 2.5rem;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        box-shadow: var(--shadow-md);
-    }
-
-    .submit-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
-
-    /* Handover Form */
-    .handover-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-lg);
-        border: 2px solid var(--dut-green);
-        overflow: hidden;
-        margin-top: var(--spacing-xl);
-        margin-bottom: var(--spacing-xl);
-    }
-
-    .handover-header {
-        background: linear-gradient(135deg, var(--dut-green), #2ecc71);
-        color: white;
-        padding: var(--spacing-md) var(--spacing-lg);
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 1.1rem;
-    }
-
-    .handover-body {
-        padding: var(--spacing-lg);
-    }
-
-    .handover-form-row {
-        display: flex;
-        gap: var(--spacing-md);
-        align-items: flex-end;
-        flex-wrap: wrap;
-    }
-
-    .handover-input-group {
-        flex: 2;
-        min-width: 250px;
-    }
-
-    .handover-btn-group {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .handover-btn {
-        background: linear-gradient(135deg, var(--dut-green), #2ecc71);
-        color: white;
-        border: none;
-        padding: 0.8rem 1.5rem;
-        border-radius: 40px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .handover-btn:hover {
-        background: linear-gradient(135deg, #2ecc71, var(--dut-green));
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
-
-    /* Closed Case Alert */
-    .closed-alert {
-        background: rgba(28,132,65,0.1);
-        border: 2px solid var(--dut-green);
-        border-radius: var(--border-radius);
-        padding: var(--spacing-md) var(--spacing-lg);
-        margin-top: var(--spacing-xl);
-        margin-bottom: var(--spacing-xl);
-        display: flex;
-        align-items: center;
-        gap: var(--spacing-md);
-        color: var(--dut-green);
-        font-weight: 500;
-    }
-
-    .closed-alert i {
-        font-size: 2rem;
-    }
-
-    /* Color Bar */
-    .color-bar {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        margin-top: var(--spacing-xl);
-        padding-top: var(--spacing-lg);
-        border-top: 1px solid var(--border-light);
-    }
-    
-    .color-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        animation: subtlePulse 3s infinite;
-    }
-    
-    .color-dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
-    .color-dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
-    .color-dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
-    .color-dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
-    .color-dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
-    .color-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
-    
-    @keyframes subtlePulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* Utilities */
-    .mt-4 { margin-top: var(--spacing-lg); }
-    .mb-4 { margin-bottom: var(--spacing-lg); }
-    .mb-0 { margin-bottom: 0; }
-    .w-100 { width: 100%; }
-</style>
-
-<!-- Load Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-<div class="container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <a href="{{ url_for('admin.claims_list') }}" class="back-btn">
-            <i class="fas fa-arrow-left"></i>
-            Back
-        </a>
-        <div class="header-title">
-            <h3>
-                <i class="fas fa-gavel"></i>
-                Review Claim #{{ claim.id }}
-            </h3>
-            <span class="status-badge-large {{ claim.status }}">
-                {% if claim.status == 'pending' %}
-                    <i class="fas fa-clock"></i>
-                {% elif claim.status == 'approved' %}
-                    <i class="fas fa-check-circle"></i>
-                {% else %}
-                    <i class="fas fa-times-circle"></i>
-                {% endif %}
-                {{ claim.status|capitalize }}
-            </span>
-        </div>
-    </div>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert-modern {{ category }}">
-                <i class="fas 
-                    {% if category == 'success' %}fa-check-circle
-                    {% elif category == 'danger' %}fa-exclamation-circle
-                    {% elif category == 'warning' %}fa-exclamation-triangle
-                    {% else %}fa-info-circle{% endif %}">
-                </i>
-                <span>{{ message }}</span>
+</head>
+<body>
+    <!-- top strip (identical to original)
+    <div class="top-strip">
+        <div class="top-strip-inner">
+            <div class="top-strip-left">
+                <span><i class="fas fa-shield-alt"></i> Official DUT Student & Staff Platform</span>
+                <span class="top-dot"></span>
+                <span><i class="fas fa-lock"></i> Secure Claim Verification</span>
             </div>
-        {% endfor %}
-    {% endwith %}
+            <div class="top-strip-right">
+                <span><i class="fas fa-map-marker-alt"></i> Steve Biko Campus</span>
+                <span><i class="fas fa-envelope"></i> lostfound@dut.ac.za</span>
+            </div>
+        </div>
+    </div> -->
 
-    <!-- Two Column Layout -->
-    <div class="two-column">
-        <!-- Left Column: Found Item Details -->
-        <div>
-            <div class="custom-card">
-                <div class="card-header-custom dark">
-                    <i class="fas fa-box-open"></i>
-                    Found Item Details
+    <!-- navbar (same original) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT Logo" onerror="this.style.display='none';">
+                <div class="logo-text">
+                    <div class="logo-title">DUT Lost & Found</div>
+                    <div class="logo-subtitle">Official Campus Recovery Portal</div>
                 </div>
-                <div class="card-body-custom">
-                    {% if item.image_path %}
-                        <img src="{{ url_for('static', filename=item.image_path) }}"
-                             class="evidence-image"
-                             alt="{{ item.title }}">
-                    {% endif %}
-                    
-                    <table class="info-table">
-                        <tr>
-                            <td class="label"><i class="fas fa-tag"></i> Title</td>
-                            <td class="value fw-semibold">{{ item.title }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-hashtag"></i> Reference</td>
-                            <td class="reference-value">{{ item.reference_number }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-layer-group"></i> Category</td>
-                            <td class="value">{{ item.category }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-map-marker-alt"></i> Campus</td>
-                            <td class="value">{{ item.campus }}</td>
-                        </tr>
-                        {% if item.location %}
-                        <tr>
-                            <td class="label"><i class="fas fa-location-dot"></i> Location</td>
-                            <td class="value">{{ item.location }}</td>
-                        </tr>
-                        {% endif %}
-                        {% if item.date_of_incident %}
-                        <tr>
-                            <td class="label"><i class="fas fa-calendar"></i> Date</td>
-                            <td class="value">{{ item.date_of_incident.strftime('%d %B %Y') }}</td>
-                        </tr>
-                        {% endif %}
-                        <tr>
-                            <td class="label"><i class="fas fa-user"></i> Reporter</td>
-                            <td class="value">
-                                {{ item.reporter.name }}<br>
-                                <span style="color: var(--text-muted); font-size: 0.85rem;">{{ item.reporter.email }}</span>
-                            </td>
-                        </tr>
-                    </table>
+            </div>
+           <!--  <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Home</a>
+                <a href="items/search.html" class="nav-link"><i class="fas fa-search"></i>Browse</a>
+                <a href="#" class="nav-link active"><i class="fas fa-clipboard-list"></i>Admin</a>
+            </div>-->
+        </div>
+    </nav>
 
-                    <div class="section-label">
-                        <i class="fas fa-align-left"></i> Public Description
-                    </div>
-                    <div class="description-box">
-                        {{ item.public_description }}
-                    </div>
+    <!-- MAIN REVIEW CONTENT -->
+    <div class="review-container">
+        <!-- header with back button and claim title -->
+        <div class="header-bar">
+            <a href="claims_list.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Claims</a>
+            <div class="page-title">
+                Review Claim #1245
+                <span class="badge-lg bg-warning">Pending</span>
+            </div>
+        </div>
 
-                    <!-- PRIVATE VERIFICATION -->
-                    <div class="private-box">
-                        <div class="private-title">
-                            <i class="fas fa-shield-alt"></i>
-                            PRIVATE VERIFICATION — ADMIN ONLY
+        <!-- flash message simulation (no real flash, but style demo) -->
+        <div class="alert alert-success"><i class="fas fa-info-circle"></i> This is a demo — no real decision will be saved.</div>
+
+        <!-- row: left column (item) + right column (claimant details) -->
+        <div class="row g-4">
+            <!-- LEFT: FOUND ITEM DETAILS -->
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header bg-dark">
+                        <i class="fas fa-box-open"></i> Found Item Details
+                    </div>
+                    <div class="card-body">
+                        <!-- item image (placeholder) -->
+                        <img src="images/WhatsApp Image 2026-03-07 at 20.04.51.jpeg" alt="Item" class="img-fluid rounded mb-3 shadow-sm" style="max-height:200px;object-fit:contain;" onerror="this.style.display='none';">
+
+                        <table class="table table-sm table-borderless">
+                            <tr><td class="text-muted small">Title</td><td class="fw-semibold">MacBook Pro 14" (Space Grey)</td></tr>
+                            <tr><td class="text-muted small">Reference</td><td class="font-monospace text-danger">DUT-L-2405-189</td></tr>
+                            <tr><td class="text-muted small">Category</td><td>Electronics / Laptop</td></tr>
+                            <tr><td class="text-muted small">Campus</td><td>Steve Biko</td></tr>
+                            <tr><td class="text-muted small">Location</td><td>Library, 2nd floor</td></tr>
+                            <tr><td class="text-muted small">Date</td><td>12 May 2026</td></tr>
+                            <tr><td class="text-muted small">Reporter</td><td>Sarah Khumalo<br><small class="text-muted">s.khumalo@dut.ac.za</small></td></tr>
+                        </table>
+
+                        <div class="mb-3">
+                            <p class="small text-muted mb-1">Public Description</p>
+                            <p class="mb-0 border rounded p-2 bg-light small">14‑inch MacBook Pro, M3 chip, 16GB RAM. Space grey with small scratch near trackpad.</p>
                         </div>
-                        <div class="private-content">
-                            {{ item.private_verification or 'Not provided.' }}
+
+                        <!-- PRIVATE VERIFICATION (admin only) -->
+                        <div class="border border-danger rounded p-3 bg-danger bg-opacity-10">
+                            <p class="small fw-bold text-danger mb-1"><i class="fas fa-shield-alt"></i> PRIVATE VERIFICATION — ADMIN ONLY</p>
+                            <p class="mb-0 small">Serial number: C02Y7K8XJ1GJ · charger with name tag "T.Ndlovu" · keyboard has "T" slightly worn.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: CLAIMANT SUBMISSION -->
+            <div class="col-md-6">
+                <!-- Claimant details card -->
+                <div class="card mb-3">
+                    <div class="card-header"><i class="fas fa-user-graduate"></i> Claimant Details</div>
+                    <div class="card-body">
+                        <table class="table table-sm table-borderless mb-0">
+                            <tr><td class="text-muted small">Name</td><td class="fw-semibold">Thabo Ndlovu</td></tr>
+                            <tr><td class="text-muted small">Email</td><td>thabo.ndlovu@dut4life.ac.za</td></tr>
+                            <tr><td class="text-muted small">Student No.</td><td>22234567</td></tr>
+                            <tr><td class="text-muted small">Campus</td><td>Steve Biko</td></tr>
+                            <tr><td class="text-muted small">Submitted</td><td>14 May 2026 at 10:23</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ownership description -->
+                <div class="card mb-3">
+                    <div class="card-header">Ownership Description</div>
+                    <div class="card-body"><p class="small mb-0">I lost my laptop in the library. It has my student sticker and a small dent. The charger was inside the bag.</p></div>
+                </div>
+
+                <!-- Verification answers -->
+                <div class="card mb-3">
+                    <div class="card-header">Verification Answers</div>
+                    <div class="card-body"><p class="small mb-0">Serial number: C02Y7K8XJ1GJ; charger with name tag</p></div>
+                </div>
+
+                <!-- Evidence -->
+                <div class="card mb-3">
+                    <div class="card-header"><i class="fas fa-paperclip"></i> Submitted Evidence</div>
+                    <div class="card-body">
+                        <!-- simulate image evidence -->
+                        <img src="images/WhatsApp Image 2026-03-07 at 20.04.51.jpeg" class="img-fluid rounded shadow-sm" style="max-height:180px;" onerror="this.style.display='none';">
+                        <p class="small text-muted mt-2">(receipt photo placeholder)</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Claimant Submission -->
-        <div>
-            <!-- Claimant Details -->
-            <div class="claimant-card">
-                <div class="claimant-header">
-                    <i class="fas fa-user-circle"></i>
-                    Claimant Details
-                </div>
-                <div class="claimant-body">
-                    <table class="info-table">
-                        <tr>
-                            <td class="label"><i class="fas fa-user"></i> Name</td>
-                            <td class="value fw-semibold">{{ claimant.name }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-envelope"></i> Email</td>
-                            <td class="value">{{ claimant.email }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-id-card"></i> Student No.</td>
-                            <td class="value">{{ claimant.student_number or 'Not provided' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-university"></i> Campus</td>
-                            <td class="value">{{ claimant.campus or 'Not specified' }}</td>
-                        </tr>
-                        <tr>
-                            <td class="label"><i class="fas fa-clock"></i> Submitted</td>
-                            <td class="value">{{ claim.created_at.strftime('%d %B %Y at %H:%M') }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Ownership Description -->
-            <div class="custom-card">
-                <div class="card-header-custom" style="background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));">
-                    <i class="fas fa-pen"></i>
-                    Ownership Description
-                </div>
-                <div class="card-body-custom">
-                    <p style="margin: 0; line-height: 1.6;">{{ claim.claim_description }}</p>
-                </div>
-            </div>
-
-            <!-- Verification Answers -->
-            <div class="custom-card">
-                <div class="card-header-custom" style="background: linear-gradient(135deg, var(--dut-purple), var(--dut-blue));">
-                    <i class="fas fa-question-circle"></i>
-                    Verification Answers
-                </div>
-                <div class="card-body-custom">
-                    <p style="margin: 0; line-height: 1.6;">{{ claim.verification_answers or 'None provided.' }}</p>
-                </div>
-            </div>
-
-            <!-- Submitted Evidence -->
-            <div class="custom-card">
-                <div class="card-header-custom" style="background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));">
-                    <i class="fas fa-paperclip"></i>
-                    Submitted Evidence
-                </div>
-                <div class="card-body-custom">
-                    {% if claim.evidence_path %}
-                        {% set ext = claim.evidence_path.split('.')[-1].lower() %}
-                        {% if ext in ['png', 'jpg', 'jpeg', 'gif'] %}
-                            <img src="{{ url_for('static', filename=claim.evidence_path) }}"
-                                 class="evidence-image"
-                                 style="max-height:250px;"
-                                 alt="Evidence">
-                        {% else %}
-                            <a href="{{ url_for('static', filename=claim.evidence_path) }}"
-                               target="_blank" 
-                               style="display: inline-flex; align-items: center; gap: 0.5rem; 
-                                      padding: 0.8rem 1.5rem; background: var(--bg-light); 
-                                      border-radius: 40px; color: var(--dut-blue); 
-                                      text-decoration: none; border: 1px solid var(--border-light);">
-                                <i class="fas fa-file-pdf"></i>
-                                View Evidence Document
-                            </a>
-                        {% endif %}
-                    {% else %}
-                        <p style="color: var(--text-muted); margin: 0;">
-                            <i class="fas fa-times-circle"></i> No evidence uploaded.
-                        </p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Decision Form — only for pending claims -->
-    {% if claim.status == 'pending' %}
-        <div class="decision-card">
-            <div class="decision-header">
-                <i class="fas fa-gavel"></i>
-                Make a Decision
-            </div>
-            <div class="decision-body">
-                <form method="POST"
-                      action="{{ url_for('admin.review_claim', claim_id=claim.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-                    <div class="radio-group">
-                        <div class="radio-option">
-                            <input type="radio" name="decision" id="approve" value="approve" required>
-                            <label for="approve">
-                                <i class="fas fa-check-circle approve"></i>
-                                <span style="font-weight: 600; color: var(--dut-green);">Approve Claim</span>
-                            </label>
-                        </div>
-                        <div class="radio-option">
-                            <input type="radio" name="decision" id="reject" value="reject">
-                            <label for="reject">
-                                <i class="fas fa-times-circle reject"></i>
-                                <span style="font-weight: 600; color: var(--dut-red);">Reject Claim</span>
-                            </label>
+        <!-- Decision form (only for pending) -->
+        <div class="card shadow-sm mt-4 border-danger">
+            <div class="card-header bg-danger text-white fw-semibold"><i class="fas fa-gavel"></i> Make a Decision</div>
+            <div class="card-body">
+                <form method="POST" action="#">
+                    <!-- radio group -->
+                    <div class="mb-3">
+                        <div class="d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="decision" id="approve" value="approve" required>
+                                <label class="form-check-label fw-semibold text-success" for="approve"><i class="fas fa-check-circle"></i> Approve Claim</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="decision" id="reject" value="reject">
+                                <label class="form-check-label fw-semibold text-danger" for="reject"><i class="fas fa-times-circle"></i> Reject Claim</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="rejection_reason_field" style="display:none;" class="form-group">
-                        <label class="form-label">
-                            Rejection Reason <span>*</span>
-                        </label>
-                        <textarea name="rejection_reason" class="form-input" rows="4"
-                                  placeholder="Explain clearly why the claim is being rejected..."></textarea>
-                        <div class="form-text">
-                            This reason will be shown to the claimant.
-                        </div>
+                    <!-- rejection reason field (hidden by default, toggled by js) -->
+                    <div class="mb-3" id="rejection_reason_field" style="display:none;">
+                        <label class="form-label fw-semibold">Rejection Reason <span class="text-danger">*</span></label>
+                        <textarea name="rejection_reason" class="form-control" rows="3" placeholder="Explain clearly why the claim is being rejected."></textarea>
+                        <div class="form-text">This reason will be shown to the claimant.</div>
                     </div>
 
-                    <button type="submit" class="submit-btn">
-                        <i class="fas fa-check-double"></i>
-                        Submit Decision
-                    </button>
+                    <button type="submit" class="btn btn-danger btn-lg fw-semibold px-5"><i class="fas fa-check-double"></i> Submit Decision</button>
                 </form>
             </div>
         </div>
-    {% endif %}
 
-    <!-- Handover form — only for approved, not yet handed over -->
-    {% if claim.status == 'approved' and not claim.handover_logged_at %}
-        <div class="handover-card">
-            <div class="handover-header">
-                <i class="fas fa-box-arrow-right"></i>
-                Log Physical Handover
-            </div>
-            <div class="handover-body">
-                <p style="color: var(--text-muted); margin-bottom: var(--spacing-md);">
-                    <i class="fas fa-info-circle"></i>
-                    When the claimant comes in person with their student card to collect
-                    the item, record the handover here. This closes the case.
-                </p>
-                <form method="POST"
-                      action="{{ url_for('admin.log_handover', claim_id=claim.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="handover-form-row">
-                        <div class="handover-input-group">
-                            <label class="form-label">
-                                <i class="fas fa-id-card"></i> Student Number (verified in person)
-                            </label>
-                            <input type="text" name="student_number" class="form-input"
-                                   placeholder="e.g. 22431176" required>
+        <!-- Handover form (example: approved, not yet handed over) - we simulate with a separate card -->
+        <div class="card shadow-sm mt-4 border-success">
+            <div class="card-header bg-success text-white fw-semibold"><i class="fas fa-hand-holding"></i> Log Physical Handover</div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">When the claimant comes in person with their student card, record the handover here.</p>
+                <form method="POST" action="#">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Student Number (verified in person)</label>
+                            <input type="text" name="student_number" class="form-control" placeholder="e.g. 22234567" required>
                         </div>
-                        <div class="handover-btn-group">
-                            <button type="submit" class="handover-btn">
-                                <i class="fas fa-check-double"></i>
-                                Confirm Handover
-                            </button>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-success w-100 fw-semibold"><i class="fas fa-check"></i> Confirm Handover</button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    {% endif %}
 
-    <!-- Closed Case Alert -->
-    {% if claim.handover_logged_at %}
-        <div class="closed-alert">
-            <i class="fas fa-check-circle"></i>
+        <!-- optional closed case alert (hidden by default, we show as example) 
+        <div class="alert alert-success mt-4">
+            <i class="fas fa-check-circle"></i> <strong>Case Closed.</strong> Item handed over to student number <strong>22234567</strong> on 16 May 2026.
+        </div> -->
+    </div>
+
+    <!-- FOOTER (exact from original) -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT" class="footer-logo" onerror="this.style.display='none';">
+                <p>Your official lost and found portal, designed to reconnect students and staff with their belongings through a secure and reliable campus process.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
             <div>
-                <strong>Case Closed.</strong> Item handed over to student number
-                <strong>{{ claim.handover_student_number }}</strong>
-                on {{ claim.handover_logged_at.strftime('%d %B %Y at %H:%M') }}.
+                    <h4 class="footer-heading">Quick Links</h4>
+                  <ul class="footer-links">
+                    <li><a href="manage_items.html"><i class="fas fa-search"></i> Browse Items</a></li>
+                    <li><a href="manage_users.html"><i class="fas fa-users"></i> Browse Users</a></li>
+                    <li><a href="matches/view.html"><i class="fas fa-box-open"></i> View Matches</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-clipboard-list"></i> Dashboard</a></li>
+                  </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Get in Touch</h4>
+                <div class="footer-contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div><strong>Steve Biko Campus</strong><br />Main Administration</div>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>+27 (0)31 373 1234</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>lostfound@dut.ac.za</span>
+                </div>
             </div>
         </div>
-    {% endif %}
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <div>DUT Lost & Found Portal © 2026 — Durban University of Technology</div>
+                <div><span class="envision-tag">ENVISION2030</span></div>
+            </div>
+        </div>
+    </footer>
 
-    <!-- Color Bar -->
-    <div class="color-bar">
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-    </div>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-<script>
-    document.querySelectorAll('input[name="decision"]').forEach(function(radio) {
-        radio.addEventListener('change', function() {
-            var field = document.getElementById('rejection_reason_field');
-            field.style.display = this.value === 'reject' ? 'block' : 'none';
+    <!-- JavaScript to show/hide rejection reason field -->
+    <script>
+        document.querySelectorAll('input[name="decision"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                var field = document.getElementById('rejection_reason_field');
+                field.style.display = this.value === 'reject' ? 'block' : 'none';
+            });
         });
-    });
-</script>
-{% endblock %}
+    </script>
+</body>
+</html>

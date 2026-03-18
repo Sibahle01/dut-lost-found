@@ -1,479 +1,296 @@
-﻿{% extends "base.html" %}
-{% block title %}Potential Matches - {{ item.reference_number }}{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Potential Matches · Admin · DUT Lost & Found</title>
 
-{% block content %}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
-<style>
-    /* DUT Color Scheme */
-    :root {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
-    }
+    <!-- same fonts / icons / root as original, extended for progress bars & cards -->
+    
+   <link rel="stylesheet" href="../css/view.css"> <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-        padding: 2rem 0;
-    }
-
-    .container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 2rem;
-    }
-
-    h1 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #1C8441, #5370A3, #D11F2D);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 2rem;
-    }
-
-    h2 {
-        color: #5370A3;
-        font-size: 2rem;
-        margin: 2rem 0 1rem;
-    }
-
-    .main-card {
-        background: white;
-        border-radius: 40px;
-        padding: 2rem;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        margin-bottom: 2rem;
-        border: 1px solid rgba(122,180,182,0.3);
-        position: relative;
-    }
-
-    .main-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 8px;
-        background: linear-gradient(90deg, #1C8441, #5370A3, #812575, #D11F2D);
-        border-radius: 40px 40px 0 0;
-    }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-
-    .info-item {
-        background: #f8faff;
-        padding: 1rem;
-        border-radius: 20px;
-        border: 1px solid rgba(122,180,182,0.2);
-        font-size: 1rem;
-    }
-
-    .match-card {
-        background: white;
-        border-radius: 30px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-left: 8px solid;
-        transition: transform 0.3s;
-    }
-
-    .match-card:hover {
-        transform: translateY(-5px);
-    }
-
-    .match-card.high { border-left-color: #1C8441; }
-    .match-card.medium { border-left-color: #FFA500; }
-    .match-card.low { border-left-color: #5370A3; }
-
-    .match-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .match-header h3 {
-        color: #5370A3;
-        margin: 0;
-    }
-
-    .score {
-        background: linear-gradient(135deg, #1C8441, #5370A3);
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 30px;
-        font-weight: bold;
-    }
-
-    .btn {
-        padding: 0.8rem 1.5rem;
-        border-radius: 30px;
-        border: none;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        margin-right: 0.5rem;
-        transition: transform 0.3s;
-        display: inline-block;
-    }
-
-    .btn:hover {
-        transform: translateY(-2px);
-    }
-
-    .btn-view { background: #5370A3; color: white; }
-    .btn-confirm { background: #1C8441; color: white; }
-    .btn-reject { background: #D11F2D; color: white; }
-    .btn-back { background: #812575; color: white; }
-
-    .progress {
-        height: 8px;
-        background: #e0e0e0;
-        border-radius: 4px;
-        margin: 0.5rem 0;
-    }
-
-    .progress-fill {
-        height: 100%;
-        border-radius: 4px;
-        background: linear-gradient(90deg, #1C8441, #5370A3);
-    }
-
-    .verification-box {
-        background: #fff0f0;
-        padding: 1rem;
-        border-radius: 20px;
-        margin-bottom: 1rem;
-        border: 2px dashed #D11F2D;
-    }
-
-    .emoji {
-        font-size: 1.2rem;
-        margin-right: 0.3rem;
-        display: inline-block;
-    }
-</style>
-
-<div class="container">
-    <h1>&#10024; Potential Matches</h1>  <!-- sparkles emoji -->
-
-    <!-- Main Item Card -->
-    <div class="main-card">
-        <h2 style="margin-top: 0;">
-            <span class="emoji">&#128230;</span>  <!-- package emoji -->
-            Original {{ item.type|capitalize }} Item
-        </h2>
-        
-        <div class="info-grid">
-            <div class="info-item"><span class="emoji">&#35;&#65039;&#8419;</span> <strong>Ref:</strong> {{ item.reference_number }}</div>  <!-- hash emoji -->
-            <div class="info-item"><span class="emoji">&#127991;</span> <strong>Title:</strong> {{ item.title }}</div>  <!-- tag emoji -->
-            <div class="info-item">
-                <span class="emoji">{% if item.type == 'lost' %}&#9888;&#65039;{% else %}&#9989;{% endif %}</span>  <!-- warning or check -->
-                <strong>Type:</strong> {{ item.type|capitalize }}
+</head>
+<body>
+    <!-- top strip -->
+    <div class="top-strip">
+        <div class="top-strip-inner">
+            <div class="top-strip-left">
+                <span><i class="fas fa-shield-alt"></i> Official DUT Student & Staff Platform</span>
+                <span class="top-dot"></span>
+                <span><i class="fas fa-lock"></i> Secure Claim Verification</span>
             </div>
-            <div class="info-item"><span class="emoji">&#128193;</span> <strong>Category:</strong> {{ item.category }}</div>  <!-- folder emoji -->
-            <div class="info-item"><span class="emoji">&#128205;</span> <strong>Campus:</strong> {{ item.campus }}</div>  <!-- location emoji -->
-            <div class="info-item"><span class="emoji">&#128100;</span> <strong>Reporter:</strong> {{ item.reporter.name }}</div>  <!-- user emoji -->
-            <div class="info-item"><span class="emoji">&#128197;</span> <strong>Date:</strong> {{ item.created_at.strftime('%d %B %Y') }}</div>  <!-- calendar emoji -->
-            <div class="info-item"><span class="emoji">&#128681;</span> <strong>Status:</strong> {{ item.status|capitalize }}</div>  <!-- flag emoji -->
+            <div class="top-strip-right">
+                <span><i class="fas fa-map-marker-alt"></i> Steve Biko Campus</span>
+                <span><i class="fas fa-envelope"></i> lostfound@dut.ac.za</span>
+            </div>
         </div>
     </div>
 
-    <h2>
-        <span class="emoji">&#128279;</span>  <!-- link emoji -->
-        Matching Items ({{ matches|length }})
-    </h2>
-
-    {% if matches %}
-        {% for match in matches %}
-            {% set score_class = 'high' if match.score >= 85 else ('medium' if match.score >= 70 else 'low') %}
-            <div class="match-card {{ score_class }}">
-                <div class="match-header">
-                    <h3>
-                        <span class="emoji">{% if match.item.type == 'lost' %}&#9888;&#65039;{% else %}&#9989;{% endif %}</span>  <!-- warning or check -->
-                        {{ match.item.title }}
-                    </h3>
-                    <div class="score">
-                        &#11088; {{ match.score }}%  <!-- star emoji -->
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
-                    <div><span class="emoji">&#35;&#65039;&#8419;</span> {{ match.item.reference_number }}</div>  <!-- hash -->
-                    <div><span class="emoji">&#128193;</span> {{ match.item.category }}</div>  <!-- folder -->
-                    <div><span class="emoji">&#128205;</span> {{ match.item.campus }}</div>  <!-- location -->
-                    <div><span class="emoji">&#128100;</span> {{ match.item.reporter.name }}</div>  <!-- user -->
-                    <div><span class="emoji">&#128197;</span> {{ match.item.created_at.strftime('%d/%m/%Y') }}</div>  <!-- calendar -->
-                    <div><span class="emoji">{% if match.item.type == 'lost' %}&#9888;&#65039;{% else %}&#128230;{% endif %}</span> {{ match.item.type|capitalize }}</div>  <!-- warning or package -->
-                </div>
-
-                <!-- Match Breakdown -->
-                <div style="background: #f8faff; padding: 1rem; border-radius: 20px; margin-bottom: 1rem;">
-                    <p><span class="emoji">&#128202;</span> <strong>Match Analysis:</strong></p>  <!-- chart emoji -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                        <div>
-                            <span class="emoji">&#127991;</span> Category: {{ match.breakdown.category }}%  <!-- tag -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.category }}%"></div></div>
-                        </div>
-                        <div>
-                            <span class="emoji">&#128506;</span> Campus: {{ match.breakdown.campus }}%  <!-- map -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.campus }}%"></div></div>
-                        </div>
-                        <div>
-                            <span class="emoji">&#128221;</span> Title: {{ match.breakdown.title }}%  <!-- memo -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.title }}%"></div></div>
-                        </div>
-                        <div>
-                            <span class="emoji">&#128196;</span> Description: {{ match.breakdown.description }}%  <!-- document -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.description }}%"></div></div>
-                        </div>
-                        <div>
-                            <span class="emoji">&#128467;</span> Date: {{ match.breakdown.date }}%  <!-- calendar -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.date }}%"></div></div>
-                        </div>
-                        <div>
-                            <span class="emoji">&#128204;</span> Location: {{ match.breakdown.location }}%  <!-- round pushpin -->
-                            <div class="progress"><div class="progress-fill" style="width: {{ match.breakdown.location }}%"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Private Verification -->
-                <div class="verification-box">
-                    <p><span class="emoji">&#128274;</span> <strong style="color: #D11F2D;">Private Verification (Admin Only)</strong></p>  <!-- lock emoji -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                        <div><span class="emoji">&#128196;</span> <strong>Current:</strong> {{ item.private_verification|truncate(50) }}</div>  <!-- document -->
-                        <div><span class="emoji">&#128196;</span> <strong>Match:</strong> {{ match.item.private_verification|truncate(50) }}</div>  <!-- document -->
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div>
-                    <a href="{{ url_for('items.detail', item_id=match.item.id) }}" class="btn btn-view" target="_blank">
-                        &#128065; View  <!-- eye emoji -->
-                    </a>
-                    
-                    <form method="POST" action="{{ url_for('matching.confirm_match') }}" style="display: inline;">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="lost_id" value="{% if item.type == 'lost' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                        <input type="hidden" name="found_id" value="{% if item.type == 'found' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                        <button type="submit" class="btn btn-confirm">&#9989; Confirm</button>  <!-- check mark -->
-                    </form>
-                    
-                    <form method="POST" action="{{ url_for('matching.reject_match') }}" style="display: inline;">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="lost_id" value="{% if item.type == 'lost' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                        <input type="hidden" name="found_id" value="{% if item.type == 'found' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                        <button type="submit" class="btn btn-reject">&#10060; Reject</button>  <!-- cross mark -->
-                    </form>
+    <!-- navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT Logo" onerror="this.style.display='none';">
+                <div class="logo-text">
+                    <div class="logo-title">DUT Lost & Found</div>
+                    <div class="logo-subtitle">Official Campus Recovery Portal</div>
                 </div>
             </div>
-        {% endfor %}
-    {% else %}
-        <div style="text-align: center; padding: 3rem; background: white; border-radius: 30px;">
-            <div style="font-size: 4rem;">&#128269;</div>  <!-- search emoji -->
-            <p style="color: #5370A3;">No potential matches found</p>
+               <!--  <div class="nav-links">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i>Home</a>
+                <a href="items/search.html" class="nav-link"><i class="fas fa-search"></i>Browse</a>
+                <a href="#" class="nav-link active"><i class="fas fa-clipboard-list"></i>Admin</a>
+            </div>-->
         </div>
-    {% endif %}
+    </nav>
 
-    <div style="text-align: center; margin: 2rem 0;">
-        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-back">
-            &#8592; Back to Dashboard  <!-- left arrow -->
-        </a>
-    </div>
-</div>
-<<<<<<< HEAD
-{% endblock %}
-=======
-{% endblock %}
-=======
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div>
-    <h3 class="fw-bold mb-0">Potential Matches</h3>
-    <p class="text-muted mb-0">
-      Item: {{ item.title }} ({{ item.reference_number }})
-    </p>
-  </div>
-  <a href="{{ url_for('admin.manage_items') }}" class="btn btn-outline-secondary btn-sm">
-    <i class="bi bi-arrow-left"></i> Back to Items
-  </a>
-</div>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-{% endwith %}
-
-<!-- Source Item Details -->
-<div class="card mb-4">
-  <div class="card-header bg-dark text-white">
-    <h5 class="mb-0">Source Item Details</h5>
-  </div>
-  <div class="card-body">
-    <div class="row">
-      <div class="col-md-6">
-        <p><strong>Title:</strong> {{ item.title }}</p>
-        <p><strong>Reference:</strong> {{ item.reference_number }}</p>
-        <p><strong>Type:</strong> 
-          <span class="badge {% if item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
-            {{ item.type|capitalize }}
-          </span>
-        </p>
-        <p><strong>Category:</strong> {{ item.category }}</p>
-        <p><strong>Campus:</strong> {{ item.campus }}</p>
-      </div>
-      <div class="col-md-6">
-        <p><strong>Reporter:</strong> {{ item.reporter.name }}</p>
-        <p><strong>Email:</strong> {{ item.reporter.email }}</p>
-        <p><strong>Date:</strong> {{ item.created_at.strftime('%d %b %Y') }}</p>
-        <p><strong>Status:</strong> 
-          <span class="badge bg-primary">{{ item.status|capitalize }}</span>
-        </p>
-      </div>
-    </div>
-    <div class="mt-3">
-      <p><strong>Public Description:</strong></p>
-      <div class="border rounded p-3 bg-light">
-        {{ item.public_description }}
-      </div>
-    </div>
-  </div>
-</div>
-
-<h4 class="mb-3">Potential Matches ({{ matches|length }})</h4>
-
-{% if matches %}
-  <div class="row">
-    {% for match in matches %}
-      <div class="col-md-6 mb-4">
-        <div class="card h-100 {% if match.score >= 70 %}border-success border-2{% endif %}">
-          <div class="card-header d-flex justify-content-between align-items-center
-                     {% if match.score >= 70 %}bg-success text-white{% endif %}">
-            <h5 class="mb-0">{{ match.item.title }}</h5>
-            <span class="badge {% if match.score >= 70 %}bg-white text-success{% else %}bg-primary{% endif %} fs-6">
-              {{ match.score }}% Match
-            </span>
-          </div>
-          <div class="card-body">
-            <div class="row mb-3">
-              <div class="col-6">
-                <p><strong>Reference:</strong><br>
-                  <span class="font-monospace">{{ match.item.reference_number }}</span>
-                </p>
-                <p><strong>Category:</strong> {{ match.item.category }}</p>
-                <p><strong>Campus:</strong> {{ match.item.campus }}</p>
-              </div>
-              <div class="col-6">
-                <p><strong>Type:</strong><br>
-                  <span class="badge {% if match.item.type == 'lost' %}bg-warning{% else %}bg-success{% endif %}">
-                    {{ match.item.type|capitalize }}
-                  </span>
-                </p>
-                <p><strong>Reporter:</strong> {{ match.item.reporter.name }}</p>
-                <p><strong>Date:</strong> {{ match.item.created_at.strftime('%d %b') }}</p>
-              </div>
+    <!-- MAIN CONTENT: Potential Matches -->
+    <div class="matches-container">
+        <!-- header with back button -->
+        <div class="header-flex">
+            <div class="header-title">
+                <h3 class="fw-bold mb-0">Potential Matches</h3>
+                <p class="text-muted mb-0">Item: MacBook Pro 14" (DUT-L-2405-189)</p>
             </div>
-
-            <p><strong>Description:</strong></p>
-            <div class="border rounded p-2 bg-light small mb-3">
-              {{ match.item.public_description }}
-            </div>
-
-            <!-- Match Score Breakdown -->
-            <div class="mb-3">
-              <p class="fw-semibold mb-2">Match Breakdown:</p>
-              <div class="row g-2">
-                <div class="col-6">
-                  <small>Category: {{ match.breakdown.category }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-success" style="width: {{ match.breakdown.category }}%"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <small>Campus: {{ match.breakdown.campus }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-success" style="width: {{ match.breakdown.campus }}%"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <small>Title: {{ match.breakdown.title }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-info" style="width: {{ match.breakdown.title }}%"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <small>Description: {{ match.breakdown.description }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-info" style="width: {{ match.breakdown.description }}%"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <small>Date: {{ match.breakdown.date }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-warning" style="width: {{ match.breakdown.date }}%"></div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <small>Location: {{ match.breakdown.location }}%</small>
-                  <div class="progress mb-2" style="height: 4px;">
-                    <div class="progress-bar bg-warning" style="width: {{ match.breakdown.location }}%"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Private Verification (Admin Only) -->
-            <div class="border border-danger rounded p-2 bg-danger bg-opacity-10 mb-3">
-              <p class="small fw-bold text-danger mb-1">
-                <i class="bi bi-shield-lock-fill"></i> PRIVATE VERIFICATION
-              </p>
-              <p class="small mb-0"><strong>Source Item:</strong> {{ item.private_verification|truncate(100) }}</p>
-              <p class="small mb-0"><strong>Match Item:</strong> {{ match.item.private_verification|truncate(100) }}</p>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex justify-content-between">
-              <a href="{{ url_for('items.detail', item_id=match.item.id) }}" 
-                 class="btn btn-sm btn-outline-primary" target="_blank">
-                <i class="bi bi-eye"></i> View
-              </a>
-              
-              <form method="POST" action="{{ url_for('admin.create_match') }}" class="d-inline">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="lost_item_id" 
-                       value="{% if item.type == 'lost' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                <input type="hidden" name="found_item_id" 
-                       value="{% if item.type == 'found' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                <button type="submit" class="btn btn-sm btn-success"
-                        onclick="return confirm('Confirm this match? Both parties will be notified.')">
-                  <i class="bi bi-check-circle"></i> Confirm Match
-                </button>
-              </form>
-            </div>
-          </div>
+            <a href="manage_items.html" class="btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back to Items</a>
         </div>
-      </div>
-    {% endfor %}
-  </div>
-{% else %}
-  <div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> No potential matches found for this item.
-  </div>
-{% endif %}
-{% endblock %}
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
->>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
+
+        <!-- flash message demo -->
+        <div class="alert alert-info"><i class="fas fa-info-circle"></i> Showing potential matches based on category, campus, and description.</div>
+
+        <!-- Source Item Details card -->
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Source Item Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Title:</strong> MacBook Pro 14" (Space Grey)</p>
+                        <p><strong>Reference:</strong> DUT-L-2405-189</p>
+                        <p><strong>Type:</strong> <span class="badge bg-warning">Lost</span></p>
+                        <p><strong>Category:</strong> Electronics / Laptop</p>
+                        <p><strong>Campus:</strong> Steve Biko</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Reporter:</strong> Sarah Khumalo</p>
+                        <p><strong>Email:</strong> s.khumalo@dut.ac.za</p>
+                        <p><strong>Date:</strong> 12 May 2026</p>
+                        <p><strong>Status:</strong> <span class="badge bg-primary">Open</span></p>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p><strong>Public Description:</strong></p>
+                    <div class="border rounded p-3 bg-light">
+                        14‑inch MacBook Pro, M3 chip, 16GB RAM. Space grey with a small scratch near the trackpad. Last seen in library 2nd floor.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3">Potential Matches (3)</h4>
+
+        <!-- matches grid -->
+        <div class="row">
+            <!-- match 1: high score 85% -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-success border-2">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Found MacBook Pro 14"</h5>
+                        <span class="badge bg-white text-success fs-6">85% Match</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <p><strong>Reference:</strong><br><span class="font-monospace">DUT-F-2405-201</span></p>
+                                <p><strong>Category:</strong> Electronics/Laptop</p>
+                                <p><strong>Campus:</strong> Steve Biko</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Type:</strong><br><span class="badge bg-success">Found</span></p>
+                                <p><strong>Reporter:</strong> Thabo Ndlovu</p>
+                                <p><strong>Date:</strong> 13 May</p>
+                            </div>
+                        </div>
+                        <p><strong>Description:</strong></p>
+                        <div class="border rounded p-2 bg-light small mb-3">Space grey MacBook Pro, 14 inch, found in library near study carrels. Has a charger.</div>
+
+                        <!-- match breakdown -->
+                        <div class="mb-3">
+                            <p class="fw-semibold mb-2">Match Breakdown:</p>
+                            <div class="row g-2">
+                                <div class="col-6"><small>Category: 100%</small><div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+                                <div class="col-6"><small>Campus: 100%</small><div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+                                <div class="col-6"><small>Title: 90%</small><div class="progress"><div class="progress-bar bg-info" style="width:90%"></div></div></div>
+                                <div class="col-6"><small>Description: 70%</small><div class="progress"><div class="progress-bar bg-info" style="width:70%"></div></div></div>
+                                <div class="col-6"><small>Date: 60%</small><div class="progress"><div class="progress-bar bg-warning" style="width:60%"></div></div></div>
+                                <div class="col-6"><small>Location: 90%</small><div class="progress"><div class="progress-bar bg-warning" style="width:90%"></div></div></div>
+                            </div>
+                        </div>
+
+                        <!-- private verification -->
+                        <div class="border border-danger rounded p-2 bg-danger bg-opacity-10 mb-3">
+                            <p class="small fw-bold text-danger mb-1"><i class="fas fa-shield-alt"></i> PRIVATE VERIFICATION</p>
+                            <p class="small mb-0"><strong>Source:</strong> Serial: C02Y7K8XJ1GJ, charger with name tag</p>
+                            <p class="small mb-0"><strong>Match:</strong> Serial: C02Y7K8XJ1GJ, charger with "T.Ndlovu"</p>
+                        </div>
+
+                        <!-- action buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye"></i> View</a>
+                            <form method="POST" action="#" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="dummy">
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Confirm this match?')"><i class="fas fa-check-circle"></i> Confirm Match</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- match 2: medium score 68% -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Dell Laptop Bag</h5>
+                        <span class="badge bg-primary fs-6">68% Match</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <p><strong>Reference:</strong><br><span class="font-monospace">DUT-F-2405-188</span></p>
+                                <p><strong>Category:</strong> Accessories/Bag</p>
+                                <p><strong>Campus:</strong> Steve Biko</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Type:</strong><br><span class="badge bg-success">Found</span></p>
+                                <p><strong>Reporter:</strong> Jane Mkhize</p>
+                                <p><strong>Date:</strong> 12 May</p>
+                            </div>
+                        </div>
+                        <div class="border rounded p-2 bg-light small mb-3">Black Dell laptop bag, found near library entrance. No laptop inside.</div>
+                        <!-- breakdown -->
+                        <div class="mb-3">
+                            <p class="fw-semibold mb-2">Match Breakdown:</p>
+                            <div class="row g-2">
+                                <div class="col-6"><small>Category: 30%</small><div class="progress"><div class="progress-bar bg-success" style="width:30%"></div></div></div>
+                                <div class="col-6"><small>Campus: 100%</small><div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+                                <div class="col-6"><small>Title: 40%</small><div class="progress"><div class="progress-bar bg-info" style="width:40%"></div></div></div>
+                                <div class="col-6"><small>Description: 30%</small><div class="progress"><div class="progress-bar bg-info" style="width:30%"></div></div></div>
+                                <div class="col-6"><small>Date: 90%</small><div class="progress"><div class="progress-bar bg-warning" style="width:90%"></div></div></div>
+                                <div class="col-6"><small>Location: 80%</small><div class="progress"><div class="progress-bar bg-warning" style="width:80%"></div></div></div>
+                            </div>
+                        </div>
+                        <div class="border border-danger rounded p-2 bg-danger bg-opacity-10 mb-3">
+                            <p class="small fw-bold text-danger mb-1"><i class="fas fa-shield-alt"></i> PRIVATE</p>
+                            <p class="small mb-0"><strong>Source:</strong> bag with charger, laptop sticker</p>
+                            <p class="small mb-0"><strong>Match:</strong> black bag, no laptop</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye"></i> View</a>
+                            <form method="POST" action="#">
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Confirm match?')"><i class="fas fa-check-circle"></i> Confirm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- match 3: high score 92% -->
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-success border-2">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">MacBook Pro Charger</h5>
+                        <span class="badge bg-white text-success fs-6">92% Match</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <p><strong>Reference:</strong><br><span class="font-monospace">DUT-F-2405-176</span></p>
+                                <p><strong>Category:</strong> Electronics/Charger</p>
+                                <p><strong>Campus:</strong> Steve Biko</p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Type:</strong><br><span class="badge bg-success">Found</span></p>
+                                <p><strong>Reporter:</strong> Sipho Dlamini</p>
+                                <p><strong>Date:</strong> 13 May</p>
+                            </div>
+                        </div>
+                        <div class="border rounded p-2 bg-light small mb-3">White MacBook charger 85W, found in library, has a name tag "T.Ndlovu".</div>
+                        <div class="mb-3">
+                            <p class="fw-semibold mb-2">Match Breakdown:</p>
+                            <div class="row g-2">
+                                <div class="col-6"><small>Category: 100%</small><div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+                                <div class="col-6"><small>Campus: 100%</small><div class="progress"><div class="progress-bar bg-success" style="width:100%"></div></div></div>
+                                <div class="col-6"><small>Title: 80%</small><div class="progress"><div class="progress-bar bg-info" style="width:80%"></div></div></div>
+                                <div class="col-6"><small>Description: 90%</small><div class="progress"><div class="progress-bar bg-info" style="width:90%"></div></div></div>
+                                <div class="col-6"><small>Date: 95%</small><div class="progress"><div class="progress-bar bg-warning" style="width:95%"></div></div></div>
+                                <div class="col-6"><small>Location: 90%</small><div class="progress"><div class="progress-bar bg-warning" style="width:90%"></div></div></div>
+                            </div>
+                        </div>
+                        <div class="border border-danger rounded p-2 bg-danger bg-opacity-10 mb-3">
+                            <p class="small fw-bold text-danger mb-1"><i class="fas fa-shield-alt"></i> PRIVATE</p>
+                            <p class="small mb-0"><strong>Source:</strong> charger with name tag, 85W</p>
+                            <p class="small mb-0"><strong>Match:</strong> 85W charger, name "Thabo Ndlovu"</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye"></i> View</a>
+                            <form method="POST" action="#">
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Confirm match?')"><i class="fas fa-check-circle"></i> Confirm Match</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT" class="footer-logo" onerror="this.style.display='none';">
+                <p>Your official lost and found portal, designed to reconnect students and staff with their belongings through a secure and reliable campus process.</p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                    <h4 class="footer-heading">Quick Links</h4>
+                  <ul class="footer-links">
+                    <li><a href="manage_items.html"><i class="fas fa-search"></i> Browse Items</a></li>
+                    <li><a href="manage_users.html"><i class="fas fa-users"></i> Browse Users</a></li>
+                    <li><a href="matches/view.html"><i class="fas fa-box-open"></i> View Matches</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-clipboard-list"></i> Dashboard</a></li>
+                  </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Help Center</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                    <li><a href="#"><i class="fas fa-gavel"></i> Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-heading">Get in Touch</h4>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><div><strong>Steve Biko Campus</strong><br />Main Administration</div></div>
+                <div class="footer-contact-item"><i class="fas fa-phone-alt"></i><span>+27 (0)31 373 1234</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span>lostfound@dut.ac.za</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <div>DUT Lost & Found Portal © 2026 — Durban University of Technology</div>
+                <div><span class="envision-tag">ENVISION2030</span></div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

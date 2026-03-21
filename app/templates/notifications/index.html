@@ -2,442 +2,332 @@
 {% block title %}Notifications — DUT Lost & Found{% endblock %}
 
 {% block content %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
 <style>
-    .notifications-page,
-    .notifications-page * {
-        box-sizing: border-box;
-        font-family: 'Inter', sans-serif;
-    }
+  :root {
+    --dut-green:  #1C8441;
+    --dut-blue:   #5370A3;
+    --dut-red:    #D11F2D;
+    --dut-teal:   #7AB4B6;
+    --dut-orange: #FFA500;
+    --text-dark:  #18222c;
+    --text-soft:  #61707d;
+    --border:     #d9e0e6;
+    --bg:         #f3f5f7;
+    --white:      #ffffff;
+    --shadow-sm:  0 8px 18px rgba(16,32,47,0.05);
+    --shadow-md:  0 18px 40px rgba(16,32,47,0.08);
+    --radius-md:  12px;
+    --radius-lg:  16px;
+    --transition: 0.25s ease;
+  }
 
-    .notifications-page {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
+  .notif-wrap { max-width: 760px; margin: 0 auto; }
 
-        --bg-light: #f8faff;
-        --text-dark: #1a1a1a;
-        --text-muted: #5D6D7E;
-        --border-light: #e9edf5;
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .notif-header {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+  }
 
-        --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
-        --radius: 16px;
+  .notif-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--dut-green), var(--dut-blue),
+      var(--dut-teal), var(--dut-red));
+  }
 
-        --space-xs: 0.5rem;
-        --space-sm: 1rem;
-        --space-md: 1.5rem;
-        --space-lg: 2rem;
+  .notif-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
 
-        max-width: 800px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
+  .notif-header h2 i { color: var(--dut-red); }
 
-    .notifications-header {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-md);
-        margin-bottom: var(--space-md);
-        border: 1px solid var(--border-light);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: var(--space-sm);
-        box-shadow: var(--shadow-sm);
-    }
+  .mark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-decoration: none;
+    transition: all var(--transition);
+  }
 
-    .notifications-header-left {
-        display: flex;
-        align-items: center;
-        gap: var(--space-xs);
-    }
+  .mark-btn:hover {
+    background: var(--dut-blue);
+    color: white;
+    border-color: var(--dut-blue);
+  }
 
-    .notifications-header-left i {
-        font-size: 1.5rem;
-        color: var(--dut-red);
-    }
+  /* ── Notification list ───────────────────────────────────────────────── */
+  .notif-list {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
 
-    .notifications-header-left h3 {
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin: 0;
-    }
+  .notif-list::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--dut-green), var(--dut-blue),
+      var(--dut-teal), var(--dut-red));
+  }
 
-    .mark-btn {
-        background: transparent;
-        border: 1px solid var(--border-light);
-        color: var(--text-muted);
-        padding: 0.7rem 1.2rem;
-        border-radius: 40px;
-        font-size: 0.95rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: 0.25s ease;
-    }
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    transition: background var(--transition);
+  }
 
-    .mark-btn:hover {
-        background: var(--dut-blue);
-        color: white;
-        border-color: var(--dut-blue);
-    }
+  .notif-item:last-child { border-bottom: none; }
 
-    .alert {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-sm) var(--space-md);
-        margin-bottom: var(--space-md);
-        border: 1px solid var(--border-light);
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm);
-        box-shadow: var(--shadow-sm);
-    }
+  .notif-item:hover { background: var(--bg); }
 
-    .alert i {
-        font-size: 1.1rem;
-    }
+  .notif-item.unread {
+    background: #fff9f9;
+    border-left: 4px solid var(--dut-red);
+  }
 
-    .alert.success i { color: var(--dut-green); }
-    .alert.danger i { color: var(--dut-red); }
-    .alert.warning i { color: var(--dut-orange); }
-    .alert.info i { color: var(--dut-blue); }
+  .notif-item.unread:hover { background: #fff4f4; }
 
-    .notif-list {
-        background: white;
-        border-radius: var(--radius);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        margin-bottom: var(--space-lg);
-        box-shadow: var(--shadow-sm);
-    }
+  /* Icon bubble */
+  .notif-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 
-    .notif-item {
-        padding: var(--space-md);
-        border-bottom: 1px solid var(--border-light);
-        display: flex;
-        align-items: flex-start;
-        gap: var(--space-sm);
-    }
+  .notif-icon.approved  { background: rgba(28,132,65,0.1);   color: var(--dut-green); }
+  .notif-icon.rejected  { background: rgba(209,31,45,0.1);   color: var(--dut-red); }
+  .notif-icon.submitted { background: rgba(255,165,0,0.1);   color: var(--dut-orange); }
+  .notif-icon.match     { background: rgba(83,112,163,0.1);  color: var(--dut-blue); }
+  .notif-icon.closed    { background: rgba(122,180,182,0.12); color: #2a7d80; }
+  .notif-icon.default   { background: rgba(0,0,0,0.04);      color: var(--text-soft); }
 
-    .notif-item:last-child {
-        border-bottom: none;
-    }
+  /* Content */
+  .notif-content { flex: 1; min-width: 0; }
 
-    .notif-item.unread {
-        background: #fff9f9;
-        border-left: 4px solid var(--dut-red);
-    }
+  .notif-message {
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+    word-break: break-word;
+  }
 
-    .notif-icon {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 0.95rem;
-    }
+  .notif-message.bold { font-weight: 700; }
 
-    .notif-icon.approved {
-        background: rgba(28,132,65,0.1);
-        color: var(--dut-green);
-    }
+  .notif-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 
-    .notif-icon.rejected {
-        background: rgba(209,31,45,0.1);
-        color: var(--dut-red);
-    }
+  .notif-time {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
 
-    .notif-icon.submitted {
-        background: rgba(255,165,0,0.1);
-        color: var(--dut-orange);
-    }
+  .notif-time i { color: var(--dut-teal); font-size: 0.72rem; }
 
-    .notif-icon.match {
-        background: rgba(83,112,163,0.1);
-        color: var(--dut-blue);
-    }
+  .notif-link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--dut-red);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color var(--transition);
+    white-space: nowrap;
+  }
 
-    .notif-icon.closed {
-        background: rgba(122,180,182,0.1);
-        color: var(--dut-teal);
-    }
+  .notif-link:hover { color: var(--dut-blue); }
 
-    .notif-icon.default {
-        background: rgba(0,0,0,0.05);
-        color: var(--text-muted);
-    }
+  /* New badge */
+  .new-badge {
+    flex-shrink: 0;
+    background: var(--dut-red);
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.18rem 0.65rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 2px;
+  }
 
-    .notif-content {
-        flex: 1;
-        min-width: 0;
-    }
+  .new-badge i { font-size: 0.5rem; }
 
-    .notif-message {
-        color: var(--text-dark);
-        font-size: 0.98rem;
-        line-height: 1.5;
-        margin-bottom: 0.45rem;
-        word-break: break-word;
-    }
+  /* ── Empty state ─────────────────────────────────────────────────────── */
+  .empty-card {
+    background: var(--white);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius-lg);
+    padding: 3.5rem 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
 
-    .notif-message.unread {
-        font-weight: 600;
-    }
+  .empty-card i { font-size: 3rem; color: var(--dut-teal); opacity: 0.4; display: block; margin-bottom: 0.85rem; }
+  .empty-card h4 { font-weight: 800; color: var(--text-dark); margin-bottom: 0.35rem; }
+  .empty-card p  { color: var(--text-soft); font-size: 0.9rem; margin-bottom: 0; }
 
-    .notif-meta {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
+  /* ── Color bar ───────────────────────────────────────────────────────── */
+  .color-bar {
+    display: flex; justify-content: center; gap: 0.6rem;
+    margin-top: 2rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
 
-    .notif-time {
-        color: var(--text-muted);
-        font-size: 0.82rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
+  .c-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .c-dot:nth-child(1) { background: var(--dut-green); }
+  .c-dot:nth-child(2) { background: var(--dut-blue); }
+  .c-dot:nth-child(3) { background: var(--dut-teal); }
+  .c-dot:nth-child(4) { background: var(--dut-red); }
+  .c-dot:nth-child(5) { background: var(--dut-blue); }
+  .c-dot:nth-child(6) { background: var(--dut-orange); }
 
-    .notif-time i {
-        color: var(--dut-teal);
-        font-size: 0.75rem;
-    }
-
-    .notif-link {
-        color: var(--dut-red);
-        text-decoration: none;
-        font-size: 0.82rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        white-space: nowrap;
-        font-weight: 600;
-        transition: 0.2s ease;
-    }
-
-    .notif-link:hover {
-        color: var(--dut-blue);
-    }
-
-    .notif-badge {
-        background: var(--dut-red);
-        color: white;
-        padding: 0.3rem 0.8rem;
-        border-radius: 30px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-        margin-left: auto;
-    }
-
-    .notif-badge i {
-        font-size: 0.55rem;
-    }
-
-    .empty {
-        background: white;
-        border-radius: var(--radius);
-        padding: 2.5rem 1.5rem;
-        text-align: center;
-        border: 2px dashed var(--border-light);
-        margin-bottom: var(--space-lg);
-        box-shadow: var(--shadow-sm);
-    }
-
-    .empty i {
-        font-size: 3rem;
-        color: var(--dut-teal);
-        opacity: 0.35;
-        margin-bottom: 1rem;
-    }
-
-    .empty h4 {
-        font-size: 1.35rem;
-        color: var(--text-dark);
-        margin-bottom: 0.35rem;
-        font-weight: 700;
-    }
-
-    .empty p {
-        color: var(--text-muted);
-        font-size: 0.95rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .empty small {
-        color: var(--text-muted);
-        font-size: 0.82rem;
-    }
-
-    .dots {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: var(--space-lg);
-        padding-top: var(--space-md);
-        border-top: 1px solid var(--border-light);
-    }
-
-    .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-    }
-
-    .dot:nth-child(1) { background: var(--dut-green); }
-    .dot:nth-child(2) { background: var(--dut-blue); }
-    .dot:nth-child(3) { background: var(--dut-purple); }
-    .dot:nth-child(4) { background: var(--dut-red); }
-    .dot:nth-child(5) { background: var(--dut-teal); }
-    .dot:nth-child(6) { background: var(--dut-orange); }
-
-    @media (max-width: 768px) {
-        .notifications-page {
-            margin: 1rem auto;
-        }
-
-        .notifications-header {
-            padding: 1rem;
-        }
-
-        .notifications-header-left h3 {
-            font-size: 1.4rem;
-        }
-
-        .notif-item {
-            padding: 1rem;
-            gap: 0.8rem;
-        }
-
-        .notif-badge {
-            margin-left: 0;
-            margin-top: 0.5rem;
-        }
-    }
+  /* Mobile */
+  @media (max-width: 480px) {
+    .notif-item { padding: 0.9rem 1rem; gap: 0.75rem; }
+    .notif-header h2 { font-size: 1.3rem; }
+    .new-badge { margin-top: 0.4rem; }
+  }
 </style>
 
-<div class="notifications-page">
-    <div class="notifications-header">
-        <div class="notifications-header-left">
-            <i class="fas fa-bell"></i>
-            <h3>Notifications</h3>
-        </div>
+<div class="notif-wrap">
 
-        {% if notifications %}
-            <a href="{{ url_for('notifications.mark_all_read') }}" class="mark-btn">
-                <i class="fas fa-check-double"></i>
-                Mark all read
-            </a>
-        {% endif %}
-    </div>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert {{ category }}">
-                    <i class="fas
-                        {% if category == 'success' %} fa-check-circle
-                        {% elif category == 'danger' %} fa-exclamation-circle
-                        {% elif category == 'warning' %} fa-exclamation-triangle
-                        {% else %} fa-info-circle
-                        {% endif %}">
-                    </i>
-                    <span>{{ message }}</span>
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
+  <!-- Header -->
+  <div class="notif-header">
+    <h2>
+      <i class="fas fa-bell"></i> Notifications
+    </h2>
     {% if notifications %}
-        <div class="notif-list">
-            {% for notif in notifications %}
-                <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
-                    <div class="notif-icon
-                        {% if notif.type == 'claim_approved' %} approved
-                        {% elif notif.type == 'claim_rejected' %} rejected
-                        {% elif notif.type == 'claim_submitted' %} submitted
-                        {% elif notif.type == 'match_found' %} match
-                        {% elif notif.type == 'item_closed' %} closed
-                        {% else %} default
-                        {% endif %}">
-
-                        {% if notif.type == 'claim_approved' %}
-                            <i class="fas fa-check"></i>
-                        {% elif notif.type == 'claim_rejected' %}
-                            <i class="fas fa-times"></i>
-                        {% elif notif.type == 'claim_submitted' %}
-                            <i class="fas fa-file-alt"></i>
-                        {% elif notif.type == 'match_found' %}
-                            <i class="fas fa-link"></i>
-                        {% elif notif.type == 'item_closed' %}
-                            <i class="fas fa-box-archive"></i>
-                        {% else %}
-                            <i class="fas fa-bell"></i>
-                        {% endif %}
-                    </div>
-
-                    <div class="notif-content">
-                        <div class="notif-message {% if not notif.is_read %}unread{% endif %}">
-                            {{ notif.message }}
-                        </div>
-
-                        <div class="notif-meta">
-                            <span class="notif-time">
-                                <i class="fas fa-clock"></i>
-                                {{ notif.created_at.strftime('%d %b %Y at %H:%M') }}
-                            </span>
-
-                            {% if notif.related_item %}
-                                <a href="{{ url_for('items.detail', item_id=notif.related_item_id) }}" class="notif-link">
-                                    View item <i class="fas fa-arrow-right"></i>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    {% if not notif.is_read %}
-                        <div class="notif-badge">
-                            <i class="fas fa-circle"></i>
-                            New
-                        </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="empty">
-            <i class="fas fa-bell-slash"></i>
-            <h4>No notifications</h4>
-            <p>You're all caught up!</p>
-            <small>You'll be notified when claims are submitted or reviewed.</small>
-        </div>
+      <a href="{{ url_for('notifications.mark_all_read') }}" class="mark-btn">
+        <i class="fas fa-check-double"></i> Mark all read
+      </a>
     {% endif %}
+  </div>
 
-    <div class="dots">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mb-3">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  {% if notifications %}
+    <div class="notif-list">
+      {% for notif in notifications %}
+        <div class="notif-item {% if not notif.is_read %}unread{% endif %}">
+
+          <!-- Icon -->
+          <div class="notif-icon
+            {% if notif.type == 'claim_approved' %}approved
+            {% elif notif.type == 'claim_rejected' %}rejected
+            {% elif notif.type == 'claim_submitted' %}submitted
+            {% elif notif.type == 'match_found' %}match
+            {% elif notif.type == 'item_closed' %}closed
+            {% else %}default{% endif %}">
+            <i class="fas
+              {% if notif.type == 'claim_approved' %}fa-check-circle
+              {% elif notif.type == 'claim_rejected' %}fa-times-circle
+              {% elif notif.type == 'claim_submitted' %}fa-file-alt
+              {% elif notif.type == 'match_found' %}fa-link
+              {% elif notif.type == 'item_closed' %}fa-archive
+              {% else %}fa-bell{% endif %}">
+            </i>
+          </div>
+
+          <!-- Content -->
+          <div class="notif-content">
+            <div class="notif-message {% if not notif.is_read %}bold{% endif %}">
+              {{ notif.message }}
+            </div>
+            <div class="notif-meta">
+              <span class="notif-time">
+                <i class="fas fa-clock"></i>
+                {{ notif.created_at.strftime('%d %b %Y at %H:%M') }}
+              </span>
+              {% if notif.related_item %}
+                <a href="{{ url_for('notifications.mark_read', notif_id=notif.id) }}"
+                   class="notif-link">
+                  View item <i class="fas fa-arrow-right"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- New badge -->
+          {% if not notif.is_read %}
+            <div class="new-badge">
+              <i class="fas fa-circle"></i> New
+            </div>
+          {% endif %}
+
+        </div>
+      {% endfor %}
     </div>
+
+  {% else %}
+    <div class="empty-card">
+      <i class="fas fa-bell-slash"></i>
+      <h4>All caught up</h4>
+      <p>You have no notifications. You'll be notified when claims are submitted or reviewed.</p>
+    </div>
+  {% endif %}
+
+  <!-- Color bar -->
+  <div class="color-bar">
+    <div class="c-dot"></div><div class="c-dot"></div>
+    <div class="c-dot"></div><div class="c-dot"></div>
+    <div class="c-dot"></div><div class="c-dot"></div>
+  </div>
+
 </div>
 {% endblock %}

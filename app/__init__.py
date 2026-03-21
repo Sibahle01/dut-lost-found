@@ -1,4 +1,4 @@
-﻿from flask import Flask, redirect, url_for
+﻿from flask import Flask, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_mail import Mail
@@ -48,18 +48,37 @@ def create_app(config_class=Config):
 
     from app.notifications import bp as notifications_bp
     app.register_blueprint(notifications_bp, url_prefix='/notifications')
-    
+
     from app.matching import bp as matching_bp
     app.register_blueprint(matching_bp, url_prefix='/matching')
 
+    # ── Home route ────────────────────────────────────────────────────────
     @app.route('/')
-    def index():
-        return 'DUT Lost & Found Portal - Under Construction'
+    def home():
+        from app.models.item import Item
+        from sqlalchemy import or_
+
+        # Show open AND matched lost items so the homepage stays populated
+        # even after admin matching activity
+        recent_lost = Item.query.filter(
+            Item.type == 'lost',
+            or_(Item.status == 'open', Item.status == 'matched')
+        ).order_by(Item.created_at.desc()).limit(6).all()
+
+        # Found items — open and matched
+        recent_found = Item.query.filter(
+            Item.type == 'found',
+            or_(Item.status == 'open', Item.status == 'matched')
+        ).order_by(Item.created_at.desc()).limit(6).all()
+
+        return render_template('index.html',
+                               recent_lost=recent_lost,
+                               recent_found=recent_found)
 
     @app.route('/test-db')
     def test_db():
         try:
-            from app.models import User
+            from app.models.user import User
             user_count = User.query.count()
             return f'✅ Database connection successful! User count: {user_count}'
         except Exception as e:
@@ -67,8 +86,9 @@ def create_app(config_class=Config):
 
     return app
 
+
 # User loader for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
-    from app.models import User
+    from app.models.user import User
     return User.query.get(int(user_id))

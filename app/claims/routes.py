@@ -117,18 +117,18 @@ def submit(item_id):
 @bp.route('/dashboard')
 @login_required
 def dashboard():
-    """User dashboard showing their claims and reported items"""
     user_claims = Claim.query.filter_by(claimant_id=current_user.id)\
-                             .order_by(Claim.created_at.desc())\
-                             .all()
-    
-    user_items = Item.query.filter_by(reported_by=current_user.id)\
-                           .order_by(Item.created_at.desc())\
-                           .all()
-    
-    return render_template('claims/dashboard.html', 
-                         claims=user_claims, 
-                         items=user_items)
+                             .order_by(Claim.created_at.desc()).all()
+    user_items  = Item.query.filter_by(reported_by=current_user.id)\
+                            .order_by(Item.created_at.desc()).all()
+    unread_count = Notification.query.filter_by(
+        user_id=current_user.id, is_read=False
+    ).count()
+
+    return render_template('claims/dashboard.html',
+                           claims=user_claims,
+                           items=user_items,
+                           unread_count=unread_count)
 
 
 @bp.route('/my-claims')

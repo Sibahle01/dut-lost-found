@@ -1,619 +1,469 @@
 ﻿{% extends "base.html" %}
-{% block title %}Claim Item - DUT Lost & Found{% endblock %}
+{% block title %}Submit Claim — {{ item.title }}{% endblock %}
 
 {% block content %}
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    :root {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
-        
-        --gradient-primary: linear-gradient(135deg, #1C8441, #5370A3, #812575);
-        --gradient-accent: linear-gradient(135deg, #D11F2D, #FFA500);
-        
-        --bg-light: #f8faff;
-        --text-dark: #1a1a1a;
-        --text-muted: #5D6D7E;
-        --border-light: rgba(122,180,182,0.2);
-        
-        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
-        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
-        
-        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --border-radius: 24px;
-        --border-radius-sm: 16px;
-        --border-radius-xs: 12px;
-        
-        --spacing-xs: 0.5rem;
-        --spacing-sm: 1rem;
-        --spacing-md: 1.5rem;
-        --spacing-lg: 2rem;
-        --spacing-xl: 3rem;
-    }
+  :root {
+    --dut-green:  #1C8441;
+    --dut-blue:   #5370A3;
+    --dut-purple: #812575;
+    --dut-red:    #D11F2D;
+    --dut-teal:   #7AB4B6;
+    --dut-orange: #FFA500;
+    --text-dark:  #1a1a1a;
+    --text-muted: #5D6D7E;
+    --border-light: rgba(122,180,182,0.2);
+    --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
+    --transition: all 0.25s ease;
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+  .submit-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+  }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-        color: var(--text-dark);
-        min-height: 100vh;
-        padding: var(--spacing-lg) 0;
-    }
+  /* Page header */
+  .page-header {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.75rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-light);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
 
-    .claim-container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 var(--spacing-lg);
-    }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
+  }
 
-    /* Page Header */
-    .page-header {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: var(--spacing-lg) var(--spacing-xl);
-        margin-bottom: var(--spacing-xl);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        position: relative;
-        overflow: hidden;
-        text-align: center;
-    }
+  .page-header h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+  }
 
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
-    }
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin: 0.2rem 0 0;
+  }
 
-    .page-header h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        margin: 0 0 0.5rem 0;
-        background: linear-gradient(135deg, var(--dut-green), var(--dut-blue), var(--dut-red));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
-    }
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--border-light);
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition);
+    white-space: nowrap;
+  }
 
-    .page-header h1 i {
-        font-size: 2rem;
-        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
+  .back-link:hover { border-color: var(--dut-blue); color: var(--dut-blue); }
 
-    .page-header p {
-        color: var(--text-muted);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
+  /* Item summary card */
+  .item-summary {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
 
-    .page-header p i {
-        color: var(--dut-teal);
-    }
+  .item-summary-header {
+    padding: 0.9rem 1.25rem;
+    background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    /* Cards */
-    .custom-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        margin-bottom: var(--spacing-lg);
-        position: relative;
-        transition: var(--transition);
-    }
+  .item-summary-body {
+    padding: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
 
-    .custom-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
-    }
+  @media (max-width: 480px) {
+    .item-summary-body { grid-template-columns: 1fr; }
+  }
 
-    .custom-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple));
-    }
+  .summary-item { font-size: 0.88rem; }
+  .summary-label { color: var(--text-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.2rem; }
+  .summary-value { font-weight: 600; color: var(--text-dark); }
 
-    .card-header-custom {
-        padding: var(--spacing-md) var(--spacing-lg);
-        color: white;
-        font-weight: 600;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
+  .ref-pill {
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--dut-red);
+    background: rgba(209,31,45,0.07);
+    padding: 0.15rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
 
-    .card-header-custom i {
-        font-size: 1.2rem;
-        opacity: 0.9;
-    }
+  /* Form card */
+  .form-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
 
-    .card-header-custom.info {
-        background: linear-gradient(135deg, var(--dut-teal), var(--dut-blue));
-    }
+  .form-card-header {
+    padding: 0.9rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-    .card-header-custom.warning {
-        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
-    }
+  .form-card-header.proof  { background: rgba(255,165,0,0.1); color: #b37400; }
+  .form-card-header.verify { background: rgba(83,112,163,0.1); color: var(--dut-blue); }
+  .form-card-header.upload { background: rgba(28,132,65,0.1);  color: var(--dut-green); }
 
-    .card-body-custom {
-        padding: var(--spacing-lg);
-    }
+  .form-card-body { padding: 1.25rem; }
 
-    /* Item Details */
-    .item-details {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
-    }
+  /* Form controls */
+  .form-label {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    margin-bottom: 0.4rem;
+    display: block;
+  }
 
-    .detail-row {
-        display: flex;
-        border-bottom: 1px solid var(--border-light);
-        padding: var(--spacing-xs) 0;
-    }
+  .form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: var(--text-dark);
+    background: #fafbfc;
+    transition: var(--transition);
+    resize: vertical;
+  }
 
-    .detail-label {
-        width: 120px;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+  .form-control:focus {
+    outline: none;
+    border-color: var(--dut-blue);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(83,112,163,0.1);
+  }
 
-    .detail-label i {
-        color: var(--dut-teal);
-        width: 20px;
-    }
+  .form-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
 
-    .detail-value {
-        flex: 1;
-        color: var(--text-dark);
-        font-weight: 500;
-    }
+  .form-hint i { color: var(--dut-teal); margin-top: 1px; flex-shrink: 0; }
 
-    .reference-value {
-        font-family: 'SF Mono', monospace;
-        color: var(--dut-red);
-        font-weight: 600;
-        background: rgba(209,31,45,0.05);
-        padding: 0.2rem 0.8rem;
-        border-radius: 30px;
-        display: inline-block;
-    }
+  /* Upload area */
+  .upload-area {
+    border: 2px dashed rgba(122,180,182,0.4);
+    border-radius: var(--radius-sm);
+    padding: 1.5rem;
+    text-align: center;
+    background: #fafbfc;
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+  }
 
-    .description-box {
-        background: var(--bg-light);
-        border: 1px solid var(--border-light);
-        border-radius: var(--border-radius-sm);
-        padding: var(--spacing-md);
-        margin: var(--spacing-sm) 0;
-        color: var(--text-dark);
-        line-height: 1.6;
-    }
+  .upload-area:hover { border-color: var(--dut-green); background: rgba(28,132,65,0.03); }
 
-    /* Image */
-    .item-image {
-        margin-top: var(--spacing-md);
-        text-align: center;
-    }
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
 
-    .item-image img {
-        max-height: 200px;
-        border-radius: var(--border-radius-sm);
-        border: 3px solid var(--border-light);
-        box-shadow: var(--shadow-md);
-    }
+  .upload-icon { font-size: 2rem; color: var(--dut-teal); margin-bottom: 0.5rem; }
+  .upload-text { font-size: 0.88rem; color: var(--text-muted); }
+  .upload-text strong { color: var(--dut-green); }
 
-    /* Form */
-    .form-card {
-        background: white;
-        border-radius: var(--border-radius);
-        box-shadow: var(--shadow-lg);
-        border: 1px solid var(--border-light);
-        overflow: hidden;
-        margin-bottom: var(--spacing-lg);
-        position: relative;
-    }
+  /* Warning box */
+  .warning-box {
+    background: rgba(209,31,45,0.05);
+    border: 1px solid rgba(209,31,45,0.2);
+    border-left: 4px solid var(--dut-red);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+    color: var(--text-dark);
+    line-height: 1.6;
+  }
 
-    .form-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
-    }
+  .warning-box i { color: var(--dut-red); margin-right: 0.35rem; }
+  .warning-box strong { color: var(--dut-red); }
 
-    .form-header {
-        background: linear-gradient(135deg, var(--dut-orange), var(--dut-red));
-        color: white;
-        padding: var(--spacing-md) var(--spacing-lg);
-        font-weight: 600;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
+  /* Submit button */
+  .submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--dut-red), #c0392b);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-family: inherit;
+    margin-bottom: 0.85rem;
+  }
 
-    .form-body {
-        padding: var(--spacing-lg);
-    }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(209,31,45,0.3);
+  }
 
-    .form-group {
-        margin-bottom: var(--spacing-lg);
-    }
+  .cancel-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: transparent;
+    border: 1.5px solid var(--border-light);
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition);
+  }
 
-    .form-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-    }
+  .cancel-link:hover { border-color: var(--dut-blue); color: var(--dut-blue); }
 
-    .form-label i {
-        color: var(--dut-blue);
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: 2px solid var(--border-light);
-        border-radius: var(--border-radius-xs);
-        font-family: 'Inter', sans-serif;
-        transition: var(--transition);
-        background: var(--bg-light);
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: var(--dut-blue);
-        background: white;
-        box-shadow: 0 0 0 3px rgba(83,112,163,0.1);
-    }
-
-    textarea.form-control {
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    .form-text {
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        margin-top: 0.3rem;
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-    }
-
-    .form-text i {
-        color: var(--dut-teal);
-        font-size: 0.75rem;
-    }
-
-    /* File Input */
-    .file-input-wrapper {
-        position: relative;
-    }
-
-    .file-input-wrapper input[type="file"] {
-        padding: 0.5rem;
-        background: var(--bg-light);
-        border: 2px dashed var(--border-light);
-        cursor: pointer;
-    }
-
-    .file-input-wrapper input[type="file"]::-webkit-file-upload-button {
-        background: linear-gradient(135deg, var(--dut-blue), var(--dut-purple));
-        color: white;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 30px;
-        margin-right: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-
-    .file-input-wrapper input[type="file"]::-webkit-file-upload-button:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-
-    /* Action Buttons */
-    .action-buttons {
-        display: flex;
-        gap: var(--spacing-md);
-        margin-top: var(--spacing-lg);
-        flex-wrap: wrap;
-    }
-
-    .btn-submit {
-        background: linear-gradient(135deg, var(--dut-green), #2ecc71);
-        color: white;
-        border: none;
-        padding: 1rem 2.5rem;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: var(--transition);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        box-shadow: var(--shadow-md);
-        flex: 1;
-        justify-content: center;
-    }
-
-    .btn-submit:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-lg);
-        background: linear-gradient(135deg, #2ecc71, var(--dut-green));
-    }
-
-    .btn-cancel {
-        background: white;
-        color: var(--text-muted);
-        border: 2px solid var(--border-light);
-        padding: 1rem 2.5rem;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: none;
-        transition: var(--transition);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        flex: 1;
-        justify-content: center;
-    }
-
-    .btn-cancel:hover {
-        border-color: var(--dut-red);
-        color: var(--dut-red);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-
-    /* Color Bar */
-    .color-bar {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        margin-top: var(--spacing-xl);
-        padding-top: var(--spacing-lg);
-        border-top: 1px solid var(--border-light);
-    }
-    
-    .color-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        animation: subtlePulse 3s infinite;
-    }
-    
-    .color-dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
-    .color-dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
-    .color-dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
-    .color-dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
-    .color-dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
-    .color-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
-    
-    @keyframes subtlePulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.1); }
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .claim-container {
-            padding: 0 var(--spacing-sm);
-        }
-
-        .page-header h1 {
-            font-size: 1.8rem;
-            flex-direction: column;
-        }
-
-        .detail-row {
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-
-        .detail-label {
-            width: 100%;
-        }
-
-        .action-buttons {
-            flex-direction: column;
-        }
-
-        .btn-submit, .btn-cancel {
-            width: 100%;
-        }
-    }
+  /* Color bar */
+  .color-bar {
+    display: flex; justify-content: center; gap: 0.6rem;
+    margin-top: 2.5rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border-light);
+  }
+  .c-dot { width: 10px; height: 10px; border-radius: 50%; animation: cpulse 3s infinite; }
+  .c-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
+  .c-dot:nth-child(2) { background: #5370A3; animation-delay: .2s; }
+  .c-dot:nth-child(3) { background: #812575; animation-delay: .4s; }
+  .c-dot:nth-child(4) { background: #D11F2D; animation-delay: .6s; }
+  .c-dot:nth-child(5) { background: #7AB4B6; animation-delay: .8s; }
+  .c-dot:nth-child(6) { background: #FFA500; animation-delay: 1s; }
+  @keyframes cpulse {
+    0%,100% { opacity:.5; transform:scale(1); }
+    50%      { opacity:1;  transform:scale(1.15); }
+  }
 </style>
 
-<!-- Load Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<div class="submit-wrap">
 
-<div class="claim-container">
-    <!-- Page Header -->
-    <div class="page-header">
-        <h1>
-            <i class="fas fa-hand-paper"></i>
-            Claim Item
-        </h1>
-        <p>
-            <i class="fas fa-circle" style="font-size: 0.5rem;"></i>
-            Submit your proof of ownership
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2><i class="fas fa-hand-paper me-2"></i> Submit a Claim</h2>
+      <p>Provide proof of ownership so an admin can verify your claim</p>
+    </div>
+    <a href="{{ url_for('items.detail', item_id=item.id) }}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Back to Item
+    </a>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mb-3">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Item Summary -->
+  <div class="item-summary">
+    <div class="item-summary-header">
+      <i class="fas fa-box"></i> You are claiming this item
+    </div>
+    <div class="item-summary-body">
+      <div class="summary-item">
+        <div class="summary-label">Title</div>
+        <div class="summary-value">{{ item.title }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Reference</div>
+        <div class="summary-value">
+          <span class="ref-pill">{{ item.reference_number }}</span>
+        </div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Category</div>
+        <div class="summary-value">{{ item.category }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-label">Campus</div>
+        <div class="summary-value">{{ item.campus }}</div>
+      </div>
+      <div class="summary-item" style="grid-column: 1 / -1;">
+        <div class="summary-label">Description</div>
+        <div class="summary-value" style="font-weight:400; color:var(--text-muted);">
+          {{ item.public_description }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warning -->
+  <div class="warning-box">
+    <i class="fas fa-exclamation-triangle"></i>
+    <strong>Important:</strong> Only submit a claim if this item genuinely belongs to you.
+    False claims are a serious offence. All submissions are reviewed by a campus admin who
+    will compare your answers against private verification details on file.
+  </div>
+
+  <!-- Form -->
+  <form method="POST"
+        action="{{ url_for('claims.submit', item_id=item.id) }}"
+        enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Why it's yours -->
+    <div class="form-card">
+      <div class="form-card-header proof">
+        <i class="fas fa-comment-alt"></i> Proof of Ownership
+      </div>
+      <div class="form-card-body">
+        <label class="form-label">
+          Why does this item belong to you?
+          <span style="color:var(--dut-red);">*</span>
+        </label>
+        <textarea name="claim_description"
+                  class="form-control"
+                  rows="3"
+                  required
+                  placeholder="Describe when and where you lost it, any distinguishing features..."></textarea>
+        <p class="form-hint">
+          <i class="fas fa-info-circle"></i>
+          Be specific — vague descriptions make verification difficult.
         </p>
+      </div>
     </div>
 
-    <!-- Item Details Card -->
-    <div class="custom-card">
-        <div class="card-header-custom info">
-            <i class="fas fa-box-open"></i>
-            Item Details
-        </div>
-        <div class="card-body-custom">
-            <div class="item-details">
-                <div class="detail-row">
-                    <span class="detail-label">
-                        <i class="fas fa-tag"></i>
-                        Title
-                    </span>
-                    <span class="detail-value fw-semibold">{{ item.title }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">
-                        <i class="fas fa-hashtag"></i>
-                        Reference
-                    </span>
-                    <span class="detail-value">
-                        <span class="reference-value">
-                            <i class="fas fa-hashtag" style="font-size: 0.7rem;"></i>
-                            {{ item.reference_number }}
-                        </span>
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">
-                        <i class="fas fa-layer-group"></i>
-                        Category
-                    </span>
-                    <span class="detail-value">{{ item.category }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">
-                        <i class="fas fa-map-marker-alt"></i>
-                        Campus
-                    </span>
-                    <span class="detail-value">{{ item.campus }}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">
-                        <i class="fas fa-align-left"></i>
-                        Description
-                    </span>
-                    <span class="detail-value">{{ item.public_description }}</span>
-                </div>
-            </div>
-
-            {% if item.image_path %}
-                <div class="item-image">
-                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
-                </div>
-            {% endif %}
-        </div>
+    <!-- Verification details -->
+    <div class="form-card">
+      <div class="form-card-header verify">
+        <i class="fas fa-lock"></i> Verification Details
+      </div>
+      <div class="form-card-body">
+        <label class="form-label">
+          Details only the owner would know
+          <span style="color:var(--dut-red);">*</span>
+        </label>
+        <textarea name="verification_answers"
+                  class="form-control"
+                  rows="3"
+                  required
+                  placeholder="Serial numbers, unique marks, contents, lock combinations, wallpaper description, saved contacts, receipts..."></textarea>
+        <p class="form-hint">
+          <i class="fas fa-shield-alt"></i>
+          These are compared privately against details recorded when the item was found.
+          They are not visible to the public.
+        </p>
+      </div>
     </div>
 
-    <!-- Claim Form -->
-    <form method="POST" enctype="multipart/form-data" class="form-card">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        
-        <div class="form-header">
-            <i class="fas fa-shield-alt"></i>
-            Proof of Ownership
+    <!-- Evidence upload -->
+    <div class="form-card">
+      <div class="form-card-header upload">
+        <i class="fas fa-upload"></i> Supporting Evidence
+      </div>
+      <div class="form-card-body">
+        <label class="form-label">
+          Upload proof of ownership
+          <span style="color:var(--dut-red);">*</span>
+        </label>
+        <div class="upload-area">
+          <input type="file"
+                 name="evidence"
+                 required
+                 accept=".png,.jpg,.jpeg,.gif,.pdf">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <div class="upload-text">
+            <strong>Click to upload</strong> or drag and drop<br>
+            Receipt, purchase record, photo, or any ownership proof
+          </div>
         </div>
-        
-        <div class="form-body">
-            <!-- Claim Description -->
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-pen"></i>
-                    Why does this item belong to you?
-                </label>
-                <textarea name="claim_description" class="form-control" rows="3" required 
-                          placeholder="Describe why you believe this is your item..."></textarea>
-                <div class="form-text">
-                    <i class="fas fa-info-circle"></i>
-                    Be specific about when and how you lost the item
-                </div>
-            </div>
-            
-            <!-- Verification Details -->
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-lock"></i>
-                    Verification Details
-                </label>
-                <textarea name="verification_answers" class="form-control" rows="4" required
-                          placeholder="Provide details only the owner would know (serial numbers, unique marks, contents, etc.)"></textarea>
-                <div class="form-text">
-                    <i class="fas fa-shield-alt"></i>
-                    These will be compared with the private verification details
-                </div>
-            </div>
-            
-            <!-- Evidence Upload -->
-            <div class="form-group">
-                <label class="form-label">
-                    <i class="fas fa-paperclip"></i>
-                    Upload Evidence
-                </label>
-                <div class="file-input-wrapper">
-                    <input type="file" name="evidence" class="form-control" required
-                           accept=".png,.jpg,.jpeg,.gif,.pdf">
-                </div>
-                <div class="form-text">
-                    <i class="fas fa-check-circle"></i>
-                    Receipt, photo, or any proof of ownership (PNG, JPG, GIF, PDF)
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="action-buttons">
-                <button type="submit" class="btn-submit">
-                    <i class="fas fa-check-circle"></i>
-                    Submit Claim
-                </button>
-                <a href="{{ url_for('items.detail', item_id=item.id) }}" class="btn-cancel">
-                    <i class="fas fa-times-circle"></i>
-                    Cancel
-                </a>
-            </div>
-        </div>
-    </form>
-
-    <!-- Color Bar -->
-    <div class="color-bar">
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
-        <div class="color-dot"></div>
+        <p class="form-hint">
+          <i class="fas fa-file"></i>
+          Accepted: PNG, JPG, GIF, PDF — max 5 MB
+        </p>
+      </div>
     </div>
+
+    <!-- Submit -->
+    <button type="submit" class="submit-btn">
+      <i class="fas fa-check-circle"></i>
+      Submit Claim for Review
+    </button>
+    <a href="{{ url_for('items.detail', item_id=item.id) }}"
+       class="cancel-link">
+      <i class="fas fa-times"></i> Cancel
+    </a>
+
+  </form>
+
+  <!-- Color bar -->
+  <div class="color-bar">
+    <div class="c-dot"></div>
+    <div class="c-dot"></div>
+    <div class="c-dot"></div>
+    <div class="c-dot"></div>
+    <div class="c-dot"></div>
+    <div class="c-dot"></div>
+  </div>
+
 </div>
 {% endblock %}

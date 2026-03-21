@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}DUT Lost & Found — Official Portal{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ───────────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-chip">
+      <i class="fas fa-university"></i>
+      Durban University of Technology
+    </div>
+
+    <h1>Lost &amp; Found<br><span>Portal</span></h1>
+
+    <p>
+      Your official DUT platform for reporting lost items and reuniting
+      with what matters most. One secure, structured system for all
+      three campuses.
+    </p>
+
+    <div class="hero-actions">
+      {% if current_user.is_authenticated %}
+        <a href="{{ url_for('items.report') }}" class="btn btn-primary">
+          <i class="fas fa-plus-circle"></i> Report Item
+        </a>
+        <a href="{{ url_for('items.search') }}" class="btn btn-secondary">
+          <i class="fas fa-search"></i> Browse Items
+        </a>
+      {% else %}
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+          <i class="fas fa-user-plus"></i> Get Started
+        </a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="hero-rail">
+      <div class="hero-rail-card">
+        <strong>Honesty</strong>
+        <span>Verified items, true reports</span>
+      </div>
+      <div class="hero-rail-card">
+        <strong>Integrity</strong>
+        <span>Secure storage, principled returns</span>
+      </div>
+      <div class="hero-rail-card">
+        <strong>Transparency</strong>
+        <span>Clear tracking, live updates</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <img src="{{ url_for('static', filename='img/campus.jpg') }}"
+         alt="DUT Campus"
+         onerror="this.style.display='none'">
+    <div class="hero-overlay-card">
+      <div class="small-label">Official Portal</div>
+      <p>
+        A professional digital platform for students and staff to report,
+        browse, claim and recover lost belongings with confidence.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── RECENT ITEMS ────────────────────────────────────────────────────────── -->
+{% if recent_found or recent_lost %}
+<section class="recent-section">
+  <div class="section-header">
+    <span class="section-tag">Live Reports</span>
+    <h2>Recently on the Portal</h2>
+    <p>Items reported across all three DUT campuses</p>
+  </div>
+
+  <!-- Found items -->
+  {% if recent_found %}
+  <div class="recent-block">
+    <div class="recent-block-header">
+      <h4>
+        <i class="fas fa-search-plus" style="color:#1C8441;"></i>
+        Recently Found
+      </h4>
+      <a href="{{ url_for('items.search') }}?type=found" class="view-all-link">
+        View all <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    <div class="items-grid">
+      {% for item in recent_found %}
+        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="item-card">
+          <div class="item-card-image">
+            {% if item.image_path %}
+              <!-- Found item images blurred to prevent fraudulent claims -->
+              <img src="{{ url_for('static', filename=item.image_path) }}"
+                   alt="{{ item.title }}"
+                   style="filter:blur(10px) brightness(0.8); transform:scale(1.06);">
+            {% else %}
+              <div class="item-card-placeholder">
+                <i class="fas fa-search-heart"></i>
+              </div>
+            {% endif %}
+            <span class="item-type-tag found">Found</span>
+          </div>
+          <div class="item-card-body">
+            <p class="item-card-title">{{ item.title }}</p>
+            <p class="item-card-meta">{{ item.category }} · {{ item.campus }}</p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Lost items -->
+  {% if recent_lost %}
+  <div class="recent-block">
+    <div class="recent-block-header">
+      <h4>
+        <i class="fas fa-question-circle" style="color:#FFA500;"></i>
+        Recently Lost
+      </h4>
+      <a href="{{ url_for('items.search') }}?type=lost" class="view-all-link">
+        View all <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+    <div class="items-grid">
+      {% for item in recent_lost %}
+        <a href="{{ url_for('items.detail', item_id=item.id) }}" class="item-card">
+          <div class="item-card-image">
+            {% if item.image_path %}
+              <!-- Lost item images shown clearly — owner wants recognition -->
+              <img src="{{ url_for('static', filename=item.image_path) }}"
+                   alt="{{ item.title }}">
+            {% else %}
+              <div class="item-card-placeholder lost-placeholder">
+                <i class="fas fa-question-circle"></i>
+              </div>
+            {% endif %}
+            <span class="item-type-tag lost">
+              {% if item.status == 'matched' %}Matched{% else %}Lost{% endif %}
+            </span>
+          </div>
+          <div class="item-card-body">
+            <p class="item-card-title">{{ item.title }}</p>
+            <p class="item-card-meta">{{ item.category }} · {{ item.campus }}</p>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</section>
+{% endif %}
+
+<!-- ── HOW IT WORKS ───────────────────────────────────────────────────────── -->
+<section class="how-section">
+  <div class="section-header">
+    <span class="section-tag">How It Works</span>
+    <h2>Simple steps to recover what you've lost</h2>
+    <p>A clear process designed for students and staff at all three campuses</p>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-number">01</div>
+      <div class="how-icon"><i class="fas fa-flag"></i></div>
+      <h4>Report Item</h4>
+      <p>Fill in a form with details about what you lost or found, including campus and location.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-number">02</div>
+      <div class="how-icon"><i class="fas fa-search"></i></div>
+      <h4>Search Database</h4>
+      <p>Browse found items reported by other students and staff members instantly.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-number">03</div>
+      <div class="how-icon"><i class="fas fa-handshake"></i></div>
+      <h4>Submit a Claim</h4>
+      <p>Provide proof of ownership. An admin verifies your claim against private details.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-number">04</div>
+      <div class="how-icon"><i class="fas fa-bell"></i></div>
+      <h4>Get Notified</h4>
+      <p>Receive real-time updates when your claim is reviewed or a match is found.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="cta-grid">
+    <div class="cta-copy">
+      <h2>Ready to get started?</h2>
+      <p>
+        Join DUT students and staff using a secure, structured and
+        professional lost and found system across Steve Biko,
+        Ritson, and ML Sultan campuses.
+      </p>
+      <div class="cta-actions">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('items.report') }}" class="btn btn-light">
+            <i class="fas fa-plus-circle"></i> Report Item
+          </a>
+          <a href="{{ url_for('items.search') }}" class="btn btn-outline-light">
+            <i class="fas fa-search"></i> Browse Items
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-light">
+            <i class="fas fa-user-plus"></i> Create Account
+          </a>
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="cta-side">
+      <div class="cta-side-item">
+        <i class="fas fa-graduation-cap"></i>
+        <div>
+          <h4>Students</h4>
+          <p>Report lost belongings, browse listings and track requests.</p>
+        </div>
+      </div>
+      <div class="cta-side-item">
+        <i class="fas fa-user-tie"></i>
+        <div>
+          <h4>Administrators</h4>
+          <p>Verify claims, manage records and oversee recovery.</p>
+        </div>
+      </div>
+      <div class="cta-side-item">
+        <i class="fas fa-map-marker-alt"></i>
+        <div>
+          <h4>Three Campuses</h4>
+          <p>Steve Biko, Ritson and ML Sultan — all in one portal.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

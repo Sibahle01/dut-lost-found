@@ -1,407 +1,490 @@
 ﻿{% extends "base.html" %}
-{% block title %}Register - DUT Lost & Found{% endblock %}
+{% block title %}Create Account — DUT Lost & Found{% endblock %}
 
 {% block content %}
 <style>
-    .auth-container{
-        max-width:480px;
-        margin:2rem auto;
-        position:relative;
-    }
+  .auth-container {
+    width: 100%;
+    max-width: 480px;
+    margin: 2rem auto;
+    position: relative;
+  }
 
-    .back-arrow{
-        position:absolute;
-        top:1.5rem;
-        left:1.5rem;
-        color:#D11F2D;
-        font-size:1.8rem;
-        text-decoration:none;
-        transition:all .3s ease;
-        z-index:20;
-    }
+  .auth-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 20px 48px rgba(16, 32, 47, 0.10);
+    border: 1px solid #d9e0e6;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .back-arrow:hover{
-        color:#1C8441;
-        transform:translateX(-5px);
-    }
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, #1C8441, #5370A3, #812575);
+    width: 100%;
+  }
 
-    .auth-card{
-        background:white;
-        border-radius:40px;
-        padding:2.5rem;
-        box-shadow:0 20px 40px rgba(0,0,0,.15);
-        border:1px solid rgba(122,180,182,.3);
-        position:relative;
-        overflow:hidden;
-    }
+  .back-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+    color: #812575;
+    font-size: .95rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-decoration: none;
+    transition: .25s ease;
+  }
 
-    .auth-card::before{
-        content:'';
-        position:absolute;
-        top:0;
-        left:0;
-        right:0;
-        height:8px;
-        background:linear-gradient(90deg,#1C8441,#5370A3,#D11F2D);
-        width:100%;
-    }
+  .back-arrow:hover {
+    color: #1C8441;
+    transform: translateX(-3px);
+  }
 
-    .auth-header{
-        text-align:center;
-        margin-bottom:2rem;
-        margin-top:1rem;
-    }
+  .auth-logo {
+    text-align: center;
+    margin-bottom: 1.6rem;
+  }
 
-    .auth-header h2{
-        font-size:2.2rem;
-        background:linear-gradient(135deg,#1C8441,#5370A3,#D11F2D);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-        margin-bottom:.5rem;
-        font-weight:800;
-    }
+  .auth-logo img {
+    width: 80px;
+    margin: 0 auto .85rem;
+    display: block;
+  }
 
-    .auth-header p{
-        color:#812575;
-        font-size:.95rem;
-        letter-spacing:2px;
-        font-weight:500;
-    }
+  .auth-logo h1 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #10202f;
+    margin-bottom: .2rem;
+    letter-spacing: -0.02em;
+  }
 
-    .form-group{
-        margin-bottom:1.8rem;
-    }
+  .auth-logo p {
+    color: #61707d;
+    font-size: .78rem;
+    letter-spacing: .08em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 
-    .form-group label{
-        display:block;
-        margin-bottom:.5rem;
-        color:#5370A3;
-        font-weight:600;
-    }
+  .auth-heading {
+    text-align: center;
+    margin-bottom: 1.6rem;
+  }
 
-    .form-group input, .form-group select{
-        width:100%;
-        padding:1rem 1.2rem;
-        border:2px solid #e0e0e0;
-        border-radius:30px;
-        font-size:1rem;
-        background:#f8faff;
-        font-family: 'Inter', sans-serif;
-    }
+  .auth-heading h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #10202f;
+    letter-spacing: -0.03em;
+    margin-bottom: .3rem;
+  }
 
-    .form-group input:focus, .form-group select:focus{
-        outline:none;
-        border-color:#D11F2D;
-        background:white;
-        box-shadow:0 0 0 5px rgba(209,31,45,.1);
-    }
+  .auth-heading h2 span { color: #1C8441; }
 
-    .form-group small{
-        display:block;
-        margin-top:0.5rem;
-        color:#7AB4B6;
-        font-size:0.85rem;
-        margin-left:0.5rem;
-    }
+  .auth-heading p {
+    color: #61707d;
+    font-size: .95rem;
+  }
 
-    /* Password Strength Indicator - 3 colors */
-    .password-strength {
-        margin-top: 0.8rem;
-        padding: 0.5rem;
-        border-radius: 30px;
-        background: #f0f0f0;
-    }
+  .auth-alerts .alert {
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    font-size: .88rem;
+    font-weight: 600;
+    margin-bottom: .75rem;
+  }
 
-    .strength-bars {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 0.3rem;
-    }
+  .form-group { margin-bottom: 1.3rem; }
 
-    .strength-bar {
-        height: 6px;
-        flex: 1;
-        background: #ddd;
-        border-radius: 3px;
-        transition: all 0.3s ease;
-    }
+  .form-group label {
+    display: block;
+    margin-bottom: .5rem;
+    color: #10202f;
+    font-weight: 700;
+    font-size: .92rem;
+  }
 
-    .strength-bar.active:nth-child(1) { background: #D11F2D; }  /* Red - Weak */
-    .strength-bar.active:nth-child(2) { background: #FFA500; }  /* Orange - Medium */
-    .strength-bar.active:nth-child(3) { background: #1C8441; }  /* Green - Strong */
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    height: 52px;
+    padding: 0 1.2rem;
+    border: 1px solid #d9e0e6;
+    border-radius: 8px;
+    font-size: .97rem;
+    background: #fbfcfd;
+    color: #18222c;
+    transition: .25s ease;
+    font-family: inherit;
+  }
 
-    .strength-text {
-        font-size: 0.85rem;
-        color: #5370A3;
-        font-weight: 500;
-    }
+  .form-group input::placeholder { color: #95a1ab; }
 
-    .btn-register{
-        width:100%;
-        padding:1rem;
-        background:linear-gradient(135deg,#1C8441,#5370A3,#D11F2D);
-        color:white;
-        border:none;
-        border-radius:30px;
-        font-weight:700;
-        font-size:1.1rem;
-        cursor:pointer;
-        transition:.3s;
-        margin-top:1rem;
-    }
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #1C8441;
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(28, 132, 65, .08);
+  }
 
-    .btn-register:hover{
-        transform:translateY(-3px);
-        background:linear-gradient(135deg,#D11F2D,#5370A3,#1C8441);
-    }
+  .form-group small {
+    display: block;
+    margin-top: .4rem;
+    color: #7AB4B6;
+    font-size: .82rem;
+    margin-left: .25rem;
+  }
 
-    .auth-footer{
-        text-align:center;
-        margin-top:1.5rem;
-    }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235370A3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1.2rem center;
+    background-size: 1.1rem;
+    cursor: pointer;
+  }
 
-    .auth-footer a{
-        color:#D11F2D;
-        font-weight:700;
-        text-decoration:none;
-    }
-    
-    /* Color Dots - 3 colors */
-    .color-dots {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-top: 2rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(122,180,182,0.2);
-    }
-    
-    .color-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        animation: pulse 2s ease infinite;
-    }
-    
-    .color-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
-    .color-dot:nth-child(2) { background: #5370A3; animation-delay: 0.2s; }
-    .color-dot:nth-child(3) { background: #D11F2D; animation-delay: 0.4s; }
-    
-    @keyframes pulse {
-        0%, 100% { 
-            transform: scale(1); 
-            opacity: 1; 
-        }
-        50% { 
-            transform: scale(1.2); 
-            opacity: 0.7; 
-        }
-    }
+  select option { color: #18222c; }
+  select option:first-child { color: #95a1ab; }
 
-    /* Password hint */
-    .password-hint {
-        color: #7AB4B6;
-        font-size: 0.85rem;
-        margin-top: 0.3rem;
-        margin-left: 0.5rem;
-    }
+  /* Password strength */
+  .password-strength {
+    margin-top: .75rem;
+    padding: .5rem .75rem;
+    border-radius: 8px;
+    background: #f3f5f7;
+    display: none;
+  }
 
-    /* Placeholder styling */
-    ::placeholder {
-        color: #7AB4B6;
-        opacity: 0.6;
-    }
+  .strength-bars {
+    display: flex;
+    gap: .4rem;
+    margin-bottom: .3rem;
+  }
 
-    /* Campus select styling - make it visible */
-    select {
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235370A3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 1.2rem center;
-        background-size: 1.2rem;
-        color: #333;
-    }
-    
-    select option {
-        color: #333;
-        padding: 10px;
-    }
-    
-    select option:first-child {
-        color: #7AB4B6;
-    }
+  .strength-bar {
+    height: 5px;
+    flex: 1;
+    background: #d9e0e6;
+    border-radius: 3px;
+    transition: background .3s ease;
+  }
+
+  .strength-bar.active:nth-child(1) { background: #D11F2D; }
+  .strength-bar.active:nth-child(2) { background: #FFA500; }
+  .strength-bar.active:nth-child(3) { background: #1C8441; }
+
+  .strength-text {
+    font-size: .82rem;
+    font-weight: 600;
+    color: #61707d;
+  }
+
+  .password-hint {
+    color: #7AB4B6;
+    font-size: .82rem;
+    margin-top: .35rem;
+    margin-left: .25rem;
+  }
+
+  .btn-register {
+    width: 100%;
+    height: 52px;
+    background: #1C8441;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: .25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    box-shadow: 0 10px 24px rgba(28, 132, 65, .18);
+    font-family: inherit;
+    margin-top: .5rem;
+  }
+
+  .btn-register:hover {
+    background: #156732;
+    transform: translateY(-2px);
+  }
+
+  .btn-register:disabled {
+    background: #95a1ab;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.4rem;
+  }
+
+  .auth-footer p { color: #61707d; font-size: .92rem; }
+
+  .auth-footer a {
+    color: #812575;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .25s ease;
+  }
+
+  .auth-footer a:hover { color: #1C8441; }
+
+  .color-dots {
+    display: flex;
+    justify-content: center;
+    gap: .55rem;
+    margin-top: 1.8rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(122, 180, 182, .2);
+  }
+
+  .color-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    animation: dot-pulse 2s ease infinite;
+    flex-shrink: 0;
+  }
+
+  .color-dot:nth-child(1) { background: #1C8441; animation-delay: 0s; }
+  .color-dot:nth-child(2) { background: #5370A3; animation-delay: .2s; }
+  .color-dot:nth-child(3) { background: #D11F2D; animation-delay: .4s; }
+
+  @keyframes dot-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: .7; }
+  }
+
+  @media (max-width: 520px) {
+    .auth-card { padding: 1.6rem 1.1rem 1.4rem; }
+    .auth-heading h2 { font-size: 1.6rem; }
+  }
+
+  @media (max-width: 420px) {
+    .auth-card { padding: 1.3rem .9rem 1.2rem; }
+    .auth-heading h2 { font-size: 1.4rem; }
+  }
 </style>
 
 <div class="auth-container">
-    <div class="auth-card">
-        <!-- BACK ARROW - goes to homepage -->
-        <a href="/dut-lost-found/app/templates/base.html" class="back-arrow">←</a>
+  <div class="auth-card">
 
-        <div class="auth-header">
-            <h2>Create Account</h2>
-            <p>DUT LOST & FOUND PORTAL</p>
-        </div>
+    <!-- Back to home — correct Flask endpoint -->
+    <a href="{{ url_for('home') }}" class="back-arrow">
+      <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
 
-        <!-- Original form with your exact connection code -->
-        <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" name="name" placeholder="Enter your full name" required>
-            </div>
-
-            <div class="form-group">
-                <label>DUT Email Address</label>
-                <input type="email" name="email" placeholder="student@dut4life.ac.za" required>
-                <small>Must be @dut.ac.za or @dut4life.ac.za</small>
-            </div>
-
-            <div class="form-group">
-                <label>Student / Staff Number (optional)</label>
-                <input type="text" name="student_number" placeholder="e.g., 22012345">
-            </div>
-
-            <div class="form-group">
-                <label>Primary Campus</label>
-                <select name="campus" required>
-                    <option value="" disabled selected>Select your campus</option>
-                    <option value="Steve Biko">Steve Biko Campus</option>
-                    <option value="Ritson">Ritson Campus</option>
-                    <option value="ML Sultan">ML Sultan Campus</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Password (minimum 8 characters)</label>
-                <input type="password" name="password" id="password" minlength="8" required placeholder="Create a strong password" onkeyup="checkPasswordStrength()">
-                
-                <!-- Password Strength Indicator - 3 bars -->
-                <div class="password-strength" id="passwordStrength" style="display: none;">
-                    <div class="strength-bars">
-                        <div class="strength-bar" id="bar1"></div>
-                        <div class="strength-bar" id="bar2"></div>
-                        <div class="strength-bar" id="bar3"></div>
-                    </div>
-                    <div class="strength-text" id="strengthText">Enter password</div>
-                </div>
-                
-                <div class="password-hint">
-                    <i class="fas fa-info-circle"></i> Use at least 8 characters with letters and numbers
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" name="confirm_password" id="confirm_password" required placeholder="Re-enter your password" onkeyup="checkPasswordMatch()">
-                <small id="passwordMatchMessage" style="color: #D11F2D;"></small>
-            </div>
-
-            <button type="submit" class="btn-register" id="submitBtn">
-                Create Account <i class="fas fa-arrow-right" style="margin-left: 0.5rem;"></i>
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            <p>Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
-        </div>
-        
-        <!-- 3 Color dots at the bottom -->
-        <div class="color-dots">
-            <div class="color-dot"></div>
-            <div class="color-dot"></div>
-            <div class="color-dot"></div>
-        </div>
+    <!-- Logo -->
+    <div class="auth-logo">
+      <img src="{{ url_for('static', filename='img/DUT-Logo.jpg') }}"
+           alt="DUT Logo"
+           onerror="this.style.display='none'">
+      <h1>DUT Lost &amp; Found</h1>
+      <p>Official Campus Recovery Portal</p>
     </div>
+
+    <!-- Heading -->
+    <div class="auth-heading">
+      <h2>Create <span>Account</span></h2>
+      <p>Join the official DUT Lost &amp; Found Portal</p>
+    </div>
+
+    <!-- Flash messages — server validation errors appear here -->
+    <div class="auth-alerts">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+    </div>
+
+    <!-- Flask form — real POST, CSRF protected -->
+    <form method="POST"
+          action="{{ url_for('auth.register') }}"
+          id="registerForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" name="name"
+               value="{{ form_data.get('name', '') if form_data else '' }}"
+               placeholder="Enter your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">DUT Email Address</label>
+        <input id="email" type="email" name="email"
+               value="{{ form_data.get('email', '') if form_data else '' }}"
+               placeholder="student@dut4life.ac.za" required>
+        <small>
+          <i class="fas fa-info-circle"></i>
+          Must be a @dut.ac.za or @dut4life.ac.za address
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="student_number">
+          Student / Staff Number
+          <span style="color:#95a1ab; font-weight:500;">(optional)</span>
+        </label>
+        <input id="student_number" type="text" name="student_number"
+               value="{{ form_data.get('student_number', '') if form_data else '' }}"
+               placeholder="e.g. 22012345">
+      </div>
+
+      <div class="form-group">
+        <label for="campus">Primary Campus</label>
+        <select id="campus" name="campus" required>
+          <option value="" disabled
+            {% if not form_data or not form_data.get('campus') %}selected{% endif %}>
+            Select your campus
+          </option>
+          {% for c in ['Steve Biko', 'Ritson', 'ML Sultan'] %}
+            <option value="{{ c }}"
+              {% if form_data and form_data.get('campus') == c %}selected{% endif %}>
+              {{ c }} Campus
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" name="password"
+               minlength="8" required
+               placeholder="Minimum 8 characters"
+               oninput="checkPasswordStrength()">
+
+        <div class="password-strength" id="passwordStrength">
+          <div class="strength-bars">
+            <div class="strength-bar" id="bar1"></div>
+            <div class="strength-bar" id="bar2"></div>
+            <div class="strength-bar" id="bar3"></div>
+          </div>
+          <div class="strength-text" id="strengthText">Enter password</div>
+        </div>
+
+        <div class="password-hint">
+          <i class="fas fa-info-circle"></i>
+          Use at least 8 characters with letters and numbers
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Confirm Password</label>
+        <input id="confirm_password" type="password" name="confirm_password"
+               required placeholder="Re-enter your password"
+               oninput="checkPasswordMatch()">
+        <small id="passwordMatchMessage"></small>
+      </div>
+
+      <button type="submit" class="btn-register" id="submitBtn">
+        <span>Create Account</span>
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>
+        Already have an account?
+        <a href="{{ url_for('auth.login') }}">Sign in</a>
+      </p>
+    </div>
+
+    <div class="color-dots">
+      <div class="color-dot"></div>
+      <div class="color-dot"></div>
+      <div class="color-dot"></div>
+    </div>
+
+  </div>
 </div>
 
-<!-- Password Strength JavaScript - Updated for 3 colors -->
+{% block scripts %}
 <script>
-    function checkPasswordStrength() {
-        const password = document.getElementById('password').value;
-        const strengthDiv = document.getElementById('passwordStrength');
-        const bar1 = document.getElementById('bar1');
-        const bar2 = document.getElementById('bar2');
-        const bar3 = document.getElementById('bar3');
-        const strengthText = document.getElementById('strengthText');
-        
-        // Show strength indicator if password has at least 1 character
-        if (password.length > 0) {
-            strengthDiv.style.display = 'block';
-        } else {
-            strengthDiv.style.display = 'none';
-            return;
-        }
-        
-        // Reset all bars
-        bar1.className = 'strength-bar';
-        bar2.className = 'strength-bar';
-        bar3.className = 'strength-bar';
-        
-        // Calculate strength (0-3)
-        let strength = 0;
-        
-        // Length check
-        if (password.length >= 8) strength += 1;
-        
-        // Has number
-        if (/[0-9]/.test(password)) strength += 1;
-        
-        // Has uppercase or special character
-        if (/[A-Z]/.test(password) || /[^a-zA-Z0-9]/.test(password)) strength += 1;
-        
-        // Update bars based on strength
-        if (strength >= 1) bar1.className = 'strength-bar active';
-        if (strength >= 2) bar2.className = 'strength-bar active';
-        if (strength >= 3) bar3.className = 'strength-bar active';
-        
-        // Update text
-        const texts = ['Weak', 'Medium', 'Strong'];
-        const strengthLevel = strength === 0 ? 0 : 
-                             strength === 1 ? 0 :
-                             strength === 2 ? 1 : 2;
-        
-        strengthText.textContent = texts[strengthLevel];
-        strengthText.style.color = strengthLevel === 0 ? '#D11F2D' : 
-                                  strengthLevel === 1 ? '#FFA500' : '#1C8441';
-        
-        checkPasswordMatch();
+  function checkPasswordStrength() {
+    var password = document.getElementById('password').value;
+    var strengthDiv = document.getElementById('passwordStrength');
+    var bar1 = document.getElementById('bar1');
+    var bar2 = document.getElementById('bar2');
+    var bar3 = document.getElementById('bar3');
+    var strengthText = document.getElementById('strengthText');
+
+    if (password.length === 0) {
+      strengthDiv.style.display = 'none';
+      return;
     }
-    
-    function checkPasswordMatch() {
-        const password = document.getElementById('password').value;
-        const confirm = document.getElementById('confirm_password').value;
-        const message = document.getElementById('passwordMatchMessage');
-        const submitBtn = document.getElementById('submitBtn');
-        
-        if (confirm.length > 0) {
-            if (password === confirm) {
-                message.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match';
-                message.style.color = '#1C8441';
-                submitBtn.disabled = false;
-            } else {
-                message.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
-                message.style.color = '#D11F2D';
-                submitBtn.disabled = true;
-            }
-        } else {
-            message.innerHTML = '';
-            submitBtn.disabled = false;
-        }
+
+    strengthDiv.style.display = 'block';
+
+    bar1.className = 'strength-bar';
+    bar2.className = 'strength-bar';
+    bar3.className = 'strength-bar';
+
+    var strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[A-Z]/.test(password) || /[^a-zA-Z0-9]/.test(password)) strength++;
+
+    if (strength >= 1) bar1.className = 'strength-bar active';
+    if (strength >= 2) bar2.className = 'strength-bar active';
+    if (strength >= 3) bar3.className = 'strength-bar active';
+
+    var labels = ['Weak', 'Medium', 'Strong'];
+    var level = strength === 0 ? 0 : strength === 1 ? 0 : strength === 2 ? 1 : 2;
+    strengthText.textContent = labels[level];
+    strengthText.style.color = level === 0 ? '#D11F2D' : level === 1 ? '#FFA500' : '#1C8441';
+
+    checkPasswordMatch();
+  }
+
+  function checkPasswordMatch() {
+    var password = document.getElementById('password').value;
+    var confirm  = document.getElementById('confirm_password').value;
+    var message  = document.getElementById('passwordMatchMessage');
+    var btn      = document.getElementById('submitBtn');
+
+    if (confirm.length === 0) {
+      message.innerHTML = '';
+      btn.disabled = false;
+      return;
     }
-    
-    // Form validation before submit
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-        const password = document.getElementById('password').value;
-        const confirm = document.getElementById('confirm_password').value;
-        
-        if (password !== confirm) {
-            e.preventDefault();
-            alert('Passwords do not match!');
-            return false;
-        }
-        
-        return true;
-    });
+
+    if (password === confirm) {
+      message.innerHTML = '<i class="fas fa-check-circle"></i> Passwords match';
+      message.style.color = '#1C8441';
+      btn.disabled = false;
+    } else {
+      message.innerHTML = '<i class="fas fa-exclamation-circle"></i> Passwords do not match';
+      message.style.color = '#D11F2D';
+      btn.disabled = true;
+    }
+  }
+
+  // Final check before submitting
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    var password = document.getElementById('password').value;
+    var confirm  = document.getElementById('confirm_password').value;
+    if (password !== confirm) {
+      e.preventDefault();
+      return false;
+    }
+  });
 </script>
+{% endblock %}
+
 {% endblock %}

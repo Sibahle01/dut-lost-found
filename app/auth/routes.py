@@ -1,16 +1,14 @@
 import secrets
 from datetime import datetime
-from flask import render_template, redirect, url_for, flash, request, current_app
+from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
+from app.auth import bp
 from app import db, mail
 from app.models.user import User
 from flask_mail import Message
 
-# Import the blueprint from the package
-from app.auth import bp
 
-
-# -- REGISTER ------------------------------------------------------------------
+# ── REGISTER ──────────────────────────────────────────────────────────────────
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -24,14 +22,14 @@ def register():
         password       = request.form.get('password', '')
         confirm        = request.form.get('confirm_password', '')
 
-        # -- Validation ----------------------------------------------------
         errors = []
 
         if not name:
             errors.append('Full name is required.')
 
         if not User.is_dut_email(email):
-            errors.append('You must register with a DUT email address (@dut.ac.za or @dut4life.ac.za).')
+            errors.append('You must register with a DUT email address '
+                          '(@dut.ac.za or @dut4life.ac.za).')
 
         if User.query.filter_by(email=email).first():
             errors.append('An account with this email already exists.')
@@ -48,10 +46,9 @@ def register():
         if errors:
             for error in errors:
                 flash(error, 'danger')
-            return render_template('auth/register.html',
-                                 form_data=request.form)
+            return render_template('auth/register.html', form_data=request.form)
 
-        # -- Create User ---------------------------------------------------
+        # Auto-verify in dev — no SMTP needed
         verification_token = secrets.token_urlsafe(32)
 
         user = User(
@@ -60,27 +57,23 @@ def register():
             student_number=student_number if student_number else None,
             campus=campus,
             role='student',
-            is_verified=True,  # Auto-verified for development
+            is_verified=True,       # auto-verified for dev/demo
             verification_token=verification_token
         )
         user.set_password(password)
-
         db.session.add(user)
         db.session.commit()
 
-        # -- Email verification disabled for development ------------------
-        # Uncomment this block when email sending is configured
-        """
-        verify_url = url_for('auth.verify_email',
-                           token=verification_token, _external=True)
         try:
+            verify_url = url_for('auth.verify_email',
+                                 token=verification_token, _external=True)
             msg = Message(
                 subject='Verify your DUT Lost & Found account',
                 recipients=[email],
                 html=f'''
                 <h2>Welcome to the DUT Lost & Found Portal</h2>
                 <p>Hi {name},</p>
-                <p>Please verify your email address to activate your account.</p>
+                <p>Your account has been created. Click below to verify:</p>
                 <p>
                     <a href="{verify_url}"
                        style="background:#C8102E;color:white;padding:12px 24px;
@@ -89,29 +82,21 @@ def register():
                     </a>
                 </p>
                 <p>Or copy this link: {verify_url}</p>
-                <p>This link does not expire, but your account cannot be used
-                   until it is verified.</p>
                 <br>
-                <small>DUT Lost &amp; Found Portal — Durban University of Technology</small>
+                <small>DUT Lost &amp; Found Portal</small>
                 '''
             )
             mail.send(msg)
-            flash('Account created! Please check your email to verify your account '
-                  'before logging in.', 'success')
-        except Exception as e:
-            print(f"Email error: {e}")
-            flash('Account created, but we could not send a verification email. '
-                  'Please contact the administrator.', 'warning')
-        """
-        
-        # Simple success message for development
+        except Exception:
+            pass  # Email optional in dev — account is already verified above
+
         flash('Account created successfully! You can now log in.', 'success')
         return redirect(url_for('auth.login'))
 
     return render_template('auth/register.html', form_data={})
 
 
-# -- VERIFY EMAIL --------------------------------------------------------------
+# ── VERIFY EMAIL ───────────────────────────────────────────────────────────────
 @bp.route('/verify/<token>')
 def verify_email(token):
     user = User.query.filter_by(verification_token=token).first()
@@ -132,7 +117,7 @@ def verify_email(token):
     return redirect(url_for('auth.login'))
 
 
-# -- LOGIN ---------------------------------------------------------------------
+# ── LOGIN ──────────────────────────────────────────────────────────────────────
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -149,10 +134,8 @@ def login():
             flash('Invalid email or password.', 'danger')
             return render_template('auth/login.html', email=email)
 
-        # This check will now pass because users are auto-verified
         if not user.is_verified:
-            flash('Please verify your email address before logging in. '
-                  'Check your inbox for the verification link.', 'warning')
+            flash('Please verify your email address before logging in.', 'warning')
             return render_template('auth/login.html', email=email)
 
         login_user(user, remember=remember)
@@ -167,7 +150,7 @@ def login():
     return render_template('auth/login.html', email='')
 
 
-# -- LOGOUT --------------------------------------------------------------------
+# ── LOGOUT ─────────────────────────────────────────────────────────────────────
 @bp.route('/logout')
 @login_required
 def logout():

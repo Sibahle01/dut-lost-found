@@ -3,619 +3,566 @@
 
 {% block content %}
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    :root {
-        --dut-green: #1C8441;
-        --dut-blue: #5370A3;
-        --dut-purple: #812575;
-        --dut-red: #D11F2D;
-        --dut-teal: #7AB4B6;
-        --dut-orange: #FFA500;
-        
-        --bg-light: #f8faff;
-        --text-dark: #1a1a1a;
-        --text-muted: #5D6D7E;
-        --border-light: rgba(122,180,182,0.2);
-        
-        --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-        --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
-        --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
-        
-        --transition: all 0.3s ease;
-        --radius: 24px;
-        --radius-sm: 16px;
-        
-        /* Consistent spacing */
-        --space-xs: 0.5rem;   /* 8px */
-        --space-sm: 1rem;     /* 16px */
-        --space-md: 1.5rem;   /* 24px */
-        --space-lg: 2rem;     /* 32px */
-        --space-xl: 3rem;     /* 48px */
-    }
+  :root {
+    --dut-green:  #1C8441;
+    --dut-blue:   #5370A3;
+    --dut-red:    #D11F2D;
+    --dut-teal:   #7AB4B6;
+    --dut-orange: #FFA500;
+    --text-dark:  #18222c;
+    --text-soft:  #61707d;
+    --border:     #d9e0e6;
+    --bg:         #f3f5f7;
+    --white:      #ffffff;
+    --shadow-sm:  0 8px 18px rgba(16,32,47,0.05);
+    --shadow-md:  0 18px 40px rgba(16,32,47,0.08);
+    --radius-md:  12px;
+    --radius-lg:  16px;
+    --transition: 0.25s ease;
+  }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-        color: var(--text-dark);
-        min-height: 100vh;
-        padding: var(--space-lg) 0;
-    }
+  @media (max-width: 768px) {
+    .detail-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
 
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 var(--space-lg);
-    }
+  /* ── Shared card base ────────────────────────────────────────────────── */
+  .d-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    position: relative;
+    transition: box-shadow var(--transition);
+  }
 
-    /* Layout */
-    .row {
-        display: flex;
-        gap: var(--space-lg);
-    }
+  .d-card:hover { box-shadow: var(--shadow-md); }
 
-    .col-main {
-        flex: 2;
-    }
+  .d-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--dut-green), var(--dut-blue),
+      var(--dut-teal), var(--dut-red));
+  }
 
-    .col-side {
-        flex: 1;
-    }
+  .d-card-body { padding: 1.4rem; }
 
-    @media (max-width: 768px) {
-        .container {
-            padding: 0 var(--space-sm);
-        }
-        
-        .row {
-            flex-direction: column;
-            gap: var(--space-md);
-        }
-    }
+  .d-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding-bottom: 0.85rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
 
-    /* Header Card */
-    .header-card {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-lg);
-        margin-bottom: var(--space-lg);
-        box-shadow: var(--shadow-md);
-        border: 1px solid var(--border-light);
-        position: relative;
-        overflow: hidden;
-    }
+  .d-card-header i   { color: var(--dut-teal); font-size: 1.1rem; }
+  .d-card-header h3  { color: var(--dut-blue); font-size: 1rem; font-weight: 700; margin: 0; }
 
-    .header-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-green), var(--dut-blue), var(--dut-purple), var(--dut-red));
-    }
+  /* ── Header card ─────────────────────────────────────────────────────── */
+  .item-title {
+    font-size: clamp(1.4rem, 4vw, 1.9rem);
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
 
-    .badge-container {
-        display: flex;
-        gap: var(--space-xs);
-        flex-wrap: wrap;
-        margin-bottom: var(--space-md);
-    }
+  .badge-row {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.85rem;
+  }
 
-    /* Badges */
-    .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--space-xs);
-        padding: 0.4rem 1.2rem;
-        border-radius: 40px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 0.2px;
-    }
+  .d-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.28rem 0.85rem;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
 
-    .badge i {
-        font-size: 0.75rem;
-    }
+  .d-badge.type-lost    { background: rgba(255,165,0,0.12); color: #b37400; border: 1px solid rgba(255,165,0,0.3); }
+  .d-badge.type-found   { background: rgba(28,132,65,0.12); color: var(--dut-green); border: 1px solid rgba(28,132,65,0.3); }
+  .d-badge.cat          { background: rgba(83,112,163,0.1); color: var(--dut-blue); border: 1px solid rgba(83,112,163,0.2); }
+  .d-badge.status-open    { background: rgba(83,112,163,0.1);  color: var(--dut-blue); border: 1px solid rgba(83,112,163,0.25); }
+  .d-badge.status-matched { background: rgba(122,180,182,0.15); color: #2a7d80; border: 1px solid rgba(122,180,182,0.3); }
+  .d-badge.status-claimed { background: rgba(255,165,0,0.12); color: #b37400; border: 1px solid rgba(255,165,0,0.3); }
+  .d-badge.status-closed  { background: rgba(94,94,94,0.1); color: #5e5e5e; border: 1px solid rgba(94,94,94,0.2); }
 
-    .badge.type-lost {
-        background: rgba(255, 165, 0, 0.15);
-        color: var(--dut-orange);
-        border: 1px solid rgba(255,165,0,0.3);
-    }
+  .item-meta {
+    color: var(--text-soft);
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
 
-    .badge.type-found {
-        background: rgba(28, 132, 65, 0.15);
-        color: var(--dut-green);
-        border: 1px solid rgba(28,132,65,0.3);
-    }
+  .item-meta i { color: var(--dut-teal); font-size: 0.78rem; }
 
-    .badge.category {
-        background: var(--bg-light);
-        color: var(--dut-blue);
-        border: 1px solid var(--border-light);
-    }
+  .ref-pill {
+    color: var(--dut-red);
+    font-weight: 700;
+    font-family: monospace;
+    background: rgba(209,31,45,0.06);
+    padding: 0.15rem 0.6rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+  }
 
-    .badge.status-open {
-        background: rgba(83, 112, 163, 0.15);
-        color: var(--dut-blue);
-        border: 1px solid rgba(83,112,163,0.3);
-    }
+  /* ── Image card with blur ────────────────────────────────────────────── */
+  .img-wrap {
+    position: relative;
+    background: var(--bg);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    max-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .badge.status-matched {
-        background: rgba(122, 180, 182, 0.15);
-        color: var(--dut-teal);
-        border: 1px solid rgba(122,180,182,0.3);
-    }
+  .img-wrap img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+    transition: filter var(--transition);
+  }
 
-    .badge.status-claimed {
-        background: rgba(255,165,0,0.15);
-        color: var(--dut-orange);
-        border: 1px solid rgba(255,165,0,0.3);
-    }
+  .img-wrap.blurred img {
+    filter: blur(12px) brightness(0.8);
+    transform: scale(1.06);
+  }
 
-    .badge.status-closed {
-        background: rgba(94,94,94,0.15);
-        color: #5e5e5e;
-        border: 1px solid rgba(94,94,94,0.3);
-    }
+  .blur-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: white;
+    pointer-events: none;
+    text-align: center;
+    padding: 1rem;
+  }
 
-    h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: var(--space-xs);
-        line-height: 1.2;
-    }
+  .blur-overlay i { font-size: 2rem; opacity: 0.9; }
 
-    .meta {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: var(--space-xs);
-        flex-wrap: wrap;
-    }
+  .blur-overlay span {
+    background: rgba(0,0,0,0.5);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    max-width: 220px;
+    line-height: 1.4;
+  }
 
-    .meta i {
-        color: var(--dut-teal);
-    }
+  .blur-notice {
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+  }
 
-    .ref-highlight {
-        color: var(--dut-red);
-        font-weight: 600;
-        font-family: 'SF Mono', monospace;
-        background: rgba(209,31,45,0.05);
-        padding: 0.2rem 0.6rem;
-        border-radius: 30px;
-    }
+  .blur-notice i { color: var(--dut-teal); }
 
-    /* Image */
-    .image-card {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-md);
-        margin-bottom: var(--space-lg);
-        border: 1px solid var(--border-light);
-        box-shadow: var(--shadow-md);
-        text-align: center;
-    }
+  /* ── Description ─────────────────────────────────────────────────────── */
+  .description {
+    color: var(--text-dark);
+    line-height: 1.75;
+    font-size: 0.95rem;
+  }
 
-    .image-card img {
-        max-height: 300px;
-        max-width: 100%;
-        object-fit: contain;
-        border-radius: var(--radius-sm);
-    }
+  /* ── Info grid ───────────────────────────────────────────────────────── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+  }
 
-    /* Info Cards */
-    .info-card {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-lg);
-        margin-bottom: var(--space-lg);
-        border: 1px solid var(--border-light);
-        box-shadow: var(--shadow-md);
-        transition: var(--transition);
-    }
+  @media (max-width: 480px) { .info-grid { grid-template-columns: 1fr; } }
 
-    .info-card:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-lg);
-    }
+  .info-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.85rem;
+  }
 
-    .card-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-xs);
-        margin-bottom: var(--space-md);
-        padding-bottom: var(--space-sm);
-        border-bottom: 1px solid var(--border-light);
-    }
+  .info-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--text-soft);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
 
-    .card-header i {
-        color: var(--dut-purple);
-        font-size: 1.2rem;
-    }
+  .info-label i { color: var(--dut-teal); }
+  .info-value   { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
 
-    .card-header h3 {
-        color: var(--dut-blue);
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin: 0;
-    }
+  /* ── Sidebar cards ───────────────────────────────────────────────────── */
+  .side-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.35rem;
+    margin-bottom: 1.25rem;
+  }
 
-    .description {
-        color: var(--text-dark);
-        line-height: 1.7;
-        font-size: 0.95rem;
-    }
+  /* Claim — red */
+  .side-card.claim {
+    border: 2px solid var(--dut-red);
+    background: linear-gradient(135deg, #fff, #fff8f8);
+    position: relative; overflow: hidden;
+  }
 
-    /* Info Grid */
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-md);
-    }
+  .side-card.claim::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--dut-red), var(--dut-orange));
+  }
 
-    @media (max-width: 576px) {
-        .info-grid {
-            grid-template-columns: 1fr;
-            gap: var(--space-sm);
-        }
-    }
+  /* Match — teal/green */
+  .side-card.match {
+    border: 2px solid var(--dut-teal);
+    background: linear-gradient(135deg, #fff, #f0fafb);
+    position: relative; overflow: hidden;
+  }
 
-    .info-item {
-        background: var(--bg-light);
-        padding: var(--space-sm);
-        border-radius: var(--radius-sm);
-        border: 1px solid var(--border-light);
-    }
+  .side-card.match::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--dut-green), var(--dut-teal));
+  }
 
-    .info-label {
-        color: var(--text-muted);
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-        margin-bottom: var(--space-xs);
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
+  .side-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+  }
 
-    .info-label i {
-        color: var(--dut-teal);
-        font-size: 0.7rem;
-    }
+  .side-header h4 { font-size: 0.98rem; font-weight: 700; margin: 0; color: var(--text-dark); }
+  .side-header i  { font-size: 1.1rem; }
 
-    .info-value {
-        color: var(--text-dark);
-        font-weight: 600;
-        font-size: 0.95rem;
-    }
+  .side-text {
+    color: var(--text-soft);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
 
-    /* Sidebar Cards */
-    .sidebar-card {
-        background: white;
-        border-radius: var(--radius);
-        padding: var(--space-lg);
-        margin-bottom: var(--space-lg);
-        border: 1px solid var(--border-light);
-        box-shadow: var(--shadow-md);
-    }
+  /* Match preview */
+  .match-preview {
+    background: rgba(122,180,182,0.08);
+    border: 1px solid rgba(122,180,182,0.25);
+    border-radius: var(--radius-md);
+    padding: 0.85rem;
+    margin-bottom: 1rem;
+  }
 
-    .sidebar-card.claim-card {
-        border: 2px solid var(--dut-red);
-        background: linear-gradient(135deg, #fff, #fff8f8);
-        position: relative;
-        overflow: hidden;
-    }
+  .mp-title { font-weight: 700; font-size: 0.88rem; color: var(--text-dark); margin-bottom: 0.2rem; }
+  .mp-meta  { font-size: 0.78rem; color: var(--text-soft); }
+  .mp-ref   { font-family: monospace; font-size: 0.75rem; color: var(--dut-red); font-weight: 700; margin-top: 0.2rem; }
 
-    .sidebar-card.claim-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--dut-red), var(--dut-orange));
-    }
+  /* Action buttons */
+  .btn-claim {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; padding: 0.85rem;
+    background: linear-gradient(135deg, var(--dut-red), #c0392b);
+    color: white; border: none; border-radius: 40px;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    cursor: pointer; transition: all var(--transition); font-family: inherit;
+  }
 
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        gap: var(--space-xs);
-        margin-bottom: var(--space-md);
-    }
+  .btn-claim:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(209,31,45,0.3); color: white; }
 
-    .sidebar-header i {
-        font-size: 1.2rem;
-    }
+  .btn-match-claim {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; padding: 0.85rem;
+    background: linear-gradient(135deg, var(--dut-green), #159535);
+    color: white; border: none; border-radius: 40px;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    cursor: pointer; transition: all var(--transition);
+  }
 
-    .sidebar-header.claim-header i {
-        color: var(--dut-red);
-    }
+  .btn-match-claim:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(28,132,65,0.3); color: white; }
 
-    .sidebar-header.reference-header i {
-        color: var(--dut-blue);
-    }
+  .btn-signin {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; padding: 0.85rem;
+    background: transparent; border: 2px solid var(--dut-red);
+    color: var(--dut-red); border-radius: 40px;
+    font-weight: 700; font-size: 0.95rem; text-decoration: none;
+    transition: all var(--transition);
+  }
 
-    .sidebar-header h4 {
-        color: var(--text-dark);
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 0;
-    }
+  .btn-signin:hover { background: var(--dut-red); color: white; }
 
-    .sidebar-text {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: var(--space-md);
-    }
+  /* Reference card */
+  .ref-number {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--dut-red);
+    font-family: monospace;
+    text-align: center;
+    margin-bottom: 0.4rem;
+    letter-spacing: 1px;
+  }
 
-    /* Buttons */
-    .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--space-xs);
-        padding: 0.8rem 1.5rem;
-        border-radius: 40px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        text-decoration: none;
-        width: 100%;
-        border: none;
-        cursor: pointer;
-        transition: var(--transition);
-    }
+  .ref-note {
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
 
-    .btn-claim {
-        background: linear-gradient(135deg, var(--dut-red), #e34f5f);
-        color: white;
-        box-shadow: var(--shadow-sm);
-    }
+  .ref-note i { color: var(--dut-teal); }
 
-    .btn-claim:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
-    }
+  /* ── Color bar ───────────────────────────────────────────────────────── */
+  .color-bar {
+    display: flex; justify-content: center; gap: 0.6rem;
+    margin-top: 2.5rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
 
-    .btn-signin {
-        background: transparent;
-        border: 2px solid var(--dut-red);
-        color: var(--dut-red);
-    }
+  .c-dot { width: 10px; height: 10px; border-radius: 50%; animation: cpulse 2.5s infinite; }
+  .c-dot:nth-child(1) { background: var(--dut-green);  animation-delay: 0s; }
+  .c-dot:nth-child(2) { background: var(--dut-blue);   animation-delay: .2s; }
+  .c-dot:nth-child(3) { background: var(--dut-teal);   animation-delay: .4s; }
+  .c-dot:nth-child(4) { background: var(--dut-red);    animation-delay: .6s; }
+  .c-dot:nth-child(5) { background: var(--dut-blue);   animation-delay: .8s; }
+  .c-dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
 
-    .btn-signin:hover {
-        background: var(--dut-red);
-        color: white;
-    }
-
-    /* Reference Number */
-    .ref-number {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--dut-red);
-        font-family: 'SF Mono', monospace;
-        text-align: center;
-        margin-bottom: var(--space-sm);
-        letter-spacing: 1px;
-    }
-
-    .ref-note {
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.25rem;
-    }
-
-    .ref-note i {
-        color: var(--dut-teal);
-    }
-
-    /* Color Dots */
-    .dots {
-        display: flex;
-        justify-content: center;
-        gap: var(--space-xs);
-        margin-top: var(--space-xl);
-        padding-top: var(--space-lg);
-        border-top: 1px solid var(--border-light);
-    }
-
-    .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    .dot:nth-child(1) { background: var(--dut-green); animation-delay: 0s; }
-    .dot:nth-child(2) { background: var(--dut-blue); animation-delay: 0.2s; }
-    .dot:nth-child(3) { background: var(--dut-purple); animation-delay: 0.4s; }
-    .dot:nth-child(4) { background: var(--dut-red); animation-delay: 0.6s; }
-    .dot:nth-child(5) { background: var(--dut-teal); animation-delay: 0.8s; }
-    .dot:nth-child(6) { background: var(--dut-orange); animation-delay: 1s; }
-
-    @keyframes pulse {
-        0%, 100% { opacity: 0.5; transform: scale(1); }
-        50% { opacity: 1; transform: scale(1.2); }
-    }
-
-    /* Utilities */
-    .text-muted { color: var(--text-muted) !important; }
-    .mb-0 { margin-bottom: 0 !important; }
+  @keyframes cpulse {
+    0%,100% { opacity:.5; transform:scale(1); }
+    50%      { opacity:1;  transform:scale(1.2); }
+  }
 </style>
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<div class="detail-grid">
 
-<div class="container">
-    <div class="row">
-        <!-- Main Column -->
-        <div class="col-main">
-            <!-- Header Card -->
-            <div class="header-card">
-                <div class="badge-container">
-                    <!-- Type Badge -->
-                    <span class="badge type-{{ item.type }}">
-                        <i class="fas {% if item.type == 'lost' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
-                        {{ item.type|capitalize }}
-                    </span>
-                    
-                    <!-- Category Badge -->
-                    <span class="badge category">
-                        <i class="fas fa-layer-group"></i>
-                        {{ item.category }}
-                    </span>
-                    
-                    <!-- Status Badge -->
-                    <span class="badge status-{{ item.status }}">
-                        <i class="fas 
-                            {% if item.status == 'open' %}fa-circle
-                            {% elif item.status == 'matched' %}fa-link
-                            {% elif item.status == 'claimed' %}fa-hand-paper
-                            {% else %}fa-archive{% endif %}"></i>
-                        {{ item.status|capitalize }}
-                    </span>
-                </div>
+  <!-- ── MAIN COLUMN ──────────────────────────────────────────────────── -->
+  <div>
 
-                <h1>{{ item.title }}</h1>
-                
-                <div class="meta">
-                    <i class="fas fa-hashtag"></i>
-                    <span class="ref-highlight">{{ item.reference_number }}</span>
-                    <span>•</span>
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>{{ item.campus }}</span>
-                    <span>•</span>
-                    <i class="fas fa-calendar"></i>
-                    <span>{{ item.created_at.strftime('%d %b %Y') }}</span>
-                </div>
-            </div>
-
-            <!-- Image -->
-            {% if item.image_path %}
-                <div class="image-card">
-                    <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}">
-                </div>
-            {% endif %}
-
-            <!-- Description Card -->
-            <div class="info-card">
-                <div class="card-header">
-                    <i class="fas fa-align-left"></i>
-                    <h3>Description</h3>
-                </div>
-                <p class="description">{{ item.public_description }}</p>
-            </div>
-
-            <!-- Location & Date Card -->
-            <div class="info-card">
-                <div class="card-header">
-                    <i class="fas fa-map-pin"></i>
-                    <h3>Location & Date</h3>
-                </div>
-                
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-university"></i>
-                            Campus
-                        </div>
-                        <div class="info-value">{{ item.campus }}</div>
-                    </div>
-                    
-                    {% if item.location %}
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-location-dot"></i>
-                            Location
-                        </div>
-                        <div class="info-value">{{ item.location }}</div>
-                    </div>
-                    {% endif %}
-                    
-                    {% if item.date_of_incident %}
-                    <div class="info-item">
-                        <div class="info-label">
-                            <i class="fas fa-calendar-day"></i>
-                            Date
-                        </div>
-                        <div class="info-value">{{ item.date_of_incident.strftime('%d %b %Y') }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+    <!-- Header -->
+    <div class="d-card">
+      <div class="d-card-body">
+        <div class="badge-row">
+          <span class="d-badge type-{{ item.type }}">
+            <i class="fas {% if item.type == 'lost' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+            {{ item.type|capitalize }}
+          </span>
+          <span class="d-badge cat">
+            <i class="fas fa-layer-group"></i> {{ item.category }}
+          </span>
+          <span class="d-badge status-{{ item.status }}">
+            <i class="fas
+              {% if item.status == 'open' %}fa-circle
+              {% elif item.status == 'matched' %}fa-link
+              {% elif item.status == 'claimed' %}fa-hand-paper
+              {% else %}fa-archive{% endif %}"></i>
+            {{ item.status|capitalize }}
+          </span>
         </div>
 
-        <!-- Side Column -->
-        <div class="col-side">
-            <!-- Claim Card -->
-            {% if can_claim %}
-                <div class="sidebar-card claim-card">
-                    <div class="sidebar-header claim-header">
-                        <i class="fas fa-hand-paper"></i>
-                        <h4>Is this your item?</h4>
-                    </div>
-                    <p class="sidebar-text">
-                        If this belongs to you, submit a claim with proof of ownership to verify it's yours.
-                    </p>
-                    <a href="{{ url_for('claims.submit', item_id=item.id) }}" class="btn btn-claim">
-                        <i class="fas fa-check-circle"></i>
-                        Submit a Claim
-                    </a>
-                </div>
-            {% elif not current_user.is_authenticated %}
-                <div class="sidebar-card">
-                    <div class="sidebar-header">
-                        <i class="fas fa-lock" style="color: var(--dut-red);"></i>
-                        <h4>Sign in required</h4>
-                    </div>
-                    <p class="sidebar-text">
-                        Please sign in to claim this item.
-                    </p>
-                    <a href="{{ url_for('auth.login') }}" class="btn btn-signin">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign In
-                    </a>
-                </div>
-            {% endif %}
+        <h1 class="item-title">{{ item.title }}</h1>
 
-            <!-- Reference Card -->
-            <div class="sidebar-card">
-                <div class="sidebar-header reference-header">
-                    <i class="fas fa-hashtag"></i>
-                    <h4>Reference Number</h4>
-                </div>
-                <div class="ref-number">{{ item.reference_number }}</div>
-                <p class="ref-note">
-                    <i class="fas fa-info-circle"></i>
-                    Keep this to track your item
-                </p>
-            </div>
+        <div class="item-meta">
+          <i class="fas fa-hashtag"></i>
+          <span class="ref-pill">{{ item.reference_number }}</span>
+          <span>·</span>
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ item.campus }}</span>
+          <span>·</span>
+          <i class="fas fa-calendar"></i>
+          <span>{{ item.created_at.strftime('%d %b %Y') }}</span>
         </div>
+      </div>
     </div>
 
-    <!-- Color Dots -->
-    <div class="dots">
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+    <!-- Image — blurred for found items -->
+    {% if item.image_path %}
+      <div class="d-card">
+        <div class="d-card-body" style="padding-bottom:1rem;">
+          <div class="img-wrap {% if item.type == 'found' %}blurred{% endif %}">
+            <img src="{{ url_for('static', filename=item.image_path) }}"
+                 alt="{{ item.title }}">
+            {% if item.type == 'found' %}
+              <div class="blur-overlay">
+                <i class="fas fa-eye-slash"></i>
+                <span>Image hidden — only visible to the verified owner</span>
+              </div>
+            {% endif %}
+          </div>
+          {% if item.type == 'found' %}
+            <p class="blur-notice">
+              <i class="fas fa-shield-alt"></i>
+              Images of found items are blurred to prevent fraudulent claims.
+              Submit a claim and an admin will verify your ownership privately.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Description -->
+    <div class="d-card">
+      <div class="d-card-body">
+        <div class="d-card-header">
+          <i class="fas fa-align-left"></i>
+          <h3>Description</h3>
+        </div>
+        <p class="description">{{ item.public_description }}</p>
+      </div>
     </div>
+
+    <!-- Location & Date -->
+    <div class="d-card">
+      <div class="d-card-body">
+        <div class="d-card-header">
+          <i class="fas fa-map-pin"></i>
+          <h3>Location &amp; Date</h3>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label"><i class="fas fa-university"></i> Campus</div>
+            <div class="info-value">{{ item.campus }}</div>
+          </div>
+          {% if item.location %}
+            <div class="info-item">
+              <div class="info-label"><i class="fas fa-location-dot"></i> Location</div>
+              <div class="info-value">{{ item.location }}</div>
+            </div>
+          {% endif %}
+          {% if item.date_of_incident %}
+            <div class="info-item">
+              <div class="info-label"><i class="fas fa-calendar-day"></i> Date</div>
+              <div class="info-value">{{ item.date_of_incident.strftime('%d %b %Y') }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SIDEBAR ─────────────────────────────────────────────────────── -->
+  <div>
+
+    {# CASE 1: Found item — logged-in student who didn't report it #}
+    {% if can_claim %}
+      <div class="side-card claim">
+        <div class="side-header">
+          <i class="fas fa-hand-paper" style="color:var(--dut-red);"></i>
+          <h4>Is this your item?</h4>
+        </div>
+        <p class="side-text">
+          If this belongs to you, submit a claim with proof of ownership.
+          An admin will compare your answers against private verification
+          details and approve or reject the claim.
+        </p>
+        <a href="{{ url_for('claims.submit', item_id=item.id) }}"
+           class="btn-claim">
+          <i class="fas fa-check-circle"></i> Submit a Claim
+        </a>
+      </div>
+
+    {# CASE 2: Owner of a lost item where a match was found #}
+    {% elif matched_found_item %}
+      <div class="side-card match">
+        <div class="side-header">
+          <i class="fas fa-link" style="color:var(--dut-teal);"></i>
+          <h4>A match has been found!</h4>
+        </div>
+        <p class="side-text">
+          An admin matched a found item to your report. Submit a claim
+          on the found item to verify ownership and arrange collection.
+        </p>
+        <div class="match-preview">
+          <div class="mp-title">{{ matched_found_item.title }}</div>
+          <div class="mp-meta">
+            {{ matched_found_item.campus }} · {{ matched_found_item.category }}
+          </div>
+          <div class="mp-ref">{{ matched_found_item.reference_number }}</div>
+        </div>
+        <a href="{{ url_for('claims.submit', item_id=matched_found_item.id) }}"
+           class="btn-match-claim">
+          <i class="fas fa-check-circle"></i> Claim the Matched Item
+        </a>
+      </div>
+
+    {# CASE 3: Not logged in #}
+    {% elif not current_user.is_authenticated %}
+      <div class="side-card">
+        <div class="side-header">
+          <i class="fas fa-lock" style="color:var(--dut-red);"></i>
+          <h4>Sign in required</h4>
+        </div>
+        <p class="side-text">Please sign in to claim this item.</p>
+        <a href="{{ url_for('auth.login') }}" class="btn-signin">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Reference number -->
+    <div class="side-card">
+      <div class="side-header">
+        <i class="fas fa-hashtag" style="color:var(--dut-blue);"></i>
+        <h4>Reference Number</h4>
+      </div>
+      <div class="ref-number">{{ item.reference_number }}</div>
+      <p class="ref-note">
+        <i class="fas fa-info-circle"></i> Keep this to track your item
+      </p>
+    </div>
+
+  </div>
 </div>
+
+<!-- Color bar -->
+<div class="color-bar">
+  <div class="c-dot"></div><div class="c-dot"></div>
+  <div class="c-dot"></div><div class="c-dot"></div>
+  <div class="c-dot"></div><div class="c-dot"></div>
+</div>
+
 {% endblock %}

@@ -1,1127 +1,251 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}DUT Lost & Found{% endblock %}</title>
-    <!-- Bootstrap Icons for bell icon -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Minimal styling - team can enhance later -->
-    <style>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
-        
-        /* Your existing CSS remains exactly the same */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --dut-primary: #5370A3;
-            --dut-primary-light: #6b8bbf;
-            --dut-secondary: #A56EAE;
-            --dut-accent: #D11F2D;
-            --dut-success: #1C8441;
-            --dut-purple: #812575;
-            --dut-teal: #7AB4B6;
-            
-            --gradient-primary: linear-gradient(135deg, #5370A3, #812575);
-            --gradient-secondary: linear-gradient(135deg, #A56EAE, #D11F2D);
-            --gradient-accent: linear-gradient(135deg, #D11F2D, #812575);
-            
-            --shadow-sm: 0 4px 6px rgba(0,0,0,0.07);
-            --shadow-md: 0 10px 30px -5px rgba(83,112,163,0.15);
-            --shadow-lg: 0 20px 40px -10px rgba(129,37,117,0.2);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body {
-            
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf5 100%);
-            line-height: 1.6;
-            color: #1a1a1a;
-            min-height: 100vh;
-        }
-        
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            border-bottom: 3px solid var(--dut-accent);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-logo img {
-            height: 60px;
-            width: auto;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-text .dut {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo-text .full {
-            font-size: 0.8rem;
-            color: #5D6D7E;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 40px;
-            transition: var(--transition);
-        }
-
-        .nav-link:hover {
-            background: var(--gradient-primary);
-=======
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .navbar { background: #333; padding: 1rem; display: flex; align-items: center; flex-wrap: wrap; }
-        .navbar a { color: white; text-decoration: none; margin-right: 1rem; position: relative; }
-        .navbar .nav-right { margin-left: auto; display: flex; align-items: center; }
-        .container { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-        
-        /* Notification Badge Styling */
-        .notification-badge {
-            background: #ff4757;
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            position: absolute;
-<<<<<<< HEAD
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-           background-image: url("images/WhatsApp\ Image\ 2026-03-07\ at\ 20.04.51.jpeg");background-size: cover;
-            background-position: center;
-            filter: brightness(0.7);
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(83,112,163,0.9), rgba(129,37,117,0.9), rgba(209,31,45,0.8));
-            mix-blend-mode: multiply;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 2;
-            padding: 5rem;
-            color: white;
-        }
-
-        .hero-chip {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            background: rgba(122,180,182,0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 60px;
-            color: var(--dut-teal);
-            font-weight: 600;
-            margin-bottom: 2.5rem;
-            border: 1px solid var(--dut-teal);
-        }
-
-        .hero-content h1 {
-            font-size: clamp(3.5rem, 8vw, 6rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero-content h1 span {
-            color: var(--dut-teal);
-        }
-
-        .hero-content p {
-            font-size: 1.3rem;
-            opacity: 0.95;
-            margin-bottom: 3rem;
-            max-width: 600px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 4rem;
-        }
-
-        .btn {
-            padding: 1rem 2rem;
-            border-radius: 60px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            transition: var(--transition);
-            border: none;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
-
-        .btn-primary {
-            background: var(--dut-accent);
-            color: white;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -5px rgba(0,0,0,0.4);
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: var(--dut-teal);
-            transform: translateY(-5px);
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 4rem;
-        }
-
-        .hero-stat .number {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--dut-teal);
-            line-height: 1;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero-stat .label {
-            font-size: 1rem;
-            opacity: 0.9;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* User Types */
-        .user-types {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
-            margin: 4rem 0;
-        }
-
-        .user-card {
-            border-radius: 40px;
-            padding: 3.5rem 2.5rem;
-            transition: var(--transition);
-=======
-            top: -8px;
-            right: -8px;
-            min-width: 18px;
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
-            text-align: center;
-        }
-
-<<<<<<< HEAD
-        .user-card:nth-child(1) {
-            background: linear-gradient(135deg, #5370A3, #812575);
-        }
-
-        .user-card:nth-child(2) {
-            background: linear-gradient(135deg, #A56EAE, #D11F2D);
-        }
-
-        .user-card:nth-child(3) {
-            background: linear-gradient(135deg, #1C8441, #7AB4B6);
-        }
-
-        .user-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 30px 40px -10px rgba(0,0,0,0.4);
-        }
-
-        .user-icon {
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2.5rem;
-            color: white;
-            font-size: 3rem;
-            transition: var(--transition);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .user-card:hover .user-icon {
-            transform: scale(1.1) rotate(10deg);
-            background: var(--dut-teal);
-            color: var(--dut-primary);
-        }
-
-        .user-card h3 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .user-card p {
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 2rem;
-        }
-
-        .user-badge {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 60px;
-            font-weight: 600;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin: 4rem 0;
-        }
-
-        .feature-card {
-            border-radius: 30px;
-            padding: 2.5rem 2rem;
-            text-align: center;
-            transition: var(--transition);
-            color: white;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .feature-card:nth-child(1) {
-            background: linear-gradient(135deg, #5370A3, #4e349c);
-        }
-
-        .feature-card:nth-child(2) {
-            background: linear-gradient(135deg, #A56EAE, #970e90);
-        }
-
-        .feature-card:nth-child(3) {
-            background: linear-gradient(135deg, #D11F2D, #ae3b3b);
-        }
-
-        .feature-card:nth-child(4) {
-            background: linear-gradient(135deg, #1C8441, #75ba91);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 40px -10px rgba(0,0,0,0.4);
-        }
-
-        .feature-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            font-size: 2.2rem;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .feature-card h4 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .feature-card p {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* Stats Section */
-        .stats-section {
-            position: relative;
-            border-radius: 60px;
-            overflow: hidden;
-            padding: 6rem 4rem;
-            margin: 5rem 0;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .stats-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .stats-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(83,112,163,0.95), rgba(129,37,117,0.95));
-            mix-blend-mode: multiply;
-        }
-
-        .stats-content {
-            position: relative;
-            z-index: 2;
-            color: white;
-        }
-
-        .stats-content h2 {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            color: var(--dut-teal);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--dut-teal);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        /* Items Grid */
-        .items-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .item-card {
-            background: white;
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .item-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 30px 40px -10px rgba(0,0,0,0.3);
-        }
-
-        .item-image {
-            height: 220px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .item-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1.5rem;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: white;
-            z-index: 2;
-        }
-
-        .item-badge.found {
-            background: #1C8441;
-        }
-
-        .item-badge.lost {
-            background: #D11F2D;
-        }
-
-        .item-content {
-            padding: 2rem;
-            background: white;
-        }
-
-        .item-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 0.8rem;
-            color: #5370A3;
-        }
-
-        .item-meta {
-            display: flex;
-            gap: 1.5rem;
-            color: #5D6D7E;
-        }
-
-        .item-meta i {
-            color: #D11F2D;
-            margin-right: 0.3rem;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            position: relative;
-            border-radius: 60px;
-            overflow: hidden;
-            padding: 6rem 4rem;
-            margin: 5rem 0;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .cta-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .cta-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(209,31,45,0.95), rgba(129,37,117,0.95));
-            mix-blend-mode: multiply;
-        }
-
-        .cta-content {
-            position: relative;
-            z-index: 2;
-            color: white;
-        }
-
-        .cta-content h2 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: #7AB4B6;
-        }
-
-        .cta-content p {
-            font-size: 1.3rem;
-            margin-bottom: 3rem;
-            opacity: 0.95;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-        }
-
-        .btn-dark {
-            background: #1C8441;
-            color: white;
-        }
-
-        .btn-dark:hover {
-            background: #136231;
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -5px rgba(0,0,0,0.3);
-        }
-
-        /* Section Header */
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.5rem;
-            color: #5370A3;
-            margin-bottom: 0.5rem;
-        }
-
-        .section-header p {
-            color: #812575;
-            font-size: 1.1rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 992px) {
-            .user-types, .features-grid, .stats-grid, .items-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .user-types, .features-grid, .stats-grid, .items-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero-content {
-                padding: 3rem 2rem;
-            }
-            
-            .hero-stats {
-                flex-direction: column;
-                gap: 2rem;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-            }
-        }
-=======
-        .alert { padding: 1rem; margin: 1rem 0; border: 1px solid #ccc; }
-        .alert-success { background: #d4edda; }
-        .alert-danger { background: #f8d7da; }
-        .alert-warning { background: #fff3cd; }
-        .alert-info { background: #d1ecf1; }
-        form { max-width: 500px; }
-        input, select { display: block; width: 100%; margin: 0.5rem 0 1rem; padding: 0.5rem; }
-        button { background: #333; color: white; padding: 0.5rem 1rem; border: none; cursor: pointer; }
-        hr { margin: 2rem 0; }
-        footer { background: #333; color: white; text-align: center; padding: 1rem; margin-top: 2rem; }
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}DUT Lost & Found · Official Portal{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Bootstrap 5 — required for admin pages, report forms, tables -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+
+    <!-- Custom styles — load after Bootstrap so they override correctly -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 </head>
 <body>
+
+    <!-- Top Strip -->
+    <div class="top-strip">
+        <div class="top-strip-inner">
+            <div class="top-strip-left">
+                <span><i class="fas fa-shield-alt"></i> Official DUT Student &amp; Staff Platform</span>
+                <span class="top-dot"></span>
+                <span><i class="fas fa-lock"></i> Secure Claim Verification</span>
+            </div>
+            <div class="top-strip-right">
+                <span><i class="fas fa-map-marker-alt"></i> Steve Biko · Ritson · ML Sultan</span>
+                <span><i class="fas fa-envelope"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f4989b8780929b819a90b4908180da9597da8e95">[email&#160;protected]</a></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
     <nav class="navbar">
-<<<<<<< HEAD
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="images/Screenshot 2026-03-09 143047.png" alt="DUT Logo">
+                <img src="{{ url_for('static', filename='img/DUT-Logo.jpg') }}"
+                     alt="DUT Logo"
+                     onerror="this.style.display='none'">
                 <div class="logo-text">
-                  
+                    <div class="logo-title">DUT Lost &amp; Found</div>
+                    <div class="logo-subtitle">Official Campus Recovery Portal</div>
                 </div>
             </div>
+
             <div class="nav-links">
-                 <a href="index.html" class="nav-link active"><i class="fas fa-home"></i>Home</a>
-                <a href="items/search.html" class="nav-link"><i class="fas fa-search"></i>Browse</a>
-                <a href="auth/login.html" class="nav-link"><i class="fas fa-sign-in-alt"></i>Sign In</a>
-                <a href="auth/register.html" class="nav-link"><i class="fas fa-user-plus"></i>Register</a>
-          </div>
-        </div>
-    </nav>
-
-
-    <main class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-bg"></div>
-            <div class="hero-overlay"></div>
-            <div class="hero-content">
-                <div class="hero-chip">
-                    <i class="fas fa-university"></i>
-                    DURBAN UNIVERSITY OF TECHNOLOGY
-                </div>
-                <h1>
-                    Lost & Found<br>
-                    <span>Portal</span>
-                </h1>
-                <p>Your official DUT platform for reporting lost items and reuniting with what matters most. Join thousands of students and staff.</p>
-                <div class="hero-buttons">
-                    <a href="items/report.html" class="btn btn-primary">
-                        <i class="fas fa-plus-circle"></i>
-                        Report Lost Item
-                    </a>
-                    <a href="items/search.html" class="btn btn-outline">
-                        <i class="fas fa-search"></i>
-                        Browse Items
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Who Are You Section -->
-        <div class="section-header">
-            <h2>Who are you?</h2>
-            <p>Choose your role to get started</p>
-        </div>
-
-        <div class="user-types">
-            <a href="login.html?role=student" class="user-card">
-                <div class="user-icon">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <h3>Student</h3>
-                <p>Currently enrolled at DUT. Report lost items, claim found items, and track your requests in real-time.</p>
-                <span class="user-badge">Get Started →</span>
-            </a>
-            
-            <a href="login.html?role=admin" class="user-card">
-                <div class="user-icon">
-                    <i class="fas fa-user-tie"></i>
-                </div>
-                <h3>Administrator</h3>
-                <p>Campus security or admin staff. Manage claims, verify identities, and oversee the entire system.</p>
-                <span class="user-badge">Admin Login →</span>
-            </a>
-        </div>
-
-        <!-- How It Works -->
-        <div class="section-header">
-            <h2>How It Works</h2>
-            <p>Simple steps to recover what you've lost</p>
-        </div>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-flag"></i>
-                </div>
-                <h4>Report Lost Item</h4>
-                <p>Fill out a simple form with details about your lost item. Add photos, location, and time.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-search"></i>
-                </div>
-                <h4>Search Database</h4>
-                <p>Browse through found items reported by other students and staff members instantly.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <h4>Claim Items</h4>
-                <p>Found something? Submit a claim and get verified to retrieve your belongings securely.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <h4>Get Notified</h4>
-                <p>Receive instant notifications when potential matches are found for your lost items.</p>
-            </div>
-        </div>
-
-        <!-- CTA Section -->
-        <div class="cta-section">
-            <div class="cta-bg"></div>
-            <div class="cta-overlay"></div>
-            <div class="cta-content">
-                <h2>Ready to Get Started?</h2>
-                <p>Join thousands of DUT students and staff using our lost and found system.</p>
-                <div class="cta-buttons">
-                    <a href="auth/register.html" class="btn btn-dark">
-                        <i class="fas fa-user-plus"></i>
-                        Create Account
-                    </a>
-
-               
-                    
-                    <a href="auth/login.html" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign In
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-   <!-- Footer -->
-<footer>
-    <!-- Wave SVG Divider -->
-    <div class="footer-wave">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
-            <path fill="currentColor" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,170.7C1248,160,1344,128,1392,112L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
-        </svg>
-    </div>
-
-    <div class="footer-main">
-        <div class="footer-content" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; max-width: 1400px; margin: 0 auto; padding: 3rem 2rem;">
-            <!-- Brand Column -->
-            <div class="footer-brand">
-                <div class="footer-logo-wrapper" style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
-                    <div class="logo-glow" style="position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px; background: radial-gradient(circle at 30% 50%, rgba(122,180,182,0.4), transparent 70%); border-radius: 50%; animation: pulseGlow 3s ease infinite;"></div>
-                    <img src="https://www.dut.ac.za/wp-content/uploads/2020/04/DUT_Logo.png" alt="DUT Logo" class="footer-logo-img" style="position: relative; z-index: 2; height: 80px; filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
-                </div>
-                <h3 class="footer-tagline" style="color: #7AB4B6; font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500;">Durban University of Technology</h3>
-                <p class="footer-description" style="color: rgba(255,255,255,0.7); line-height: 1.8; margin-bottom: 1.5rem; font-size: 0.95rem;">
-                    Your official lost and found portal. Reuniting students and staff with their belongings since 2024. 
-                    We're committed to making campus life easier, one found item at a time.
-                </p>
-
-                <!-- Social Links -->
-                <div class="footer-social" style="display: flex; gap: 0.8rem;">
-                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="#" class="social-link" style="width: 45px; height: 45px; border-radius: 15px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: all 0.3s;">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Quick Links Column -->
-            <div class="footer-links-group">
-                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-compass"></i>
-                    Quick Links
-                </h4>
-                <ul class="footer-links-list" style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 1rem;"><a href="items/search.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-search" style="width: 20px; color: #7AB4B6;"></i> Browse Items</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="items/report.html?type=lost" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-flag" style="width: 20px; color: #7AB4B6;"></i> Report Lost Item</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="items/report.html?type=found" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-box-open" style="width: 20px; color: #7AB4B6;"></i> Report Found Item</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="claims/dashboard.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-clipboard-list" style="width: 20px; color: #7AB4B6;"></i> My Dashboard</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="notifications/index.html" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-bell" style="width: 20px; color: #7AB4B6;"></i> Notifications</a></li>
-                </ul>
-            </div>
-
-            <!-- Support Column -->
-            <div class="footer-links-group">
-                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-headset"></i>
-                    Support
-                </h4>
-                <ul class="footer-links-list" style="list-style: none; padding: 0;">
-                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-question-circle" style="width: 20px; color: #7AB4B6;"></i> Help Center</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-star" style="width: 20px; color: #7AB4B6;"></i> FAQ</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-envelope" style="width: 20px; color: #7AB4B6;"></i> Contact Us</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-shield-alt" style="width: 20px; color: #7AB4B6;"></i> Privacy Policy</a></li>
-                    <li style="margin-bottom: 1rem;"><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 0.8rem;"><i class="fas fa-gavel" style="width: 20px; color: #7AB4B6;"></i> Terms of Service</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Column -->
-            <div class="footer-links-group">
-                <h4 class="footer-links-title" style="color: #7AB4B6; font-size: 1.2rem; margin-bottom: 1.8rem; display: flex; align-items: center; gap: 0.5rem;">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Get in Touch
-                </h4>
-                
-                <!-- Campus Cards -->
-                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
-                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <div class="campus-info">
-                        <strong style="color: white; font-size: 0.95rem;">Steve Biko Campus</strong>
-                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Main Administration</span>
-                    </div>
-                </div>
-                
-                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
-                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="campus-info">
-                        <strong style="color: white; font-size: 0.95rem;">Ritson Campus</strong>
-                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Engineering & Technology</span>
-                    </div>
-                </div>
-                
-                <div class="campus-card" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 16px; margin-bottom: 0.8rem;">
-                    <div class="campus-icon" style="width: 40px; height: 40px; background: rgba(122,180,182,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #7AB4B6;">
-                        <i class="fas fa-landmark"></i>
-                    </div>
-                    <div class="campus-info">
-                        <strong style="color: white; font-size: 0.95rem;">ML Sultan Campus</strong>
-                        <span style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Arts & Design</span>
-                    </div>
-                </div>
-
-                <!-- Contact Details -->
-                <div class="contact-details" style="margin-top: 1.5rem;">
-                    <div class="contact-item" onclick="copyToClipboard('+27 (0)31 373 1234')" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7); cursor: pointer;">
-                        <i class="fas fa-phone-alt" style="width: 20px; color: #7AB4B6;"></i>
-                        <span>+27 (0)31 373 1234</span>
-                        <small class="copy-hint" style="position: absolute; right: 1rem; font-size: 0.7rem; color: #7AB4B6; opacity: 0;">Click to copy</small>
-                    </div>
-                    <div class="contact-item" onclick="copyToClipboard('lostfound@dut.ac.za')" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7); cursor: pointer;">
-                        <i class="fas fa-envelope" style="width: 20px; color: #7AB4B6;"></i>
-                        <span>lostfound@dut.ac.za</span>
-                        <small class="copy-hint" style="position: absolute; right: 1rem; font-size: 0.7rem; color: #7AB4B6; opacity: 0;">Click to copy</small>
-                    </div>
-                    <div class="contact-item" style="display: flex; align-items: center; gap: 1rem; padding: 0.8rem 0; color: rgba(255,255,255,0.7);">
-                        <i class="fas fa-clock" style="width: 20px; color: #7AB4B6;"></i>
-                        <span>Mon-Fri: 8:00 - 17:00</span>
-                    </div>
-                </div>
-
-                <!-- Emergency Badge -->
-                <div class="emergency-badge" style="margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, rgba(209,31,45,0.2), rgba(122,180,182,0.2)); border-radius: 20px; display: flex; align-items: center; gap: 1rem;">
-                    <i class="fas fa-shield-alt" style="font-size: 2rem; color: #D11F2D; animation: pulse 2s ease infinite;"></i>
-                    <div>
-                        <strong style="display: block; color: white; font-size: 0.95rem;">Campus Security</strong>
-                        <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem;">24/7 Emergency: 031 373 5555</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Newsletter Section -->
-        <div class="newsletter-section" style="border-top: 1px solid rgba(255,255,255,0.1); padding: 2rem; background: rgba(0,0,0,0.2);">
-            <div class="newsletter-content" style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; justify-content: center;">
-                <div class="newsletter-icon" style="width: 60px; height: 60px; background: rgba(122,180,182,0.2); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #7AB4B6; font-size: 1.8rem;">
-                    <i class="fas fa-bell"></i>
-                </div>
-                <div class="newsletter-text">
-                    <h4 style="color: white; margin-bottom: 0.3rem;">Stay Updated</h4>
-                    <p style="color: rgba(255,255,255,0.6);">Get notified when items matching your lost items are found</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer Bottom -->
-    <div class="footer-bottom" style="background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);">
-        <div class="footer-bottom-content" style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <div class="footer-copyright" style="display: flex; align-items: center; gap: 0.5rem; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
-                <i class="fas fa-search"></i>
-                <span>DUT Lost & Found Portal © 2026 — Durban University of Technology</span>
-            </div>
-            
-            <div class="footer-bottom-links" style="display: flex; gap: 1.5rem;">
-                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-sitemap"></i> Sitemap</a>
-                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-lock"></i> Privacy</a>
-                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-file-contract"></i> Terms</a>
-                <a href="#" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.3rem;"><i class="fas fa-cookie-bite"></i> Cookies</a>
-            </div>
-            
-            <div class="footer-envision" style="text-align: right;">
-                <span class="envision-badge" style="background: linear-gradient(135deg, #5370A3, #812575); color: white; padding: 0.3rem 1rem; border-radius: 40px; font-size: 0.8rem; font-weight: 600; display: inline-block; margin-right: 0.5rem;">ENVISION2030</span>
-                <span class="made-with" style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">Made with <i class="fas fa-heart" style="color: #D11F2D;"></i> for the DUT community</span>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<!-- Add this JavaScript for copy functionality -->
-<script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        // Show a temporary tooltip or notification
-        const notification = document.createElement('div');
-        notification.className = 'copy-notification';
-        notification.innerHTML = '<i class="fas fa-check-circle"></i> Copied to clipboard!';
-        notification.style.position = 'fixed';
-        notification.style.bottom = '20px';
-        notification.style.right = '20px';
-        notification.style.background = '#1C8441';
-        notification.style.color = 'white';
-        notification.style.padding = '1rem 2rem';
-        notification.style.borderRadius = '50px';
-        notification.style.display = 'flex';
-        notification.style.alignItems = 'center';
-        notification.style.gap = '0.5rem';
-        notification.style.boxShadow = '0 10px 30px -5px rgba(0,0,0,0.3)';
-        notification.style.zIndex = '9999';
-        notification.style.animation = 'slideIn 0.3s ease';
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
-    });
-}
-
-// Add keyframe animation for slideIn
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes pulseGlow {
-        0%, 100% { opacity: 0.3; transform: scale(1); }
-        50% { opacity: 0.6; transform: scale(1.1); }
-    }
-`;
-document.head.appendChild(style);
-</script>
-</body>
-<<<<<<< HEAD
-</html>
-=======
-</html>
-=======
-        <a href="{{ url_for('items.index') }}">DUT Lost & Found</a>
-        <a href="{{ url_for('items.search') }}">Browse Items</a>
-        
-        <div class="nav-right">
-            {% if current_user.is_authenticated %}
-                <a href="{{ url_for('items.report') }}">Report Item</a>
-                
-                <!-- Notification Bell -->
-                <a href="{{ url_for('notifications.index') }}" style="position: relative; margin-right: 1rem;" id="notificationLink">
-                    <i class="bi bi-bell" style="font-size: 1.2rem;"></i>
-                    <span id="notificationCount" class="notification-badge" style="display: none;">0</span>
+                <a href="{{ url_for('home') }}"
+                   class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Home
                 </a>
 
-                {% if current_user.is_admin %}
-                    <a href="{{ url_for('admin.dashboard') }}">Admin</a>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('items.search') }}"
+                       class="nav-link {% if request.endpoint == 'items.search' %}active{% endif %}">
+                        <i class="fas fa-search"></i> Browse
+                    </a>
+                    <a href="{{ url_for('items.report') }}"
+                       class="nav-link {% if request.endpoint == 'items.report' %}active{% endif %}">
+                        <i class="fas fa-plus-circle"></i> Report
+                    </a>
+
+                    <!-- Notification Bell -->
+                    <a href="{{ url_for('notifications.index') }}"
+                       class="nav-link"
+                       style="position:relative;">
+                        <i class="fas fa-bell"></i>
+                        <span id="notificationCount"
+                              class="notification-badge"
+                              style="display:none;">0</span>
+                    </a>
+
+                    {% if current_user.is_admin %}
+                        <a href="{{ url_for('admin.dashboard') }}"
+                           class="nav-link {% if 'admin' in (request.endpoint or '') %}active{% endif %}">
+                            <i class="fas fa-user-tie"></i> Admin
+                        </a>
+                    {% endif %}
+
+                    <a href="{{ url_for('claims.dashboard') }}"
+                       class="nav-link {% if request.endpoint == 'claims.dashboard' %}active{% endif %}">
+                        <i class="fas fa-user"></i> {{ current_user.name.split()[0] }}
+                    </a>
+
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </a>
+
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}"
+                       class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </a>
+                    <a href="{{ url_for('auth.register') }}"
+                       class="nav-link {% if request.endpoint == 'auth.register' %}active{% endif %}">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
                 {% endif %}
-                
-                <a href="{{ url_for('claims.dashboard') }}">{{ current_user.name.split()[0] }}</a>
-                <a href="{{ url_for('auth.logout') }}">Sign Out</a>
-            {% else %}
-                <a href="{{ url_for('auth.login') }}">Sign In</a>
-                <a href="{{ url_for('auth.register') }}">Register</a>
-            {% endif %}
+            </div>
         </div>
     </nav>
 
-    <div class="container">
+    <!-- Main Content -->
+    <main class="main">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
+                <div class="alert alert-{{ category }}">{{ message|safe }}</div>
             {% endfor %}
         {% endwith %}
 
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
-    <footer>
-        <small>DUT Lost & Found Portal &copy; 2026 — Durban University of Technology</small>
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <p>
+                    Your official lost and found portal, designed to reconnect students
+                    and staff with their belongings through a secure and reliable
+                    campus process.
+                </p>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links">
+                    {% if current_user.is_authenticated %}
+                        <li>
+                            <a href="{{ url_for('items.search') }}">
+                                <i class="fas fa-search"></i> Browse Items
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('items.report') }}">
+                                <i class="fas fa-flag"></i> Report Lost
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('items.report') }}">
+                                <i class="fas fa-box-open"></i> Report Found
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('claims.dashboard') }}">
+                                <i class="fas fa-clipboard-list"></i> My Dashboard
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{{ url_for('auth.login') }}">
+                                <i class="fas fa-sign-in-alt"></i> Sign In
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('auth.register') }}">
+                                <i class="fas fa-user-plus"></i> Create Account
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-heading">Campuses</h4>
+                <ul class="footer-links">
+                    <li>
+                        <a href="{% if current_user.is_authenticated %}{{ url_for('items.search') }}?campus=Steve+Biko{% else %}{{ url_for('auth.login') }}{% endif %}">
+                            <i class="fas fa-map-marker-alt"></i> Steve Biko
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% if current_user.is_authenticated %}{{ url_for('items.search') }}?campus=Ritson{% else %}{{ url_for('auth.login') }}{% endif %}">
+                            <i class="fas fa-map-marker-alt"></i> Ritson
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% if current_user.is_authenticated %}{{ url_for('items.search') }}?campus=ML+Sultan{% else %}{{ url_for('auth.login') }}{% endif %}">
+                            <i class="fas fa-map-marker-alt"></i> ML Sultan
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-heading">Get in Touch</h4>
+                <div class="footer-contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <strong>Steve Biko Campus</strong><br>
+                        Main Administration
+                    </div>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-phone-alt"></i>
+                    <span>+27 (0)31 373 1234</span>
+                </div>
+                <div class="footer-contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="264a495552404953484266425352084745085c47">[email&#160;protected]</a></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <div>
+                    DUT Lost &amp; Found Portal &copy; 2026 —
+                    Durban University of Technology
+                </div>
+                <div><span class="envision-tag">ENVISION2030</span></div>
+            </div>
+        </div>
     </footer>
 
+    <!-- Bootstrap JS -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Notification polling -->
     <script>
         function updateNotificationCount() {
             fetch('/notifications/api/count')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
+                .then(function(res) {
+                    if (!res.ok) return;
+                    return res.json();
                 })
-                .then(data => {
-                    const countBadge = document.getElementById('notificationCount');
-                    if (countBadge) {
+                .then(function(data) {
+                    if (!data) return;
+                    var badge = document.getElementById('notificationCount');
+                    if (badge) {
                         if (data.unread > 0) {
-                            countBadge.textContent = data.unread;
-                            countBadge.style.display = 'inline-block';
+                            badge.textContent = data.unread;
+                            badge.style.display = 'inline-block';
                         } else {
-                            countBadge.style.display = 'none';
+                            badge.style.display = 'none';
                         }
                     }
                 })
-                .catch(err => console.error('Error fetching notifications:', err));
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            {% if current_user.is_authenticated %}
-                // Initial check
-                updateNotificationCount();
-                // Check for new notifications every 30 seconds
-                setInterval(updateNotificationCount, 30000);
-            {% endif %}
-        });
-    </script>
-</body>
-</html>
->>>>>>> 0960d747143bdbc7ecbb7977c7d331a32c78057c
->>>>>>> b6faf5cd757cd2c704a32c09b2219eaa046dc5f2
+                .catch(fu

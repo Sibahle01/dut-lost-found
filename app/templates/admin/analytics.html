@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Analytics Dashboard</h1>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card bg-primary text-white">
+      <div class="card-body">
+        <h5>Total Items</h5>
+        <h2>{{ totals.total_items }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-success text-white">
+      <div class="card-body">
+        <h5>Recovery Rate</h5>
+        <h2>{{ totals.recovery_rate }}%</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-warning text-white">
+      <div class="card-body">
+        <h5>Pending Claims</h5>
+        <h2>{{ totals.pending_claims }}</h2>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card bg-info text-white">
+      <div class="card-body">
+        <h5>Open Items</h5>
+        <h2>{{ totals.open_items }}</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Campus Breakdown Table -->
+<h3 class="mb-3">Campus Statistics</h3>
+<div class="table-responsive mb-5">
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Campus</th>
+        <th>Lost Items</th>
+        <th>Found Items</th>
+        <th>Matched</th>
+        <th>Claimed</th>
+        <th>Closed</th>
+        <th>Recovery Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campus in campus_stats %}
+      <tr>
+        <td><strong>{{ campus.name }}</strong></td>
+        <td>{{ campus.lost }}</td>
+        <td>{{ campus.found }}</td>
+        <td>{{ campus.matched }}</td>
+        <td>{{ campus.claimed }}</td>
+        <td>{{ campus.closed }}</td>
+        <td>
+          <span class="badge {% if campus.recovery_rate >= 50 %}bg-success{% else %}bg-warning{% endif %}">
+            {{ campus.recovery_rate }}%
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Additional Stats -->
+<div class="row">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        <h5>Item Status Summary</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total Lost Items:</span>
+            <strong>{{ totals.all_lost }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total Found Items:</span>
+            <strong>{{ totals.all_found }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Matched Items:</span>
+            <strong>{{ totals.all_matched }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Claimed Items:</span>
+            <strong>{{ totals.all_claimed }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Closed Items (Recovered):</span>
+            <strong>{{ totals.all_closed }}</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-dark text-white">
+        <h5>Claim Status Summary</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Pending Claims:</span>
+            <strong>{{ totals.pending_claims }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Approved Claims:</span>
+            <strong>{{ totals.approved_claims }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Rejected Claims:</span>
+            <strong>{{ totals.rejected_claims }}</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

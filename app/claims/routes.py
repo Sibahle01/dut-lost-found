@@ -149,3 +149,13 @@ def my_items():
                       .order_by(Item.created_at.desc())\
                       .all()
     return render_template('claims/my_items.html', items=items)
+
+
+@bp.route('/status/<int:claim_id>')
+@login_required
+def claim_status(claim_id):
+    claim = Claim.query.get_or_404(claim_id)
+    if claim.claimant_id != current_user.id and not current_user.is_admin:
+        flash('You do not have permission to view this claim.', 'danger')
+        return redirect(url_for('claims.dashboard'))
+    return render_template('claims/status.html', claim=claim)

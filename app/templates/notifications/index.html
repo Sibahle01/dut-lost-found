@@ -295,7 +295,7 @@
                 {{ notif.created_at.strftime('%d %b %Y at %H:%M') }}
               </span>
               {% if notif.related_item %}
-                <a href="{{ url_for('notifications.mark_read', notif_id=notif.id) }}"
+                <a href="{{ url_for('matching.view_matches', item_id=notif.related_item_id) }}"
                    class="notif-link">
                   View item <i class="fas fa-arrow-right"></i>
                 </a>

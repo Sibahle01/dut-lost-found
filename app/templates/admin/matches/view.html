@@ -215,13 +215,11 @@
               </a>
 
               <form method="POST"
-                    action="{{ url_for('admin.create_match') }}"
+                    action="{{ url_for('matching.confirm_match') }}"
                     class="flex-fill">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="lost_item_id"
-                       value="{% if item.type == 'lost' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
-                <input type="hidden" name="found_item_id"
-                       value="{% if item.type == 'found' %}{{ item.id }}{% else %}{{ match.item.id }}{% endif %}">
+                <input type="hidden" name="lost_id" value="{{ match.lost_item.id }}">
+                <input type="hidden" name="found_id" value="{{ match.found_item.id }}">
                 <button type="submit"
                         class="btn btn-sm btn-success w-100"
                         onclick="return confirm(

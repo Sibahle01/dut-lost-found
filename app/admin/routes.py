@@ -260,27 +260,6 @@ def create_match():
                            found_items=found_items)
 
 
-# ── TOGGLE ITEM STATUS ────────────────────────────────────────────────────────
-@bp.route('/items/<int:item_id>/toggle-status')
-@login_required
-@admin_required
-def toggle_item_status(item_id):
-    """Toggle item between open and closed status"""
-    item = Item.query.get_or_404(item_id)
-    
-    if item.status == 'closed':
-        item.status = 'open'
-        flash(f'Item {item.reference_number} reopened.', 'success')
-    elif item.status == 'open':
-        item.status = 'closed'
-        flash(f'Item {item.reference_number} closed.', 'success')
-    else:
-        flash(f'Cannot toggle item with status: {item.status}', 'warning')
-    
-    db.session.commit()
-    return redirect(url_for('admin.manage_items', status='all'))
-
-
 # ── MANAGE ITEMS ──────────────────────────────────────────────────────────────
 @bp.route('/items')
 @login_required
@@ -325,3 +304,49 @@ def toggle_role(user_id):
     db.session.commit()
     flash(f'{user.name} is now a {user.role}.', 'success')
     return redirect(url_for('admin.manage_users'))
+@bp.route('/analytics')
+@login_required
+@admin_required
+def analytics():
+    from app.models.item import Item
+    from app.models.claim import Claim
+    from app.models.user import User
+    
+    campuses = ['Steve Biko', 'Ritson', 'ML Sultan']
+    campus_stats = []
+    
+    for campus in campuses:
+        lost = Item.query.filter_by(campus=campus, type='lost').count()
+        found = Item.query.filter_by(campus=campus, type='found').count()
+        matched = Item.query.filter_by(campus=campus, status='matched').count()
+        claimed = Item.query.filter_by(campus=campus, status='claimed').count()
+        closed = Item.query.filter_by(campus=campus, status='closed').count()
+        recovery_rate = round((closed / lost * 100), 1) if lost > 0 else 0
+        campus_stats.append({
+            'name': campus,
+            'lost': lost,
+            'found': found,
+            'matched': matched,
+            'claimed': claimed,
+            'closed': closed,
+            'recovery_rate': recovery_rate
+        })
+    
+    totals = {
+        'total_items': Item.query.count(),
+        'total_claims': Claim.query.count(),
+        'total_users': User.query.filter_by(role='student').count(),
+        'open_items': Item.query.filter_by(status='open').count(),
+        'closed_items': Item.query.filter_by(status='closed').count(),
+        'pending_claims': Claim.query.filter_by(status='pending').count(),
+        'approved_claims': Claim.query.filter_by(status='approved').count(),
+        'rejected_claims': Claim.query.filter_by(status='rejected').count(),
+        'all_lost': Item.query.filter_by(type='lost').count(),
+        'all_found': Item.query.filter_by(type='found').count(),
+        'all_matched': Item.query.filter_by(status='matched').count(),
+        'all_claimed': Item.query.filter_by(status='claimed').count(),
+        'all_closed': Item.query.filter_by(status='closed').count(),
+    }
+    totals['recovery_rate'] = round(totals['all_closed'] / totals['all_lost'] * 100, 1) if totals['all_lost'] > 0 else 0
+    
+    return render_template('admin/analytics.html', totals=totals, campus_stats=campus_stats)
